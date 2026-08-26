@@ -1,11 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Faster+One&family=Madimi+One&family=Patrick+Hand+SC&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <title>Formulário Carona</title>
 </head>
+
 <body>
-    <h1>Testando</h1>
+    <main class="carona-container">
+        <!-- Título e subtítulo da página -->
+        <section class="busca-carona">
+            <h1>Procurar carona</h1>
+            <h2 class="descricao">
+                Encontre uma carona para o seu destino.
+            </h2>
+            
+            <!-- Container From + Iframe -->
+            <section class="formulario-container">
+                <!-- Formulário -->
+                <form class="carona-form" id="caronaForm">
+
+                    <!-- Origem -->
+                    <div class="input-group">
+
+                        <label for="origem">
+                            Origem
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-location-dot origem-icon"></i>
+                            <input type="text" id="origem" name="origem" placeholder="Ex.: Uniceplac"
+                                autocomplete="off" required>
+                        </div>
+                    </div>
+
+
+                    <!-- Destino -->
+                    <div class="input-group">
+
+                        <label for="destino">
+                            Destino
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-location-dot destino-icon"></i>
+                            <input type="text" id="destino" name="destino" placeholder="Ex.: Praça Santa Maria"
+                                autocomplete="off" required>
+                        </div>
+                    </div>
+
+
+                    <!-- Calendário/ Data -->
+                    <div class="input-group">
+                        <label for="data">
+                            Data
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <input type="date" id="data" name="data" required>
+                        </div>
+                    </div>
+
+
+                    <!-- Horário de partida -->
+                    <div class="input-group">
+                        <label for="horario">
+                            Horário de partida
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-clock"></i>
+                            <input type="time" id="horario" name="horario">
+                        </div>
+                    </div>
+
+
+                    <!-- Botão de Buscar Caronas -->
+                    <button type="submit" class="buscar-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Buscar caronas
+                    </button>
+                </form>
+
+                <!-- Mapa -->
+                <section class="mapa-container">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15341.064752957438!2d-48.050515615934025!3d-15.99965285173558!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935a2a9b5b3167a9%3A0xadca780ed76e5c07!2sCentro%20Universit%C3%A1rio%20do%20Planalto%20Central%20Apparecido%20dos%20Santos!5e0!3m2!1spt-BR!2sbr!4v1787780285709!5m2!1spt-BR!2sbr"
+                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                </section>
+            </section>
+    </main>
+    <script src="script.js"></script>
 </body>
+
 </html>
