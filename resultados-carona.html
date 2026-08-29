@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resultados</title>
+
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Faster+One&family=Madimi+One&family=Patrick+Hand+SC&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="resultados-carona.css">
+</head>
+
+
+<body>
+
+    <main class="caronas-container">
+
+        <!-- Cabeçalho -->
+        <section class="caronas-header">
+
+            <h1>Caronas disponíveis</h1>
+
+
+            <!-- Filtros da busca -->
+            <div class="filtros-container">
+
+                <div class="filtro">
+                    <span class="filtro-label">Origem</span>
+                    <span class="filtro-valor">Brasília - DF</span>
+                </div>
+
+                <div class="filtro">
+                    <span class="filtro-label">Destino</span>
+                    <span class="filtro-valor">Goiânia - GO</span>
+                </div>
+
+                <div class="filtro">
+                    <span class="filtro-label">Dia</span>
+                    <span class="filtro-valor">29/08/2026</span>
+                </div>
+
+                <div class="filtro">
+                    <span class="filtro-label">Horário</span>
+                    <span class="filtro-valor">18:00</span>
+                </div>
+
+                <a class="alterar-busca" href="#">
+                    <i class="fa-solid fa-pen"></i>
+                    Alterar busca
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- Resultados -->
+        <section class="resultados-container">
+            <article id="resultados"></article>
+        </section>
+
+
+
+    </main>
+
+    
+    <!-- Pop-up de confirmação -->
+
+    <div class="popup-overlay" id="popup-confirmacao">
+
+        <div class="popup">
+
+            <button class="popup-fechar" id="popup-fechar" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="popup-icone">
+                <i class="fa-solid fa-car-side"></i>
+            </div>
+
+            <h2>Confirmar pedido</h2>
+
+            <p>
+                Você deseja pedir esta carona?
+            </p>
+
+            <div class="popup-acoes">
+
+                <button class="popup-cancelar" id="popup-cancelar" type="button">
+                    Cancelar
+                </button>
+
+                <button class="popup-confirmar" id="popup-confirmar" type="button">
+                    <i class="fa-solid fa-check"></i>
+                    Pedir carona
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script src="resultados-carona.js"></script>
+</body>
+
+</html>
