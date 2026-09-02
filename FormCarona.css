@@ -1,7 +1,7 @@
 :root {
     --preto-unimove: #131313;
     --amarelo-unimove: #f8d410;
-    --azul-unumove: #0F5DED;
+    --azul-unimove: #0F5DED;
     --verde-unimove: #86FA01;
     --branco-bege-unimove: #FFF4CC;
 
@@ -40,14 +40,16 @@ body {
 
         h1 {
             font-family: var(--fonte-titulos);
+            font-weight: normal;
             letter-spacing: -26%;
+            word-spacing: 26%;
             paint-order: stroke fill;
-            color: var(--azul-unumove);
+            color: var(--azul-unimove);
         }
 
         h2 {
             font-family: var(--fonte-subtitulos);
-            color: var(--azul-unumove);
+            color: var(--azul-unimove);
         }
 
         form {
@@ -58,7 +60,7 @@ body {
 
             font-family: var(--fonte-subtitulos);
             padding: 10px;
-            color: var(--azul-unumove);
+            color: var(--azul-unimove);
 
             input,
             button {
@@ -66,7 +68,7 @@ body {
             }
 
             .origem-icon {
-                color: var(--azul-unumove);
+                color: var(--azul-unimove);
             }
 
             .destino-icon {
@@ -92,7 +94,7 @@ body {
             }
 
             button {
-                background-color: var(--azul-unumove);
+                background-color: var(--azul-unimove);
                 color: white;
 
                 border: solid var(--preto-unimove) 1px;
@@ -140,12 +142,15 @@ body {
 
         h1 {
             font-family: var(--fonte-titulos);
-            color: var(--azul-unumove);
+            font-weight: normal;
+            letter-spacing: -26%;
+            word-spacing: 26%;
+            color: var(--azul-unimove);
         }
 
         h2 {
             font-family: var(--fonte-subtitulos);
-            color: var(--azul-unumove);
+            color: var(--azul-unimove);
         }
 
         form {
@@ -160,7 +165,7 @@ body {
             padding: 10px;
 
             font-family: var(--fonte-subtitulos);
-            color: var(--azul-unumove);
+            color: var(--azul-unimove);
 
             input,
             button {
@@ -168,7 +173,7 @@ body {
             }
 
             .origem-icon {
-                color: var(--azul-unumove);
+                color: var(--azul-unimove);
             }
 
             .destino-icon {
@@ -205,7 +210,7 @@ body {
             button {
                 grid-column: 1 / -1;
 
-                background-color: var(--azul-unumove);
+                background-color: var(--azul-unimove);
                 color: white;
 
                 border: solid var(--preto-unimove) 1px;
