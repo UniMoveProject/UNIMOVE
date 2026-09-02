@@ -80,6 +80,9 @@ body {
     margin-bottom: 25px;
 
     font-family: var(--fonte-titulos);
+    font-weight: normal;
+    letter-spacing: -26%;
+    word-spacing: 26%;
     font-size: 42px;
     font-weight: normal;
 
@@ -525,7 +528,7 @@ body {
     transform: translateY(-2px);
 }
 
-.Opcao-Mobilidade input:checked + label {
+.Opcao-Mobilidade input:checked+label {
     background-color: var(--azul-unimove);
 
     color: white;
@@ -546,7 +549,7 @@ body {
     font-size: 28px;
 }
 
-.Opcao-Mobilidade input:checked + label .Icone {
+.Opcao-Mobilidade input:checked+label .Icone {
     color: white;
 }
 
@@ -628,13 +631,13 @@ body {
     transform: translateY(-2px);
 }
 
-.Opcao-Veiculo input:checked + label {
+.Opcao-Veiculo input:checked+label {
     background-color: var(--azul-unimove);
 
     color: white;
 }
 
-.Opcao-Veiculo input:checked + label .Icone {
+.Opcao-Veiculo input:checked+label .Icone {
     color: white;
 }
 
