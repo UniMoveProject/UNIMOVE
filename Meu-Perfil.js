@@ -35,14 +35,11 @@ inputFotoPerfil.addEventListener("change", function () {
 ========================================= */
 
 const motorista = document.getElementById("Motorista");
-const ciclista = document.getElementById("Ciclista");
-
-const rotaCiclismo = document.querySelector(".Rota-Ciclismo");
 const dadosVeiculo = document.querySelector(".Dados-Veiculo");
 
 
 /* =========================================
-   MOSTRAR / ESCONDER SEÇÕES
+   MOSTRAR / ESCONDER DADOS DO VEÍCULO
 ========================================= */
 
 function atualizarSecoes() {
@@ -53,17 +50,10 @@ function atualizarSecoes() {
         dadosVeiculo.style.display = "none";
     }
 
-
-    if (ciclista.checked) {
-        rotaCiclismo.style.display = "block";
-    } else {
-        rotaCiclismo.style.display = "none";
-    }
 }
 
 
 motorista.addEventListener("change", atualizarSecoes);
-ciclista.addEventListener("change", atualizarSecoes);
 
 
 /* Estado inicial */
@@ -85,12 +75,13 @@ const popupMensagem = document.getElementById("popupMensagem");
 let tipoAtualizacao = null;
 
 
-/* Mensagens do popup */
+/* =========================================
+   MENSAGENS DO POPUP
+========================================= */
 
 const mensagensConfirmacao = {
     dados: "Tem certeza que deseja atualizar seus dados pessoais?",
     senha: "Tem certeza que deseja alterar sua senha?",
-    rota: "Tem certeza que deseja salvar sua rota de ciclismo?",
     veiculo: "Tem certeza que deseja atualizar os dados do veículo?"
 };
 
@@ -175,13 +166,6 @@ popupConfirmar.addEventListener("click", function () {
         case "senha":
 
             console.log("Senha atualizada!");
-
-            break;
-
-
-        case "rota":
-
-            console.log("Rota de ciclismo atualizada!");
 
             break;
 
