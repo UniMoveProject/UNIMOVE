@@ -1,7 +1,7 @@
 :root {
     --preto-unimove: #131313;
     --amarelo-unimove: #f8d410;
-    --azul-unumove: #0F5DED;
+    --azul-unimove: #0F5DED;
     --verde-unimove: #86FA01;
     --branco-bege-unimove: #FFF4CC;
 
@@ -63,8 +63,11 @@ body {
 
 .caronas-header h1 {
     font-family: var(--fonte-titulos);
+    font-weight: normal;
+    letter-spacing: -26%;
+    word-spacing: 26%;
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
     font-size: 42px;
 
@@ -74,7 +77,7 @@ body {
 .caronas-header h2 {
     font-family: var(--fonte-subtitulos);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
     font-size: 22px;
 
@@ -100,7 +103,7 @@ body {
 
     padding: 0 18px;
 
-    background-color: var(--azul-unumove);
+    background-color: var(--azul-unimove);
 
     color: white;
 
@@ -184,7 +187,7 @@ body {
 
     border-radius: 50%;
 
-    border: solid var(--azul-unumove) 3px;
+    border: solid var(--azul-unimove) 3px;
 
     flex-shrink: 0;
 }
@@ -218,7 +221,7 @@ body {
 .motorista-header h2 {
     font-family: var(--fonte-subtitulos);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
     font-size: 25px;
 }
@@ -356,9 +359,9 @@ body {
 
     background-color: var(--branco-bege-unimove);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
-    border: solid var(--azul-unumove) 1px;
+    border: solid var(--azul-unimove) 1px;
 
     border-radius: 15px;
 
@@ -374,7 +377,7 @@ body {
 }
 
 .editar-carona:hover {
-    background-color: var(--azul-unumove);
+    background-color: var(--azul-unimove);
 
     color: white;
 }
@@ -394,7 +397,7 @@ body {
 
     padding: 12px 18px;
 
-    background-color: var(--azul-unumove);
+    background-color: var(--azul-unimove);
 
     color: white;
 
@@ -459,7 +462,7 @@ body {
     gap: 12px;
 }
 
-.sem-resultados-conteudo > i {
+.sem-resultados-conteudo>i {
     display: flex;
 
     align-items: center;
@@ -472,9 +475,9 @@ body {
 
     background-color: var(--branco-bege-unimove);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
-    border: solid var(--azul-unumove) 2px;
+    border: solid var(--azul-unimove) 2px;
 
     border-radius: 50%;
 
@@ -484,7 +487,7 @@ body {
 .sem-resultados-conteudo h2 {
     font-family: var(--fonte-subtitulos);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
     font-size: 30px;
 }
@@ -604,7 +607,7 @@ body {
 .popup-fechar:hover {
     background-color: var(--branco-bege-unimove);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 }
 
 
@@ -623,9 +626,9 @@ body {
 
     background-color: var(--branco-bege-unimove);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
-    border: solid var(--azul-unumove) 2px;
+    border: solid var(--azul-unimove) 2px;
 
     border-radius: 50%;
 
@@ -640,7 +643,7 @@ body {
 
     font-family: var(--fonte-subtitulos);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
     font-size: 30px;
 }
@@ -686,9 +689,9 @@ body {
 
     background-color: var(--branco-bege-unimove);
 
-    color: var(--azul-unumove);
+    color: var(--azul-unimove);
 
-    border: solid var(--azul-unumove) 1px;
+    border: solid var(--azul-unimove) 1px;
 
     border-radius: 15px;
 
@@ -702,7 +705,7 @@ body {
 }
 
 .popup-cancelar:hover {
-    background-color: var(--azul-unumove);
+    background-color: var(--azul-unimove);
 
     color: white;
 }
@@ -722,7 +725,7 @@ body {
 
     height: 45px;
 
-    background-color: var(--azul-unumove);
+    background-color: var(--azul-unimove);
 
     color: white;
 
@@ -987,7 +990,7 @@ body {
         border-radius: 18px;
     }
 
-    .sem-resultados-conteudo > i {
+    .sem-resultados-conteudo>i {
         width: 65px;
         height: 65px;
 
