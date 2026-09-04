@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat da Carona — Unimove</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Faster+One&family=Madimi+One&family=Patrick+Hand+SC&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --preto-unimove: #131313;
+    --amarelo-unimove: #f8d410;
+    --azul-unumove: #0F5DED;
+    --verde-unimove: #86FA01;
+    --branco-bege-unimove: #FFF4CC;
+    --fonte-titulos: "Faster One", system-ui;
+    --fonte-subtitulos: "Madimi One", sans-serif;
+    --fonte-textos: "Patrick Hand SC", cursive;
+    font-weight: normal;
+    letter-spacing: -26%;
+    word-spacing: 26%;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e7e2d2;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+    min-height: 100vh;
+    font-family: var(--fonte-textos);
+  }
+
+  .phone {
+    width: 100%;
+    max-width: 420px;
+    height: 860px;
+    background: var(--branco-bege-unimove);
+    border: 4px solid var(--preto-unimove);
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 8px 8px 0 var(--preto-unimove);
+  }
+
+  /* ---------- DEMO SWITCHER (fora do "aparelho") ---------- */
+  .demo-bar {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+  .demo-bar button {
+    font-family: var(--fonte-subtitulos);
+    font-size: 11px;
+    background: var(--preto-unimove);
+    color: var(--branco-bege-unimove);
+    border: 2px solid var(--preto-unimove);
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .demo-bar button.active { background: var(--amarelo-unimove); color: var(--preto-unimove); }
+
+  /* ---------- CABEÇALHO FIXO ---------- */
+  .header {
+    background: var(--preto-unimove);
+    color: var(--branco-bege-unimove);
+    padding: 14px 14px 12px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .back-btn {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; color: var(--branco-bege-unimove);
+    font-size: 20px; cursor: pointer; flex-shrink: 0;
+  }
+
+  .car-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .car-photo {
+    width: 46px; height: 46px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--azul-unumove), #073b96);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    border: 2px solid var(--branco-bege-unimove);
+  }
+
+  .car-info { min-width: 0; flex: 1; }
+
+  .plate {
+    display: inline-block;
+    font-family: var(--fonte-titulos);
+    font-size: 13px;
+    letter-spacing: 1px;
+    background: var(--amarelo-unimove);
+    color: var(--preto-unimove);
+    padding: 2px 8px 3px;
+    border-radius: 4px;
+    border: 2px solid var(--preto-unimove);
+    transform: rotate(-1deg);
+  }
+
+  .car-model {
+    font-family: var(--fonte-subtitulos);
+    font-size: 12px;
+    color: var(--branco-bege-unimove);
+    margin-top: 3px;
+    opacity: 0.85;
+  }
+
+  .expand-btn {
+    background: transparent;
+    border: 2px solid var(--branco-bege-unimove);
+    color: var(--branco-bege-unimove);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .driver-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 8px;
+    padding-top: 8px;
+    border-top: 1.5px dashed rgba(255,244,204,0.3);
+  }
+
+  .driver-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--verde-unimove);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--fonte-subtitulos);
+    font-size: 13px;
+    color: var(--preto-unimove);
+    flex-shrink: 0;
+    border: 2px solid var(--branco-bege-unimove);
+  }
+
+  .driver-name {
+    font-family: var(--fonte-subtitulos);
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .driver-rating {
+    font-size: 12px;
+    color: var(--amarelo-unimove);
+    opacity: 0.9;
+  }
+
+  .route-line {
+    font-family: var(--fonte-subtitulos);
+    font-size: 12.5px;
+    color: var(--branco-bege-unimove);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .route-time {
+    font-size: 11.5px;
+    color: var(--amarelo-unimove);
+    margin-left: auto;
+  }
+
+  .details-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+  .details-panel.open { max-height: 140px; }
+  .details-panel-inner {
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1.5px dashed rgba(255,244,204,0.3);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--branco-bege-unimove);
+    opacity: 0.9;
+  }
+
+  /* ---------- PARTICIPANTES ---------- */
+  .participants {
+    display: flex;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--amarelo-unimove);
+    border-bottom: 3px solid var(--preto-unimove);
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+
+  .participant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+    width: 52px;
+  }
+
+  .participant-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--branco-bege-unimove);
+    border: 2.5px solid var(--preto-unimove);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--fonte-subtitulos);
+    font-size: 14px;
+    color: var(--preto-unimove);
+    position: relative;
+  }
+
+  .participant.motorista .participant-avatar {
+    background: var(--azul-unumove);
+    color: var(--branco-bege-unimove);
+  }
+
+  .badge-motorista {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--verde-unimove);
+    color: var(--preto-unimove);
+    font-size: 7.5px;
+    font-family: var(--fonte-subtitulos);
+    padding: 1px 4px;
+    border-radius: 6px;
+    border: 1.5px solid var(--preto-unimove);
+    white-space: nowrap;
+  }
+
+  .participant-name {
+    font-size: 10px;
+    font-family: var(--fonte-subtitulos);
+    color: var(--preto-unimove);
+    text-align: center;
+    max-width: 52px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ---------- ÁREA DE MENSAGENS ---------- */
+  .messages-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+
+  .load-more {
+    text-align: center;
+    font-size: 11px;
+    font-family: var(--fonte-subtitulos);
+    color: var(--preto-unimove);
+    opacity: 0.55;
+    padding: 4px 0 8px;
+  }
+
+  .sys-msg {
+    align-self: center;
+    font-size: 12px;
+    color: var(--preto-unimove);
+    opacity: 0.65;
+    text-align: center;
+    padding: 4px 10px;
+    max-width: 85%;
+  }
+
+  .welcome-msg {
+    align-self: center;
+    text-align: center;
+    font-size: 13px;
+    color: var(--preto-unimove);
+    background: rgba(15,93,237,0.08);
+    border: 1.5px dashed var(--azul-unumove);
+    border-radius: 12px;
+    padding: 10px 14px;
+    max-width: 90%;
+  }
+
+  .bubble-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    max-width: 88%;
+  }
+  .bubble-row.own { align-self: flex-end; flex-direction: row-reverse; }
+  .bubble-row.other { align-self: flex-start; }
+
+  .bubble-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--branco-bege-unimove);
+    border: 2px solid var(--preto-unimove);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--fonte-subtitulos);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .bubble-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .bubble-row.own .bubble-col { align-items: flex-end; }
+
+  .bubble-name {
+    font-size: 10.5px;
+    font-family: var(--fonte-subtitulos);
+    color: var(--preto-unimove);
+    opacity: 0.6;
+    padding: 0 4px;
+  }
+
+  .bubble {
+    padding: 8px 12px;
+    font-size: 15px;
+    line-height: 1.35;
+    border: 2px solid var(--preto-unimove);
+    position: relative;
+    word-break: break-word;
+  }
+
+  .bubble-row.other .bubble {
+    background: #fff;
+    color: var(--preto-unimove);
+    border-radius: 4px 14px 14px 14px;
+  }
+
+  .bubble-row.own .bubble {
+    background: var(--azul-unumove);
+    color: var(--branco-bege-unimove);
+    border-color: var(--preto-unimove);
+    border-radius: 14px 4px 14px 14px;
+  }
+
+  .bubble-time {
+    font-size: 10px;
+    color: var(--preto-unimove);
+    opacity: 0.5;
+    padding: 0 4px;
+  }
+
+  .typing {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--preto-unimove);
+    opacity: 0.6;
+    padding-left: 34px;
+  }
+  .typing-dots span {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--preto-unimove);
+    margin-right: 2px;
+    animation: bounce 1.2s infinite ease-in-out;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+
+  /* ---------- RECONECTANDO ---------- */
+  .reconnect-banner {
+    background: var(--amarelo-unimove);
+    color: var(--preto-unimove);
+    font-size: 12px;
+    font-family: var(--fonte-subtitulos);
+    text-align: center;
+    padding: 6px;
+    flex-shrink: 0;
+    display: none;
+  }
+  .reconnect-banner.show { display: block; }
+
+  /* ---------- RODAPÉ / INPUT ---------- */
+  .footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--branco-bege-unimove);
+    border-top: 3px solid var(--preto-unimove);
+    flex-shrink: 0;
+  }
+
+  .footer input {
+    flex: 1;
+    font-family: var(--fonte-textos);
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: 2px solid var(--preto-unimove);
+    background: #fff;
+    outline: none;
+  }
+  .footer input:focus { border-color: var(--azul-unumove); }
+  .footer input::placeholder { color: #999; }
+
+  .send-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--verde-unimove);
+    border: 2.5px solid var(--preto-unimove);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 16px;
+    color: var(--preto-unimove);
+  }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .footer.archived {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 12px 14px;
+  }
+  .archived-notice {
+    font-size: 12.5px;
+    color: var(--preto-unimove);
+    opacity: 0.7;
+    text-align: center;
+    font-family: var(--fonte-subtitulos);
+    line-height: 1.4;
+  }
+
+  /* ---------- ESTADOS: SKELETON ---------- */
+  .skel { background: rgba(19,19,19,0.12); border-radius: 8px; }
+  .skel-shimmer {
+    background: linear-gradient(90deg, rgba(19,19,19,0.10) 25%, rgba(19,19,19,0.18) 37%, rgba(19,19,19,0.10) 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+  /* ---------- SEM PERMISSÃO ---------- */
+  .no-permission {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px;
+    text-align: center;
+  }
+  .no-permission-icon {
+    font-size: 40px;
+  }
+  .no-permission h3 {
+    font-family: var(--fonte-subtitulos);
+    font-size: 17px;
+    color: var(--preto-unimove);
+  }
+  .no-permission p {
+    font-size: 13px;
+    color: var(--preto-unimove);
+    opacity: 0.65;
+    max-width: 240px;
+  }
+  .no-permission button {
+    margin-top: 6px;
+    font-family: var(--fonte-subtitulos);
+    font-size: 13px;
+    background: var(--preto-unimove);
+    color: var(--branco-bege-unimove);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  .unread-badge {
+    position: fixed;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-bar" id="demoBar">
+  <button data-state="ativo" class="active">Ativo</button>
+  <button data-state="carregando">Carregando</button>
+  <button data-state="vazio">Vazio</button>
+  <button data-state="arquivado">Arquivado</button>
+  <button data-state="reconectando">Reconectando</button>
+  <button data-state="semPermissao">Sem permissão</button>
+</div>
+
+<div class="phone">
+
+  <!-- CABEÇALHO -->
+  <div class="header" id="headerArea">
+    <div class="header-top">
+      <button class="back-btn" aria-label="Voltar">←</button>
+      <div class="car-card">
+        <div class="car-photo">🚗</div>
+        <div class="car-info">
+          <span class="plate">QCM-2A19</span>
+          <div class="car-model">Onix branco</div>
+        </div>
+      </div>
+      <button class="expand-btn" id="expandBtn" aria-label="Ver detalhes da carona">▾</button>
+    </div>
+
+    <div class="driver-row">
+      <div class="driver-avatar">RS</div>
+      <div>
+        <div class="driver-name">Rafael Souza</div>
+        <div class="driver-rating">★ 4.8</div>
+      </div>
+    </div>
+
+    <div class="route-line">
+      <span>Terminal Jardim ABC → Campus UniEvangélica</span>
+      <span class="route-time">7h20</span>
+    </div>
+
+    <div class="details-panel" id="detailsPanel">
+      <div class="details-panel-inner">
+        Paradas: Praça Central (7h30)<br>
+        Valor por vaga: R$ 8,00 · Vagas totais: 4
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTICIPANTES -->
+  <div class="participants" id="participantsArea">
+    <div class="participant motorista">
+      <div class="participant-avatar">RS
+        <span class="badge-motorista">Motorista</span>
+      </div>
+      <div class="participant-name">Rafael</div>
+    </div>
+    <div class="participant">
+      <div class="participant-avatar">MA</div>
+      <div class="participant-name">Maria</div>
+    </div>
+    <div class="participant">
+      <div class="participant-avatar">JP</div>
+      <div class="participant-name">João</div>
+    </div>
+    <div class="participant">
+      <div class="participant-avatar">CA</div>
+      <div class="participant-name">Carla</div>
+    </div>
+  </div>
+
+  <!-- BANNER RECONEXÃO -->
+  <div class="reconnect-banner" id="reconnectBanner">Reconectando...</div>
+
+  <!-- MENSAGENS -->
+  <div class="messages-wrap" id="messagesArea"></div>
+
+  <!-- RODAPÉ -->
+  <div class="footer" id="footerArea">
+    <input type="text" id="msgInput" placeholder="Escreva uma mensagem para o grupo..." />
+    <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>
+  </div>
+
+</div>
+
+<script>
+  const messagesArea = document.getElementById('messagesArea');
+  const footerArea = document.getElementById('footerArea');
+  const headerArea = document.getElementById('headerArea');
+  const participantsArea = document.getElementById('participantsArea');
+  const reconnectBanner = document.getElementById('reconnectBanner');
+  const msgInput = document.getElementById('msgInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const expandBtn = document.getElementById('expandBtn');
+  const detailsPanel = document.getElementById('detailsPanel');
+  const phone = document.querySelector('.phone');
+
+  expandBtn.addEventListener('click', () => {
+    detailsPanel.classList.toggle('open');
+    expandBtn.textContent = detailsPanel.classList.contains('open') ? '▴' : '▾';
+  });
+
+  const conversa = [
+    { tipo: 'sistema', texto: 'Carona confirmada! Combine aqui os detalhes com o motorista e os outros passageiros.' },
+    { tipo: 'msg', autor: 'Rafael', ini: 'RS', dono: false, texto: 'Pessoal, saio às 7h20 pontualmente no Terminal, ponto de sempre 👍', hora: '07:02' },
+    { tipo: 'msg', autor: 'Maria', ini: 'MA', dono: false, texto: 'Combinado! Vou chegar uns 5 min antes', hora: '07:05' },
+    { tipo: 'sistema', texto: 'João entrou na carona' },
+    { tipo: 'msg', autor: 'Você', ini: 'VC', dono: true, texto: 'Rafael, dá pra parar na praça central? Fica mais perto pra mim', hora: '07:08' },
+    { tipo: 'msg', autor: 'Rafael', ini: 'RS', dono: false, texto: 'Dá sim, sem problema. Nos vemos lá então', hora: '07:09' },
+    { tipo: 'sistema', texto: 'Carla saiu da carona' },
+  ];
+
+  function bolha(m) {
+    const row = document.createElement('div');
+    row.className = 'bubble-row ' + (m.dono ? 'own' : 'other');
+    row.innerHTML = `
+      <div class="bubble-avatar">${m.ini}</div>
+      <div class="bubble-col">
+        <span class="bubble-name">${m.autor}</span>
+        <div class="bubble">${m.texto}</div>
+        <span class="bubble-time">${m.hora}</span>
+      </div>`;
+    return row;
+  }
+
+  function sistemaMsg(texto) {
+    const d = document.createElement('div');
+    d.className = 'sys-msg';
+    d.textContent = texto;
+    return d;
+  }
+
+  function renderAtivo() {
+    messagesArea.innerHTML = '';
+    const loadMore = document.createElement('div');
+    loadMore.className = 'load-more';
+    loadMore.textContent = 'Carregando mensagens anteriores ao rolar para cima...';
+    messagesArea.appendChild(loadMore);
+
+    conversa.forEach(m => {
+      messagesArea.appendChild(m.tipo === 'sistema' ? sistemaMsg(m.texto) : bolha(m));
+    });
+
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div> Maria está digitando...`;
+    messagesArea.appendChild(typing);
+
+    footerArea.innerHTML = `
+      <input type="text" id="msgInput" placeholder="Escreva uma mensagem para o grupo..." />
+      <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>`;
+    bindFooter();
+    scrollBottom();
+  }
+
+  function bindFooter() {
+    const input = document.getElementById('msgInput');
+    const btn = document.getElementById('sendBtn');
+    if (!input) return;
+    const enviar = () => {
+      const texto = input.value.trim();
+      if (!texto) return;
+      const agora = new Date();
+      const hora = agora.getHours().toString().padStart(2,'0') + ':' + agora.getMinutes().toString().padStart(2,'0');
+      messagesArea.appendChild(bolha({ autor: 'Você', ini: 'VC', dono: true, texto, hora }));
+      input.value = '';
+      scrollBottom();
+    };
+    btn.addEventListener('click', enviar);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
+  }
+
+  function scrollBottom() { messagesArea.scrollTop = messagesArea.scrollHeight; }
+
+  function renderCarregando() {
+    messagesArea.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const row = document.createElement('div');
+      row.className = 'bubble-row ' + (i % 2 === 0 ? 'other' : 'own');
+      const w = 100 + Math.random() * 80;
+      row.innerHTML = `<div class="skel-shimmer" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;"></div>
+        <div class="skel-shimmer" style="width:${w}px;height:38px;border-radius:14px;"></div>`;
+      messagesArea.appendChild(row);
+    }
+    footerArea.innerHTML = `
+      <input type="text" placeholder="Escreva uma mensagem para o grupo..." disabled />
+      <button class="send-btn" disabled aria-label="Enviar mensagem">➤</button>`;
+  }
+
+  function renderVazio() {
+    messagesArea.innerHTML = '';
+    const w = document.createElement('div');
+    w.className = 'welcome-msg';
+    w.textContent = 'Carona confirmada! Combine aqui os detalhes com o motorista e os outros passageiros.';
+    messagesArea.appendChild(w);
+    footerArea.innerHTML = `
+      <input type="text" id="msgInput" placeholder="Escreva uma mensagem para o grupo..." />
+      <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>`;
+    bindFooter();
+  }
+
+  function renderArquivado() {
+    messagesArea.innerHTML = '';
+    conversa.forEach(m => {
+      messagesArea.appendChild(m.tipo === 'sistema' ? sistemaMsg(m.texto) : bolha(m));
+    });
+    messagesArea.appendChild(sistemaMsg('Esta carona foi concluída'));
+    footerArea.className = 'footer archived';
+    footerArea.innerHTML = `<div class="archived-notice">Esta carona já foi concluída — o chat está arquivado, mas você pode consultar o histórico</div>`;
+    scrollBottom();
+  }
+
+  function renderReconectando() {
+    renderAtivo();
+    reconnectBanner.classList.add('show');
+  }
+
+  function renderSemPermissao() {
+    headerArea.style.display = 'none';
+    participantsArea.style.display = 'none';
+    footerArea.style.display = 'none';
+    messagesArea.innerHTML = '';
+    const div = document.createElement('div');
+    div.className = 'no-permission';
+    div.innerHTML = `
+      <div class="no-permission-icon">🔒</div>
+      <h3>Você não tem acesso a este chat</h3>
+      <p>Esta conversa é exclusiva para o motorista e os passageiros confirmados desta carona.</p>
+      <button>Voltar para minhas caronas</button>`;
+    messagesArea.appendChild(div);
+  }
+
+  function reset() {
+    footerArea.className = 'footer';
+    reconnectBanner.classList.remove('show');
+    headerArea.style.display = '';
+    participantsArea.style.display = '';
+    footerArea.style.display = '';
+  }
+
+  const estados = {
+    ativo: renderAtivo,
+    carregando: renderCarregando,
+    vazio: renderVazio,
+    arquivado: renderArquivado,
+    reconectando: renderReconectando,
+    semPermissao: renderSemPermissao,
+  };
+
+  document.getElementById('demoBar').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#demoBar button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    reset();
+    estados[btn.dataset.state]();
+  });
+
+  renderAtivo();
+</script>
+
+</body>
+</html>
