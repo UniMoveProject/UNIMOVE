@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Faster+One&family=Madimi+One&family=Patrick+Hand+SC&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="Oferecer-Carona-Form.css">
+
+    <title>Oferecer Carona</title>
+</head>
+
+<body>
+
+    <main class="oferecer-container">
+
+        <!-- Título e subtítulo da página -->
+        <section class="oferecer-carona">
+
+            <h1>Oferecer carona</h1>
+
+            <h2 class="descricao">
+                Cadastre uma carona e encontre pessoas para compartilhar sua viagem.
+            </h2>
+
+
+            <!-- Container Form + Iframe -->
+            <section class="formulario-container">
+
+                <!-- Formulário -->
+                <form class="carona-form" id="oferecerCaronaForm">
+
+
+                    <!-- Origem -->
+                    <div class="input-group">
+
+                        <label for="origem">
+                            Origem
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-location-dot origem-icon"></i>
+
+                            <input type="text" id="origem" name="origem" placeholder="Ex.: Uniceplac" autocomplete="off"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Destino -->
+                    <div class="input-group">
+
+                        <label for="destino">
+                            Destino
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-location-dot destino-icon"></i>
+
+                            <input type="text" id="destino" name="destino" placeholder="Ex.: Terminal BRT"
+                                autocomplete="off" required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Rota -->
+                    <div class="input-group">
+
+                        <label for="rota">
+                            Rota
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-route rota-icon"></i>
+
+                            <input type="text" id="rota" name="rota" placeholder="Ex.: Avenida dos Alagados"
+                                autocomplete="off" required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Calendário/ Data -->
+                    <div class="input-group">
+
+                        <label for="data">
+                            Data
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-calendar-days"></i>
+
+                            <input type="date" id="data" name="data" required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Horário de partida -->
+                    <div class="input-group">
+
+                        <label for="horario">
+                            Horário de partida
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-clock"></i>
+
+                            <input type="time" id="horario" name="horario" required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Quantidade de vagas -->
+                    <div class="input-group">
+
+                        <label for="vagas">
+                            Vagas disponíveis
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-users vagas-icon"></i>
+
+                            <input type="number" id="vagas" name="vagas" placeholder="Ex.: 3" min="1" max="4" required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Carro -->
+                    <div class="input-group">
+
+                        <label for="carro">
+                            Carro
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-car carro-icon"></i>
+
+                            <input type="text" id="carro" name="carro" placeholder="Ex.: Honda Civic" autocomplete="off"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Placa -->
+                    <div class="input-group">
+
+                        <label for="placa">
+                            Placa
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-id-card placa-icon"></i>
+
+                            <input type="text" id="placa" name="placa" placeholder="Ex.: ADD-4C10" maxlength="8"
+                                autocomplete="off" required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Cor -->
+                    <div class="input-group">
+
+                        <label for="cor">
+                            Cor
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-palette cor-icon"></i>
+
+                            <input type="text" id="cor" name="cor" placeholder="Ex.: Branco" autocomplete="off"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Opções da carona -->
+                    <div class="opcoes-container">
+
+                        <div class="secao-titulo">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>Opções da carona</span>
+                        </div>
+
+
+                        <!-- Apenas mulheres -->
+                        <label class="check-option">
+
+                            <input type="checkbox" id="apenasMulheres" name="apenasMulheres">
+
+                            <span class="check-custom">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+
+                            <span class="check-text">
+                                Ofereço carona apenas para mulheres
+                            </span>
+
+                        </label>
+
+
+                        <!-- Aceita bagagens -->
+                        <label class="check-option">
+
+                            <input type="checkbox" id="aceitaBagagens" name="aceitaBagagens">
+
+                            <span class="check-custom">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+
+                            <span class="check-text">
+                                Aceito bagagens
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Botão de Cadastrar Carona -->
+                    <button type="submit" class="cadastrar-btn">
+                        <i class="fa-solid fa-car-side"></i>
+                        Cadastrar carona
+                    </button>
+
+                </form>
+
+
+                <!-- Mapa -->
+                <section class="mapa-container">
+
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15341.064752957438!2d-48.050515615934025!3d-15.99965285173558!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935a2a9b5b3167a9%3A0xadca780ed76e5c07!2sCentro%20Universit%C3%A1rio%20do%20Planalto%20Central%20Apparecido%20dos%20Santos!5e0!3m2!1spt-BR!2sbr!4v1787780285709!5m2!1spt-BR!2sbr"
+                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin">
+                    </iframe>
+
+                </section>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <!-- Pop-up de confirmação -->
+
+    <div class="popup-overlay" id="popup-confirmacao">
+
+        <div class="popup">
+
+            <button class="popup-fechar" id="popup-fechar" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="popup-icone">
+                <i class="fa-solid fa-car-side"></i>
+            </div>
+
+            <h2>Carona cadastrada!</h2>
+
+            <p>
+                Sua carona foi cadastrada com sucesso.
+            </p>
+
+            <div class="popup-acoes">
+
+                <button class="popup-confirmar" id="popup-confirmar" type="button">
+                    <i class="fa-solid fa-check"></i>
+                    Continuar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="oferecer-carona.js"></script>
+
+    <script src="Oferecer-Carona-Form.js"></script>
+
+</body>
+
+</html>
