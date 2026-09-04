@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UniMove · Criar conta</title>
+<title>UniMove · Entrar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Faster+One&family=Madimi+One&family=Patrick+Hand+SC&display=swap" rel="stylesheet">
 <style>
@@ -61,6 +61,10 @@
     from{ opacity:0; transform:scale(.85); }
     to{ opacity:1; transform:scale(1); }
   }
+  @keyframes shake{
+    25%{ transform:translateX(-3px); }
+    75%{ transform:translateX(3px); }
+  }
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
   }
@@ -76,21 +80,6 @@
     opacity:.05;
     pointer-events:none;
     z-index:0;
-  }
-
-  .speed-lbl{
-    display:inline-block;
-    position:relative;
-    letter-spacing:.14em;
-  }
-  .speed-lbl::before{
-    content:"";
-    position:absolute;
-    left:-14px; top:50%;
-    width:10px; height:2px;
-    background:currentColor;
-    box-shadow:0 -4px currentColor, 0 4px currentColor;
-    opacity:.55;
   }
 
   /* top bar */
@@ -131,7 +120,10 @@
     color:#fff;
     padding:6px 14px;
     border-radius:999px;
+    text-decoration:none;
+    transition:filter .15s ease, transform .1s ease;
   }
+  .badge:hover{ filter:brightness(1.08); transform:translateY(-1px); }
   .top-right{ display:flex; align-items:center; gap:12px; }
   .theme-toggle{
     width:38px;height:38px;
@@ -153,7 +145,7 @@
     z-index:2;
     flex:1;
     width:100%;
-    max-width:720px;
+    max-width:480px;
     margin:0 auto;
     padding:8px clamp(16px,4vw,48px) 70px;
     display:flex;
@@ -165,7 +157,7 @@
     width:100%;
     background:var(--card-bg);
     border-radius:28px;
-    padding:clamp(20px,4vw,44px);
+    padding:clamp(24px,5vw,44px);
     box-shadow:0 30px 60px -30px rgba(19,19,19,.35);
     transition:background .25s ease, box-shadow .25s ease;
     animation:fadeSlideUp .55s .05s cubic-bezier(.2,.8,.2,1) both;
@@ -173,7 +165,7 @@
 
   .intro{
     text-align:center;
-    max-width:54ch;
+    max-width:34ch;
     margin:0 auto;
   }
 
@@ -202,57 +194,7 @@
     line-height:1.5;
   }
 
-  form{ display:flex; flex-direction:column; gap:22px; }
-
-  /* photo upload */
-  .photo-row{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    flex-direction:column;
-    gap:10px;
-    padding:20px;
-    border:1px dashed var(--input-border);
-    border-radius:20px;
-    max-width:360px;
-    margin:0 auto;
-  }
-  .avatar{
-    width:76px;height:76px;border-radius:50%;
-    background:var(--input-bg);
-    border:2px dashed var(--azul);
-    display:flex;align-items:center;justify-content:center;
-    background-size:cover;background-position:center;
-    flex-shrink:0;
-    color:var(--azul);
-    font-size:26px;
-    transition:transform .2s ease, border-color .2s ease;
-  }
-  .avatar.has-photo{ animation:popIn .3s ease; border-style:solid; border-color:var(--verde); }
-  .photo-copy label.field-label{ margin-bottom:4px; }
-  .photo-copy p{ margin:2px 0 8px; font-size:15px; color:var(--text-soft); }
-  .btn-upload{
-    font-family:'Madimi One', cursive;
-    font-size:13px;
-    background:var(--amarelo);
-    color:var(--preto);
-    border:none;
-    padding:9px 18px;
-    border-radius:999px;
-    cursor:pointer;
-    transition:filter .15s ease, transform .1s ease;
-  }
-  .btn-upload:hover{ filter:brightness(.96); transform:translateY(-1px); }
-  .btn-upload:active{ transform:translateY(0) scale(.97); }
-  input[type=file]{ display:none; }
-
-  .grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:18px 20px;
-  }
-  .full{ grid-column:1 / -1; }
+  form{ display:flex; flex-direction:column; gap:20px; }
 
   .field{ display:flex; flex-direction:column; gap:6px; }
   .field-label{
@@ -266,7 +208,7 @@
     margin-top:-2px;
   }
 
-  input[type=text], input[type=email], input[type=password], input[type=number], select{
+  input[type=email], input[type=password]{
     font-family:'Patrick Hand SC', cursive;
     font-size:17px;
     padding:12px 16px;
@@ -279,18 +221,12 @@
     transition:border-color .15s ease, box-shadow .15s ease, transform .1s ease;
   }
   input::placeholder{ color:var(--text-soft); opacity:.75; }
-  input:focus, select:focus{
+  input:focus{
     border-color:var(--azul);
     box-shadow:0 0 0 3px rgba(15,93,237,.18);
   }
   input.is-valid{ border-color:var(--verde); }
   input.is-invalid{ border-color:var(--amarelo); box-shadow:0 0 0 3px rgba(248,212,16,.22); animation:shake .32s ease; }
-  @keyframes shake{
-    25%{ transform:translateX(-3px); }
-    75%{ transform:translateX(3px); }
-  }
-
-  select{ appearance:none; cursor:pointer; }
 
   .msg{
     font-size:14px;
@@ -304,38 +240,91 @@
   .msg.ok{ color:#3f7d00; }
   [data-theme="dark"] .msg.ok{ color:var(--verde); }
 
-  /* checklist pills */
-  .role-group{ display:flex; flex-direction:column; gap:10px; align-items:center; text-align:center; }
-  .role-pills{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
-  .pill{
-    position:relative;
-  }
-  .pill input{ position:absolute; opacity:0; inset:0; width:100%; height:100%; cursor:pointer; margin:0; padding:0; }
-  .pill label{
-    display:inline-flex;
+  .form-error{
+    font-size:14.5px;
+    display:none;
     align-items:center;
     gap:8px;
-    font-family:'Madimi One', cursive;
-    font-size:14px;
-    padding:10px 18px;
-    border-radius:999px;
-    border:1.5px solid var(--input-border);
-    background:var(--input-bg);
-    color:var(--text);
+    background:rgba(248,212,16,.14);
+    border:1.5px solid var(--amarelo);
+    color:#8a6d00;
+    padding:10px 14px;
+    border-radius:14px;
+  }
+  [data-theme="dark"] .form-error{ color:var(--amarelo); background:rgba(248,212,16,.08); }
+  .form-error.show{ display:flex; animation:shake .32s ease, fadeIn .2s ease both; }
+
+  /* options row: remember me + forgot password */
+  .options-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:-4px;
+  }
+
+  .remember{
+    display:flex;
+    align-items:center;
+    gap:9px;
     cursor:pointer;
-    transition:all .15s ease;
     user-select:none;
+    font-size:14.5px;
+    color:var(--text);
   }
-  .pill:hover label{ border-color:var(--azul); transform:translateY(-1px); }
-  .pill input:checked + label{
-    background:var(--azul);
-    border-color:var(--azul);
-    color:#fff;
+  .switch{
+    position:relative;
+    width:40px;
+    height:22px;
+    flex-shrink:0;
   }
-  .pill .dot{
-    width:8px;height:8px;border-radius:50%;
-    background:currentColor; opacity:.55;
+  .switch input{
+    position:absolute;
+    opacity:0;
+    inset:0;
+    width:100%;
+    height:100%;
+    margin:0;
+    cursor:pointer;
   }
+  .switch .track{
+    position:absolute;
+    inset:0;
+    background:var(--input-border);
+    border-radius:999px;
+    transition:background .18s ease;
+  }
+  .switch .track::after{
+    content:"";
+    position:absolute;
+    top:2px; left:2px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 3px rgba(19,19,19,.35);
+    transition:transform .18s ease;
+  }
+  .switch input:checked + .track{ background:var(--azul); }
+  .switch input:checked + .track::after{ transform:translateX(18px); }
+  .switch input:focus-visible + .track{ box-shadow:0 0 0 3px rgba(15,93,237,.28); }
+
+  .link-btn{
+    font-family:'Madimi One', cursive;
+    font-size:13.5px;
+    background:none;
+    border:none;
+    color:var(--azul);
+    cursor:pointer;
+    padding:4px 0;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    transition:opacity .15s ease;
+  }
+  [data-theme="dark"] .link-btn{ color:var(--amarelo); }
+  .link-btn:hover{ opacity:.75; }
+
+  .recover-msg{ text-align:center; }
 
   /* submit */
   .submit-row{
@@ -355,7 +344,6 @@
     border-radius:999px;
     cursor:pointer;
     width:100%;
-    max-width:340px;
     transition:filter .15s ease, transform .1s ease, box-shadow .15s ease;
   }
   button.submit:hover{ filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 10px 20px -10px rgba(15,93,237,.55); }
@@ -365,6 +353,9 @@
     color:var(--text-soft);
     text-align:center;
   }
+  .fine a{ color:var(--azul); text-decoration:none; font-family:'Madimi One', cursive; }
+  [data-theme="dark"] .fine a{ color:var(--amarelo); }
+  .fine a:hover{ text-decoration:underline; }
 
   /* success state */
   .success{
@@ -383,9 +374,7 @@
     animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;
   }
   .success h2{
-    font-family:'Faster One', cursive;
-    letter-spacing:-0.02em;
-    text-transform:uppercase;
+    font-family:'Madimi One', cursive;
     font-size:26px;
     margin:0 0 10px;
   }
@@ -399,7 +388,9 @@
     border-radius:999px;
     cursor:pointer;
     font-size:14px;
+    transition:filter .15s ease, transform .1s ease;
   }
+  .success button:hover{ transform:translateY(-1px); }
   [data-theme="dark"] .success button{ color:var(--amarelo); border-color:var(--amarelo); }
 
   form.hide{ display:none; }
@@ -415,27 +406,23 @@
   }
 
   @media (max-width:640px){
-    .grid{ grid-template-columns:1fr; }
     .card{ border-radius:22px; }
   }
 
   @media (max-width:480px){
     .badge{ font-size:0; padding:8px 12px; }
-    .badge::before{ content:"Entrar"; font-size:11px; }
+    .badge::before{ content:"Criar conta"; font-size:11px; }
     .topbar{ padding:14px 16px; }
     .brand-word{ font-size:19px; }
     .wrap{ padding-left:12px; padding-right:12px; padding-bottom:40px; }
-    .card{ border-radius:18px; padding:20px 16px; }
-    .photo-row{ max-width:100%; padding:16px; }
-    button.submit{ max-width:100%; }
-    .role-pills{ gap:8px; }
-    .pill label{ padding:9px 14px; font-size:13px; }
+    .card{ border-radius:18px; padding:22px 16px; }
+    button.submit{ padding:15px 20px; }
+    .options-row{ justify-content:flex-start; }
   }
 
   @media (max-width:360px){
     h1.title{ font-size:26px; }
     .subtitle{ font-size:16px; }
-    .avatar{ width:64px; height:64px; }
   }
 
   @media (min-width:720px){
@@ -455,7 +442,7 @@
     <span class="brand-word">UNIMOVE</span>
   </div>
   <div class="top-right">
-    <span class="badge">Já tem conta? Entrar</span>
+    <a class="badge" href="unimove-cadastro-usuario.html">Não tem conta? Criar conta</a>
     <button class="theme-toggle" id="themeToggle" type="button" title="Alternar modo claro/escuro">🌙</button>
   </div>
 </header>
@@ -463,106 +450,51 @@
 <div class="wrap">
   <div class="card">
 
-    <form id="cadastroForm" novalidate>
+    <form id="loginForm" novalidate>
       <div class="intro">
-        <p class="eyebrow">Bem-vindo ao UniMove</p>
-        <h1 class="title">Criar conta</h1>
-        <p class="subtitle">Preencha seus dados para começar a dividir a rota até a faculdade. Seu perfil passa por uma conferência rápida antes da liberação do app.</p>
+        <p class="eyebrow">Bem-vindo de volta</p>
+        <h1 class="title">Entrar</h1>
+        <p class="subtitle">Acesse sua conta para continuar dividindo caronas.</p>
       </div>
 
-      <div class="photo-row">
-        <div class="avatar" id="avatarPreview">📷</div>
-        <div class="photo-copy">
-          <label class="field-label">Foto de rosto</label>
-          <p>Foto nítida e de rosto, para a comunidade reconhecer quem vai embarcar.</p>
-          <label class="btn-upload" for="fotoInput">Escolher foto</label>
-          <input type="file" id="fotoInput" accept="image/*">
-          <div class="msg warn" id="fotoMsg">⚠ Adicione uma foto de rosto.</div>
-        </div>
+      <div class="form-error" id="formErrorMsg">⚠ E-mail ou senha inválidos.</div>
+
+      <div class="field">
+        <label class="field-label" for="email">E-mail</label>
+        <input type="email" id="email" placeholder="email@aluno.edu.br" autocomplete="username">
+        <div class="msg warn" id="emailMsg">⚠ E-mail inválido.</div>
       </div>
 
-      <div class="grid">
-        <div class="field full">
-          <label class="field-label" for="nome">Nome completo</label>
-          <input type="text" id="nome" placeholder="Seu nome e sobrenome" autocomplete="off">
-          <div class="msg warn" id="nomeMsg">⚠ Digite nome e sobrenome.</div>
-        </div>
-
-        <div class="field full">
-          <label class="field-label" for="email">E-mail</label>
-          <input type="email" id="email" placeholder="email@aluno.edu.br" autocomplete="off">
-          <div class="msg warn" id="emailMsg">⚠ E-mail inválido.</div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="cpf">CPF</label>
-          <input type="text" id="cpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14">
-          <div class="msg warn" id="cpfMsg">⚠ CPF inválido.</div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="idade">Idade</label>
-          <input type="number" id="idade" placeholder="Ex: 21" min="18" max="123">
-          <div class="msg warn" id="idadeMsg">⚠ Idade deve ser entre 18 e 123 anos.</div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="sexo">Sexo</label>
-          <select id="sexo">
-            <option value="">Selecionar</option>
-            <option value="feminino">Feminino</option>
-            <option value="masculino">Masculino</option>
-            <option value="nao-informar">Prefiro não informar</option>
-          </select>
-          <div class="msg warn" id="sexoMsg">⚠ Selecione uma opção.</div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="telefone">Telefone</label>
-          <input type="text" id="telefone" placeholder="(61) 99999-9999" inputmode="numeric" maxlength="15">
-          <div class="msg warn" id="telefoneMsg">⚠ Telefone inválido. Use DDD + número.</div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="senha">Senha</label>
-          <input type="password" id="senha" placeholder="Crie uma senha forte" autocomplete="new-password">
-          <div class="hint">Mínimo 8 caracteres, 1 letra maiúscula e 1 caractere especial.</div>
-          <div class="msg warn" id="senhaMsg">⚠ Senha fraca: use maiúscula, símbolo e 8+ caracteres.</div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="confirmarSenha">Confirmar senha</label>
-          <input type="password" id="confirmarSenha" placeholder="Repete a senha" autocomplete="new-password">
-          <div class="msg warn" id="confirmarSenhaMsg">⚠ As senhas não coincidem.</div>
-        </div>
+      <div class="field">
+        <label class="field-label" for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="Digite sua senha" autocomplete="current-password">
+        <div class="msg warn" id="senhaMsg">⚠ Digite sua senha.</div>
       </div>
 
-      <div class="role-group">
-        <label class="field-label">Como você vai usar o UniMove? <span class="hint">(marque uma ou mais)</span></label>
-        <div class="role-pills">
-          <div class="pill">
-            <input type="checkbox" id="roleMotorista" name="papel" value="motorista">
-            <label for="roleMotorista"><span class="dot"></span>Motorista</label>
-          </div>
-          <div class="pill">
-            <input type="checkbox" id="rolePassageiro" name="papel" value="passageiro">
-            <label for="rolePassageiro"><span class="dot"></span>Passageiro</label>
-          </div>
-        </div>
-        <div class="msg warn" id="roleMsg">⚠ Selecione ao menos uma opção.</div>
+      <div class="options-row">
+        <label class="remember" for="manterConectado">
+          <span class="switch">
+            <input type="checkbox" id="manterConectado">
+            <span class="track"></span>
+          </span>
+          Manter conectado
+        </label>
+        <button type="button" class="link-btn" id="esqueciSenhaBtn">Esqueceu a senha?</button>
       </div>
+      <div class="msg warn recover-msg" id="recoverMsg">⚠ Digite um e-mail válido para recuperar a senha.</div>
+      <div class="msg ok recover-msg" id="recoverOkMsg">✓ Link de recuperação enviado para o seu e-mail.</div>
 
       <div class="submit-row">
-        <button type="submit" class="submit">Criar minha conta</button>
-        <p class="fine">Sua conta só é criada quando todos os campos estiverem certos.</p>
+        <button type="submit" class="submit">Entrar</button>
+        <p class="fine">Ainda não faz parte? <a href="unimove-cadastro-usuario.html">Criar conta</a></p>
       </div>
     </form>
 
     <div class="success" id="successBox">
       <div class="check">✓</div>
-      <h2>Conta criada</h2>
-      <p id="successMsg">Você já faz parte do UniMove.</p>
-      <button type="button" id="novoCadastroBtn">Fazer novo cadastro</button>
+      <h2>Login realizado</h2>
+      <p id="successMsg">Bem-vindo de volta ao UniMove.</p>
+      <button type="button" id="sairBtn">Sair</button>
     </div>
 
   </div>
@@ -580,79 +512,15 @@
     themeToggle.textContent = isDark ? '🌙' : '☀️';
   });
 
-  // photo upload preview
-  const fotoInput = document.getElementById('fotoInput');
-  const avatarPreview = document.getElementById('avatarPreview');
-  let fotoCarregada = false;
-  fotoInput.addEventListener('change', () => {
-    const file = fotoInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      avatarPreview.style.backgroundImage = `url(${e.target.result})`;
-      avatarPreview.textContent = '';
-      avatarPreview.classList.add('has-photo');
-      fotoCarregada = true;
-      setMsg('foto', true);
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // masks
-  const cpfInput = document.getElementById('cpf');
-  cpfInput.addEventListener('input', () => {
-    let v = cpfInput.value.replace(/\D/g,'').slice(0,11);
-    v = v.replace(/(\d{3})(\d)/,'$1.$2');
-    v = v.replace(/(\d{3})(\d)/,'$1.$2');
-    v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
-    cpfInput.value = v;
-  });
-
-  const telInput = document.getElementById('telefone');
-  telInput.addEventListener('input', () => {
-    let v = telInput.value.replace(/\D/g,'').slice(0,11);
-    if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3');
-    else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/,'($1) $2');
-    else if (v.length > 0) v = v.replace(/(\d{0,2})/,'($1');
-    telInput.value = v.trim();
-  });
-
   // validators
-  function validaCPF(cpfRaw){
-    const cpf = cpfRaw.replace(/\D/g,'');
-    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-    let soma = 0;
-    for (let i=0;i<9;i++) soma += parseInt(cpf[i]) * (10-i);
-    let resto = (soma*10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(cpf[9])) return false;
-    soma = 0;
-    for (let i=0;i<10;i++) soma += parseInt(cpf[i]) * (11-i);
-    resto = (soma*10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(cpf[10])) return false;
-    return true;
-  }
-
   function validaEmail(v){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
   }
 
-  function validaTelefone(v){
-    const digits = v.replace(/\D/g,'');
-    return digits.length === 10 || digits.length === 11;
-  }
-
-  function validaSenha(v){
-    return v.length >= 8 && /[A-Z]/.test(v) && /[^A-Za-z0-9]/.test(v);
-  }
-
   function setMsg(field, ok){
-    const input = document.getElementById(field === 'foto' ? null : field);
+    const input = document.getElementById(field);
     const msg = document.getElementById(field + 'Msg');
-    if (msg){
-      msg.classList.toggle('show', !ok);
-    }
+    if (msg){ msg.classList.toggle('show', !ok); }
     if (input){
       input.classList.toggle('is-valid', ok);
       input.classList.toggle('is-invalid', !ok);
@@ -660,21 +528,8 @@
   }
 
   const fields = {
-    nome: () => document.getElementById('nome').value.trim().split(/\s+/).length >= 2,
     email: () => validaEmail(document.getElementById('email').value),
-    cpf: () => validaCPF(document.getElementById('cpf').value),
-    idade: () => {
-      const v = parseInt(document.getElementById('idade').value, 10);
-      return !isNaN(v) && v >= 18 && v <= 123;
-    },
-    sexo: () => document.getElementById('sexo').value !== '',
-    telefone: () => validaTelefone(document.getElementById('telefone').value),
-    senha: () => validaSenha(document.getElementById('senha').value),
-    confirmarSenha: () => {
-      const s = document.getElementById('senha').value;
-      const c = document.getElementById('confirmarSenha').value;
-      return c.length > 0 && s === c;
-    }
+    senha: () => document.getElementById('senha').value.length > 0
   };
 
   Object.keys(fields).forEach(name => {
@@ -684,17 +539,19 @@
       if (el.classList.contains('is-invalid') || el.classList.contains('is-valid')){
         setMsg(name, fields[name]());
       }
+      formErrorMsg.classList.remove('show');
     });
   });
-  document.getElementById('senha').addEventListener('input', () => {
-    const confirmEl = document.getElementById('confirmarSenha');
-    if (confirmEl.value){ setMsg('confirmarSenha', fields.confirmarSenha()); }
-  });
 
-  const form = document.getElementById('cadastroForm');
+  // Credenciais de demonstração — este protótipo não tem backend real.
+  // Troque esta checagem por uma chamada à API de autenticação do UniMove.
+  const DEMO_EMAIL = 'aluno@uniceplac.edu.br';
+  const DEMO_SENHA = 'UniMove123!';
+
+  const form = document.getElementById('loginForm');
   const successBox = document.getElementById('successBox');
   const successMsg = document.getElementById('successMsg');
-  const roleMsg = document.getElementById('roleMsg');
+  const formErrorMsg = document.getElementById('formErrorMsg');
 
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -706,35 +563,50 @@
       if (!ok) allOk = false;
     });
 
-    setMsg('foto', fotoCarregada);
-    if (!fotoCarregada) allOk = false;
-
-    const rolesChecked = document.querySelectorAll('input[name="papel"]:checked').length > 0;
-    roleMsg.classList.toggle('show', !rolesChecked);
-    if (!rolesChecked) allOk = false;
-
     if (!allOk){
-      const firstInvalid = form.querySelector('.is-invalid') || (rolesChecked ? null : document.querySelector('.role-group'));
-      if (firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+      formErrorMsg.classList.remove('show');
+      form.querySelector('.is-invalid').focus();
       return;
     }
 
-    const nome = document.getElementById('nome').value.trim().split(/\s+/)[0];
-    successMsg.textContent = `Valeu, ${nome}! Sua conta foi criada e está em análise. Assim que for aprovada, você já pode embarcar.`;
-    form.classList.add('hide');
-    successBox.classList.add('show');
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value;
+
+    if (email.toLowerCase() === DEMO_EMAIL && senha === DEMO_SENHA){
+      formErrorMsg.classList.remove('show');
+      successMsg.textContent = 'Bem-vindo de volta ao UniMove.';
+      form.classList.add('hide');
+      successBox.classList.add('show');
+    } else {
+      formErrorMsg.classList.add('show');
+      document.getElementById('senha').classList.add('is-invalid');
+      document.getElementById('senha').classList.remove('is-valid');
+      formErrorMsg.scrollIntoView({behavior:'smooth', block:'center'});
+    }
   });
 
-  document.getElementById('novoCadastroBtn').addEventListener('click', () => {
+  // esqueceu a senha
+  const esqueciSenhaBtn = document.getElementById('esqueciSenhaBtn');
+  const recoverMsg = document.getElementById('recoverMsg');
+  const recoverOkMsg = document.getElementById('recoverOkMsg');
+  esqueciSenhaBtn.addEventListener('click', () => {
+    const emailInput = document.getElementById('email');
+    recoverOkMsg.classList.remove('show');
+    recoverMsg.classList.remove('show');
+    if (validaEmail(emailInput.value)){
+      recoverOkMsg.classList.add('show');
+    } else {
+      recoverMsg.classList.add('show');
+      emailInput.focus();
+    }
+  });
+
+  // sair (reset demo)
+  document.getElementById('sairBtn').addEventListener('click', () => {
     form.reset();
-    fotoCarregada = false;
-    avatarPreview.style.backgroundImage = '';
-    avatarPreview.textContent = '📷';
-    avatarPreview.classList.remove('has-photo');
-    document.querySelectorAll('input, select').forEach(el => {
-      el.classList.remove('is-valid','is-invalid');
-    });
+    document.querySelectorAll('input').forEach(el => el.classList.remove('is-valid','is-invalid'));
     document.querySelectorAll('.msg').forEach(m => m.classList.remove('show'));
+    formErrorMsg.classList.remove('show');
     form.classList.remove('hide');
     successBox.classList.remove('show');
     form.scrollIntoView({behavior:'smooth', block:'start'});
