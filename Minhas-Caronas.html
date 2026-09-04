@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Minhas Caronas</title>
+
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Faster+One&family=Madimi+One&family=Patrick+Hand+SC&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Minhas-Caronas.css">
+</head>
+
+
+<body>
+
+    <main class="caronas-container">
+
+        <!-- Cabeçalho -->
+        <section class="caronas-header">
+
+            <div class="titulo-container">
+
+                <div>
+                    <h1>Minhas caronas</h1>
+
+                    <h2>
+                        Gerencie as caronas que você está oferecendo.
+                    </h2>
+                </div>
+
+                <!-- Botão adicionar carona -->
+                <a
+                    class="adicionar-carona"
+                    id="adicionar-carona"
+                    href="#"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Adicionar carona</span>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- Caronas -->
+        <section class="resultados-container">
+
+            <article id="resultados"></article>
+
+        </section>
+
+    </main>
+
+
+    <!-- ======================================== -->
+    <!-- POP-UP DE EXCLUSÃO -->
+    <!-- ======================================== -->
+
+    <div class="popup-overlay" id="popup-excluir">
+
+        <div class="popup">
+
+            <button
+                class="popup-fechar"
+                id="popup-fechar"
+                type="button"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+
+            <div class="popup-icone">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </div>
+
+
+            <h2>Excluir carona</h2>
+
+
+            <p>
+                Você deseja realmente excluir esta carona?
+            </p>
+
+
+            <div class="popup-acoes">
+
+                <button
+                    class="popup-cancelar"
+                    id="popup-cancelar"
+                    type="button"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    class="popup-confirmar"
+                    id="popup-confirmar"
+                    type="button"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                    Excluir
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="Minhas-Caronas.js"></script>
+
+</body>
+
+</html>
