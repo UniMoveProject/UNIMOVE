@@ -18,468 +18,1498 @@
     --cinza-texto:#8a8778;
     --cinza-borda:#E9E2C5;
 
-    --bg: var(--bege);
-    --bg-card: var(--branco);
-    --texto: var(--preto);
-    --texto-sec: #6f6c5f;
-    --bolha-outro: var(--branco);
-    --bolha-outro-texto: var(--preto);
-    --borda: var(--cinza-borda);
-    --header-bg: var(--branco);
-  }
-  [data-theme="dark"]{
-    --bg: #0c0c0c;
-    --bg-card: #1c1c1c;
-    --texto: var(--bege);
-    --texto-sec: #b8b4a0;
-    --bolha-outro: #262626;
-    --bolha-outro-texto: var(--bege);
-    --borda: #33321f;
-    --header-bg: #181818;
+    --bg:var(--bege);
+    --bg-card:var(--branco);
+    --texto:var(--preto);
+    --texto-sec:#6f6c5f;
+    --bolha-outro:var(--branco);
+    --bolha-outro-texto:var(--preto);
+    --borda:var(--cinza-borda);
+    --header-bg:var(--branco);
   }
 
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  [data-theme="dark"]{
+    --bg:#0c0c0c;
+    --bg-card:#1c1c1c;
+    --texto:var(--bege);
+    --texto-sec:#b8b4a0;
+    --bolha-outro:#262626;
+    --bolha-outro-texto:var(--bege);
+    --borda:#33321f;
+    --header-bg:#181818;
+  }
+
+  /* =====================================================
+     RESET
+     ===================================================== */
+
+  *{
+    box-sizing:border-box;
+  }
+
+  html,
   body{
-    background: linear-gradient(180deg,#eef0f5 0%, #dfe3ee 100%);
-    font-family:'Patrick Hand SC', sans-serif;
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+  }
+
+  body{
+    background:linear-gradient(
+      180deg,
+      #eef0f5 0%,
+      #dfe3ee 100%
+    );
+
+    font-family:'Patrick Hand SC',sans-serif;
     color:var(--preto);
+
     min-height:100vh;
+
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding:28px 12px 60px;
+
+    padding:28px 20px 50px;
+
+    overflow-x:hidden;
   }
+
+  /* =====================================================
+     FONTES
+     ===================================================== */
 
   .titulo-faster{
-    font-family:'Faster One', sans-serif;
+    font-family:'Faster One',sans-serif;
     letter-spacing:-1px;
   }
+
   .titulo-madimi{
-    font-family:'Madimi One', sans-serif;
+    font-family:'Madimi One',sans-serif;
   }
 
-  /* ---------- Barra de demonstração (não faz parte do produto) ---------- */
+  /* =====================================================
+     BARRA DE DEMONSTRAÇÃO
+     ===================================================== */
+
   .demo-bar{
     width:100%;
-    max-width:420px;
+    max-width:1400px;
+
     background:var(--preto);
     color:var(--bege);
+
     border-radius:16px;
+
     padding:14px 16px;
     margin-bottom:18px;
-    font-family:'Patrick Hand SC', sans-serif;
+
+    font-family:'Patrick Hand SC',sans-serif;
   }
+
   .demo-bar .demo-label{
-    font-family:'Madimi One', sans-serif;
+    font-family:'Madimi One',sans-serif;
     font-size:12px;
     color:var(--amarelo);
+
     margin-bottom:8px;
     display:block;
   }
-  .demo-row{display:flex; flex-wrap:wrap; gap:6px;}
+
+  .demo-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+
   .demo-btn{
     flex:1 1 auto;
+
     background:#262626;
     color:var(--bege);
+
     border:1px solid #3a3a3a;
     border-radius:999px;
+
     padding:7px 12px;
-    font-family:'Patrick Hand SC', sans-serif;
+
+    font-family:'Patrick Hand SC',sans-serif;
     font-size:13px;
+
     cursor:pointer;
     transition:.15s;
+
     white-space:nowrap;
   }
-  .demo-btn:hover{background:#333;}
-  .demo-btn.active{background:var(--azul); border-color:var(--azul); color:#fff;}
 
-  /* ---------- Mockup do ponto de entrada ---------- */
+  .demo-btn:hover{
+    background:#333;
+  }
+
+  .demo-btn.active{
+    background:var(--azul);
+    border-color:var(--azul);
+    color:#fff;
+  }
+
+  /* =====================================================
+     PONTO DE ENTRADA
+     ===================================================== */
+
   .entrypoint{
-    width:100%; max-width:420px;
+    width:100%;
+    max-width:1400px;
+
     background:var(--branco);
+
     border-radius:16px;
+
     padding:14px 16px;
     margin-bottom:16px;
-    display:flex; align-items:center; gap:12px;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
     box-shadow:0 6px 20px rgba(0,0,0,.06);
+
     border:1px solid var(--cinza-borda);
   }
+
   .entrypoint .ico{
-    width:42px;height:42px;border-radius:12px;
-    background:var(--azul); display:flex; align-items:center; justify-content:center;
+    width:42px;
+    height:42px;
+
+    border-radius:12px;
+
+    background:var(--azul);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     flex-shrink:0;
   }
-  .entrypoint .ico svg{width:22px;height:22px;stroke:white;}
-  .entrypoint-text{flex:1;}
-  .entrypoint-text .t1{font-family:'Madimi One', sans-serif; font-size:14px;}
-  .entrypoint-text .t2{font-size:13px; color:var(--cinza-texto);}
+
+  .entrypoint .ico svg{
+    width:22px;
+    height:22px;
+    stroke:white;
+  }
+
+  .entrypoint-text{
+    flex:1;
+    min-width:0;
+  }
+
+  .entrypoint-text .t1{
+    font-family:'Madimi One',sans-serif;
+    font-size:14px;
+  }
+
+  .entrypoint-text .t2{
+    font-size:13px;
+    color:var(--cinza-texto);
+  }
+
   .badge-unread{
     background:var(--amarelo);
     color:var(--preto);
-    font-family:'Madimi One', sans-serif;
+
+    font-family:'Madimi One',sans-serif;
     font-size:12px;
+
     min-width:22px;
     height:22px;
+
     border-radius:11px;
-    display:flex;align-items:center;justify-content:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     padding:0 6px;
   }
 
-  /* ---------- Frame do telefone ---------- */
+  /* =====================================================
+     CONTAINER PRINCIPAL DO CHAT
+     ===================================================== */
+
   .phone{
     width:100%;
-    max-width:420px;
-    height:800px;
+    max-width:1400px;
+
+    /*
+      A altura agora acompanha a tela.
+      O chat ocupa o espaço disponível.
+    */
+    height:calc(100vh - 210px);
+
+    min-height:600px;
+
     background:var(--bg);
     color:var(--texto);
-    border-radius:36px;
-    border:10px solid var(--preto);
-    box-shadow:0 30px 60px rgba(0,0,0,.35);
+
+    /*
+      No desktop não parece mais um celular.
+    */
+    border-radius:20px;
+    border:4px solid var(--preto);
+
+    box-shadow:0 25px 60px rgba(0,0,0,.20);
+
     overflow:hidden;
+
     position:relative;
+
     display:flex;
     flex-direction:column;
+
+    isolation:isolate;
   }
 
-  /* ===== Cabeçalho fixo ===== */
+  /* =====================================================
+     CABEÇALHO
+     ===================================================== */
+
   .chat-header{
     background:var(--header-bg);
+
     border-bottom:1px solid var(--borda);
+
     flex-shrink:0;
+
     z-index:5;
   }
+
   .header-top{
-    display:flex; align-items:center; gap:10px;
-    padding:14px 14px 8px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    padding:14px 20px 8px;
   }
+
   .back-btn{
-    width:30px;height:30px;border-radius:50%;
-    background:transparent; border:none; cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
+    width:30px;
+    height:30px;
+
+    border-radius:50%;
+
+    background:transparent;
+    border:none;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     color:var(--texto);
+
+    flex-shrink:0;
   }
-  .back-btn svg{width:18px;height:18px;}
+
+  .back-btn svg{
+    width:18px;
+    height:18px;
+  }
+
   .header-top .app-name{
-    font-family:'Faster One', sans-serif;
+    font-family:'Faster One',sans-serif;
+
     color:var(--azul);
+
     font-size:15px;
+
     flex:1;
   }
+
   .theme-toggle{
-    width:32px;height:32px;border-radius:50%;
-    background:var(--bg); border:1px solid var(--borda);
-    display:flex;align-items:center;justify-content:center;
+    width:32px;
+    height:32px;
+
+    border-radius:50%;
+
+    background:var(--bg);
+
+    border:1px solid var(--borda);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     cursor:pointer;
+
+    flex-shrink:0;
   }
-  .theme-toggle svg{width:16px;height:16px;stroke:var(--texto); fill:none;}
+
+  .theme-toggle svg{
+    width:16px;
+    height:16px;
+
+    stroke:var(--texto);
+    fill:none;
+  }
+
+  /* =====================================================
+     CARD DA CARONA
+     ===================================================== */
 
   .ride-card{
-    margin:0 14px 12px;
-    background: linear-gradient(135deg, var(--azul), #0a45b8);
+    margin:0 20px 12px;
+
+    background:linear-gradient(
+      135deg,
+      var(--azul),
+      #0a45b8
+    );
+
     border-radius:16px;
+
     padding:12px 14px;
+
     color:#fff;
+
     display:flex;
     gap:12px;
+
     position:relative;
   }
+
   .ride-car-photo{
-    width:54px;height:54px;border-radius:12px;
+    width:54px;
+    height:54px;
+
+    border-radius:12px;
+
     background:#fff;
+
     flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     overflow:hidden;
+
     border:2px solid rgba(255,255,255,.5);
   }
-  .ride-car-photo svg{width:32px;height:32px;}
-  .ride-info{flex:1; min-width:0;}
+
+  .ride-car-photo svg{
+    width:32px;
+    height:32px;
+  }
+
+  .ride-info{
+    flex:1;
+    min-width:0;
+  }
+
   .ride-plate{
-    font-family:'Madimi One', sans-serif;
+    font-family:'Madimi One',sans-serif;
+
     font-size:17px;
     letter-spacing:1px;
+
     background:var(--amarelo);
     color:var(--preto);
+
     display:inline-block;
+
     padding:2px 8px;
+
     border-radius:6px;
+
     margin-bottom:4px;
   }
+
   .ride-model{
     font-size:13px;
+
     opacity:.92;
+
     margin-bottom:6px;
   }
+
   .ride-route{
-    font-family:'Madimi One', sans-serif;
+    font-family:'Madimi One',sans-serif;
+
     font-size:12.5px;
-    display:flex; align-items:center; gap:5px;
+
+    display:flex;
+    align-items:center;
+
+    gap:5px;
+
     opacity:.98;
   }
+
   .ride-time{
     font-size:12px;
+
     opacity:.85;
+
     margin-top:3px;
   }
+
   .ride-expand{
     position:absolute;
-    top:10px; right:10px;
-    width:24px;height:24px;
+
+    top:10px;
+    right:10px;
+
+    width:24px;
+    height:24px;
+
     border-radius:50%;
+
     background:rgba(255,255,255,.18);
-    display:flex;align-items:center;justify-content:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     cursor:pointer;
+
     border:none;
   }
-  .ride-expand svg{width:13px;height:13px; stroke:#fff;}
+
+  .ride-expand svg{
+    width:13px;
+    height:13px;
+
+    stroke:#fff;
+  }
 
   .ride-details-panel{
-    margin:-4px 14px 12px;
+    margin:-4px 20px 12px;
+
     background:var(--bg-card);
+
     border:1px solid var(--borda);
+
     border-radius:12px;
+
     padding:10px 12px;
+
     font-size:13px;
+
     color:var(--texto-sec);
+
     display:none;
   }
-  .ride-details-panel.open{display:block;}
-  .ride-details-panel div{margin-bottom:4px;}
-  .ride-details-panel b{color:var(--texto); font-family:'Madimi One',sans-serif; font-weight:normal;}
+
+  .ride-details-panel.open{
+    display:block;
+  }
+
+  .ride-details-panel div{
+    margin-bottom:4px;
+  }
+
+  .ride-details-panel b{
+    color:var(--texto);
+
+    font-family:'Madimi One',sans-serif;
+
+    font-weight:normal;
+  }
+
+  /* =====================================================
+     MOTORISTA
+     ===================================================== */
 
   .driver-strip{
-    display:flex; align-items:center; gap:8px;
-    padding:0 14px 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:0 20px 12px;
   }
+
   .avatar{
-    width:34px;height:34px;border-radius:50%;
+    width:34px;
+    height:34px;
+
+    border-radius:50%;
+
     background:var(--amarelo);
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Madimi One', sans-serif;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-family:'Madimi One',sans-serif;
+
     font-size:13px;
+
     color:var(--preto);
+
     flex-shrink:0;
+
     cursor:pointer;
+
     border:2px solid var(--bg-card);
   }
-  .driver-strip .avatar{width:38px;height:38px; font-size:14px;}
-  .driver-name{font-family:'Madimi One', sans-serif; font-size:13.5px;}
-  .driver-rating{font-size:12px; color:var(--texto-sec);}
-  .driver-rating b{color:var(--preto); -webkit-text-fill-color:initial;}
-  [data-theme="dark"] .driver-rating b{color:var(--bege);}
 
-  /* ===== Participantes ===== */
+  .driver-strip .avatar{
+    width:38px;
+    height:38px;
+
+    font-size:14px;
+  }
+
+  .driver-name{
+    font-family:'Madimi One',sans-serif;
+    font-size:13.5px;
+  }
+
+  .driver-rating{
+    font-size:12px;
+    color:var(--texto-sec);
+  }
+
+  .driver-rating b{
+    color:var(--preto);
+    -webkit-text-fill-color:initial;
+  }
+
+  [data-theme="dark"] .driver-rating b{
+    color:var(--bege);
+  }
+
+  /* =====================================================
+     PARTICIPANTES
+     ===================================================== */
+
   .participants{
-    display:flex; gap:10px; align-items:center;
-    padding:0 14px 12px;
+    display:flex;
+
+    gap:10px;
+
+    align-items:center;
+
+    padding:0 20px 12px;
+
     overflow-x:auto;
   }
+
   .participant{
-    display:flex; flex-direction:column; align-items:center; gap:3px;
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:3px;
+
     position:relative;
+
     flex-shrink:0;
   }
-  .participant .avatar{width:40px;height:40px;font-size:14px;}
-  .participant-name{font-size:11px; color:var(--texto-sec); max-width:52px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+  .participant .avatar{
+    width:40px;
+    height:40px;
+
+    font-size:14px;
+  }
+
+  .participant-name{
+    font-size:11px;
+
+    color:var(--texto-sec);
+
+    max-width:52px;
+
+    text-align:center;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+  }
+
   .badge-motorista{
-    position:absolute; bottom:14px; right:-4px;
-    background:var(--verde); color:var(--preto);
-    font-family:'Madimi One', sans-serif;
+    position:absolute;
+
+    bottom:14px;
+    right:-4px;
+
+    background:var(--verde);
+
+    color:var(--preto);
+
+    font-family:'Madimi One',sans-serif;
+
     font-size:8px;
+
     padding:1px 4px;
+
     border-radius:6px;
+
     border:1.5px solid var(--bg-card);
   }
 
-  /* ===== Área de mensagens ===== */
+  /* =====================================================
+     ÁREA DE MENSAGENS
+     ===================================================== */
+
   .messages{
     flex:1;
+
+    min-height:0;
+
     overflow-y:auto;
-    padding:16px 14px;
+
+    padding:22px 30px;
+
     display:flex;
+
     flex-direction:column;
+
     gap:10px;
+
+    /*
+      Permite que as mensagens usem a largura
+      de forma adequada no desktop.
+    */
+    width:100%;
   }
+
   .day-divider{
     text-align:center;
+
     font-size:12px;
+
     color:var(--texto-sec);
+
     margin:6px 0;
   }
+
   .day-divider span{
     background:var(--bg-card);
+
     padding:3px 12px;
+
     border-radius:999px;
+
     border:1px solid var(--borda);
-    font-family:'Madimi One', sans-serif;
+
+    font-family:'Madimi One',sans-serif;
+
     font-size:10.5px;
   }
+
   .system-msg{
     text-align:center;
+
     font-size:12px;
+
     color:var(--texto-sec);
+
     padding:4px 20px;
+
     line-height:1.4;
   }
-  .msg-row{ display:flex; gap:8px; max-width:85%; }
-  .msg-row.self{ align-self:flex-end; flex-direction:row-reverse; }
-  .msg-row .avatar{width:26px;height:26px; font-size:10px; margin-top:auto;}
-  .bubble-wrap{display:flex; flex-direction:column; gap:2px;}
-  .msg-row.self .bubble-wrap{align-items:flex-end;}
-  .msg-name{font-size:11px; font-family:'Madimi One', sans-serif; color:var(--texto-sec); margin-left:4px;}
+
+  .msg-row{
+    display:flex;
+
+    gap:8px;
+
+    /*
+      Antes estava limitado a 85%.
+      Agora tem largura confortável no desktop.
+    */
+    max-width:min(720px,85%);
+
+    width:max-content;
+  }
+
+  .msg-row.self{
+    align-self:flex-end;
+
+    flex-direction:row-reverse;
+  }
+
+  .msg-row .avatar{
+    width:26px;
+    height:26px;
+
+    font-size:10px;
+
+    margin-top:auto;
+  }
+
+  .bubble-wrap{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:2px;
+
+    min-width:0;
+  }
+
+  .msg-row.self .bubble-wrap{
+    align-items:flex-end;
+  }
+
+  .msg-name{
+    font-size:11px;
+
+    font-family:'Madimi One',sans-serif;
+
+    color:var(--texto-sec);
+
+    margin-left:4px;
+  }
+
   .bubble{
     background:var(--bolha-outro);
+
     color:var(--bolha-outro-texto);
+
     padding:9px 13px;
+
     border-radius:16px 16px 16px 4px;
+
     font-size:15.5px;
+
     line-height:1.35;
+
     box-shadow:0 1px 3px rgba(0,0,0,.06);
+
     border:1px solid var(--borda);
+
+    overflow-wrap:anywhere;
   }
+
   .msg-row.self .bubble{
     background:var(--azul);
+
     color:#fff;
+
     border-radius:16px 16px 4px 16px;
+
     border:none;
   }
-  .msg-time{font-size:10.5px; color:var(--texto-sec); margin:0 4px;}
+
+  .msg-time{
+    font-size:10.5px;
+
+    color:var(--texto-sec);
+
+    margin:0 4px;
+  }
+
+  /* =====================================================
+     DIGITANDO
+     ===================================================== */
 
   .typing-indicator{
-    display:flex; align-items:center; gap:6px;
-    padding:0 14px 6px;
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:0 30px 8px;
+
     font-size:12.5px;
+
     color:var(--texto-sec);
+
+    flex-shrink:0;
   }
-  .typing-dots{display:flex; gap:3px;}
+
+  .typing-dots{
+    display:flex;
+    gap:3px;
+  }
+
   .typing-dots span{
-    width:5px;height:5px;border-radius:50%;
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
     background:var(--texto-sec);
+
     animation:blink 1.2s infinite;
   }
-  .typing-dots span:nth-child(2){animation-delay:.2s;}
-  .typing-dots span:nth-child(3){animation-delay:.4s;}
-  @keyframes blink{0%,80%,100%{opacity:.2;} 40%{opacity:1;}}
+
+  .typing-dots span:nth-child(2){
+    animation-delay:.2s;
+  }
+
+  .typing-dots span:nth-child(3){
+    animation-delay:.4s;
+  }
+
+  @keyframes blink{
+    0%,80%,100%{
+      opacity:.2;
+    }
+
+    40%{
+      opacity:1;
+    }
+  }
+
+  /* =====================================================
+     CONEXÃO
+     ===================================================== */
 
   .connection-banner{
     background:#3a2f00;
-    color:var(--amarelo);
-    font-size:12.5px;
-    text-align:center;
-    padding:6px;
-    display:none;
-  }
-  .connection-banner.show{display:block;}
 
-  /* ===== Rodapé ===== */
+    color:var(--amarelo);
+
+    font-size:12.5px;
+
+    text-align:center;
+
+    padding:6px;
+
+    display:none;
+
+    flex-shrink:0;
+  }
+
+  .connection-banner.show{
+    display:block;
+  }
+
+  /* =====================================================
+     RODAPÉ
+     ===================================================== */
+
   .chat-footer{
     flex-shrink:0;
+
     background:var(--header-bg);
+
     border-top:1px solid var(--borda);
-    padding:10px 12px;
+
+    padding:12px 30px;
+
     display:flex;
+
     gap:8px;
+
     align-items:center;
   }
+
   .chat-footer input{
     flex:1;
+
+    min-width:0;
+
     border:1px solid var(--borda);
+
     background:var(--bg);
+
     color:var(--texto);
+
     border-radius:999px;
+
     padding:10px 14px;
-    font-family:'Patrick Hand SC', sans-serif;
+
+    font-family:'Patrick Hand SC',sans-serif;
+
     font-size:15px;
+
     outline:none;
   }
-  .chat-footer input::placeholder{color:var(--texto-sec);}
+
+  .chat-footer input::placeholder{
+    color:var(--texto-sec);
+  }
+
   .send-btn{
-    width:38px;height:38px;border-radius:50%;
+    width:38px;
+    height:38px;
+
+    border-radius:50%;
+
     background:var(--azul);
+
     border:none;
-    display:flex;align-items:center;justify-content:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     cursor:pointer;
+
     flex-shrink:0;
   }
-  .send-btn svg{width:17px;height:17px; fill:#fff;}
+
+  .send-btn svg{
+    width:17px;
+    height:17px;
+
+    fill:#fff;
+  }
+
+  /* =====================================================
+     AVISO ARQUIVADO
+     ===================================================== */
 
   .archived-notice{
     background:var(--bg-card);
-    border-top:1px solid var(--borda);
-    padding:10px 16px;
-    font-size:13px;
-    color:var(--texto-sec);
-    text-align:center;
-    display:flex; align-items:center; justify-content:center; gap:6px;
-  }
-  .archived-notice svg{width:14px;height:14px; flex-shrink:0;}
 
-  /* ===== Estados especiais que substituem o corpo ===== */
+    border-top:1px solid var(--borda);
+
+    padding:10px 16px;
+
+    font-size:13px;
+
+    color:var(--texto-sec);
+
+    text-align:center;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    flex-shrink:0;
+  }
+
+  .archived-notice svg{
+    width:14px;
+    height:14px;
+
+    flex-shrink:0;
+  }
+
+  /* =====================================================
+     ESTADOS ESPECIAIS
+     ===================================================== */
+
   .state-overlay{
     flex:1;
+
+    min-height:0;
+
     display:none;
+
     flex-direction:column;
+
     align-items:center;
+
     justify-content:center;
+
     text-align:center;
+
     padding:30px;
+
     gap:14px;
   }
-  .state-overlay.show{display:flex;}
-  .state-overlay svg{width:44px;height:44px; stroke:var(--texto-sec); opacity:.7;}
-  .state-overlay .st-title{font-family:'Madimi One', sans-serif; font-size:16px;}
-  .state-overlay .st-text{font-size:14px; color:var(--texto-sec); max-width:260px; line-height:1.5;}
 
-  /* skeleton */
-  .skeleton{ background:var(--bg-card);}
+  .state-overlay.show{
+    display:flex;
+  }
+
+  .state-overlay svg{
+    width:44px;
+    height:44px;
+
+    stroke:var(--texto-sec);
+
+    opacity:.7;
+  }
+
+  .state-overlay .st-title{
+    font-family:'Madimi One',sans-serif;
+
+    font-size:16px;
+  }
+
+  .state-overlay .st-text{
+    font-size:14px;
+
+    color:var(--texto-sec);
+
+    max-width:420px;
+
+    line-height:1.5;
+  }
+
+  /* =====================================================
+     SKELETON
+     ===================================================== */
+
+  .skeleton{
+    background:var(--bg-card);
+  }
+
   .sk-bar{
-    background: linear-gradient(90deg, var(--borda) 25%, #f5f0dd 37%, var(--borda) 63%);
+    background:linear-gradient(
+      90deg,
+      var(--borda) 25%,
+      #f5f0dd 37%,
+      var(--borda) 63%
+    );
+
     background-size:400% 100%;
-    animation: sk 1.4s ease infinite;
+
+    animation:sk 1.4s ease infinite;
+
     border-radius:8px;
   }
-  [data-theme="dark"] .sk-bar{ background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 37%, #2a2a2a 63%); background-size:400% 100%; }
-  @keyframes sk{ 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+
+  [data-theme="dark"] .sk-bar{
+    background:linear-gradient(
+      90deg,
+      #2a2a2a 25%,
+      #3a3a3a 37%,
+      #2a2a2a 63%
+    );
+
+    background-size:400% 100%;
+  }
+
+  @keyframes sk{
+    0%{
+      background-position:100% 50%;
+    }
+
+    100%{
+      background-position:0 50%;
+    }
+  }
+
+  /* =====================================================
+     MINI PERFIL
+     ===================================================== */
 
   .mini-profile-overlay{
-    position:absolute; inset:0;
+    position:absolute;
+
+    inset:0;
+
     background:rgba(0,0,0,.4);
+
     display:none;
-    align-items:center; justify-content:center;
+
+    align-items:center;
+    justify-content:center;
+
     z-index:20;
-    border-radius:26px;
+
+    border-radius:16px;
   }
-  .mini-profile-overlay.show{display:flex;}
+
+  .mini-profile-overlay.show{
+    display:flex;
+  }
+
   .mini-profile-card{
     background:var(--bg-card);
+
     color:var(--texto);
+
     border-radius:18px;
+
     padding:20px;
-    width:78%;
+
+    width:min(420px,78%);
+
     text-align:center;
   }
-  .mini-profile-card .avatar{width:60px;height:60px; font-size:20px; margin:0 auto 10px;}
-  .mp-name{font-family:'Madimi One', sans-serif; font-size:16px; margin-bottom:2px;}
-  .mp-course{font-size:13px; color:var(--texto-sec); margin-bottom:6px;}
+
+  .mini-profile-card .avatar{
+    width:60px;
+    height:60px;
+
+    font-size:20px;
+
+    margin:0 auto 10px;
+  }
+
+  .mp-name{
+    font-family:'Madimi One',sans-serif;
+
+    font-size:16px;
+
+    margin-bottom:2px;
+  }
+
+  .mp-course{
+    font-size:13px;
+
+    color:var(--texto-sec);
+
+    margin-bottom:6px;
+  }
+
   .mp-rating{
-    display:inline-flex; align-items:center; gap:4px;
-    background:var(--bg); border:1px solid var(--borda);
-    border-radius:999px; padding:3px 10px; font-size:13px;
-    font-family:'Madimi One', sans-serif;
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:4px;
+
+    background:var(--bg);
+
+    border:1px solid var(--borda);
+
+    border-radius:999px;
+
+    padding:3px 10px;
+
+    font-size:13px;
+
+    font-family:'Madimi One',sans-serif;
+
     margin-bottom:14px;
   }
+
   .mp-close{
-    background:var(--azul); color:#fff; border:none;
-    border-radius:999px; padding:8px 20px;
-    font-family:'Madimi One', sans-serif; font-size:13px;
+    background:var(--azul);
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:999px;
+
+    padding:8px 20px;
+
+    font-family:'Madimi One',sans-serif;
+
+    font-size:13px;
+
     cursor:pointer;
   }
 
+  /* =====================================================
+     RODAPÉ EXTERNO
+     ===================================================== */
+
   .footnote{
-    max-width:420px; width:100%;
-    text-align:center; font-size:12px; color:#666; margin-top:16px;
+    width:100%;
+
+    max-width:1400px;
+
+    text-align:center;
+
+    font-size:12px;
+
+    color:#666;
+
+    margin-top:16px;
+  }
+
+  /* =====================================================
+     DESKTOP GRANDE
+     ===================================================== */
+
+  @media (min-width:1200px){
+
+    body{
+      padding:28px 40px 40px;
+    }
+
+    .phone{
+      height:calc(100vh - 200px);
+
+      max-width:none;
+
+      border-radius:18px;
+
+      border-width:4px;
+    }
+
+    .messages{
+      padding-left:40px;
+      padding-right:40px;
+    }
+
+    .msg-row{
+      max-width:min(760px,70%);
+    }
+
+    .header-top{
+      padding-left:28px;
+      padding-right:28px;
+    }
+
+    .ride-card{
+      margin-left:28px;
+      margin-right:28px;
+    }
+
+    .ride-details-panel{
+      margin-left:28px;
+      margin-right:28px;
+    }
+
+    .driver-strip{
+      padding-left:28px;
+      padding-right:28px;
+    }
+
+    .participants{
+      padding-left:28px;
+      padding-right:28px;
+    }
+
+    .typing-indicator{
+      padding-left:40px;
+      padding-right:40px;
+    }
+
+    .chat-footer{
+      padding-left:40px;
+      padding-right:40px;
+    }
+  }
+
+  /* =====================================================
+     DESKTOP MUITO GRANDE
+     ===================================================== */
+
+  @media (min-width:1600px){
+
+    body{
+      padding-left:60px;
+      padding-right:60px;
+    }
+
+    .phone{
+      max-width:1600px;
+
+      height:calc(100vh - 200px);
+    }
+
+    .messages{
+      padding-left:60px;
+      padding-right:60px;
+    }
+
+    .msg-row{
+      max-width:800px;
+    }
+  }
+
+  /* =====================================================
+     TABLET
+     ===================================================== */
+
+  @media (min-width:601px) and (max-width:1199px){
+
+    body{
+      padding:20px 18px 35px;
+    }
+
+    .phone{
+      height:calc(100vh - 180px);
+
+      min-height:600px;
+
+      border-radius:22px;
+
+      border-width:4px;
+    }
+
+    .messages{
+      padding:20px;
+    }
+
+    .msg-row{
+      max-width:80%;
+    }
+
+    .chat-footer{
+      padding:12px 20px;
+    }
+  }
+
+  /* =====================================================
+     CELULAR
+     ===================================================== */
+
+  @media (max-width:600px){
+
+    body{
+      padding:12px 8px 30px;
+    }
+
+    .demo-bar{
+      max-width:420px;
+    }
+
+    .entrypoint{
+      max-width:420px;
+    }
+
+    /*
+      No celular volta a aparência de telefone.
+    */
+
+    .phone{
+      width:100%;
+
+      max-width:420px;
+
+      height:calc(100vh - 120px);
+
+      min-height:580px;
+
+      border-radius:30px;
+
+      border-width:8px;
+
+      box-shadow:0 25px 50px rgba(0,0,0,.28);
+    }
+
+    .header-top{
+      padding:14px 14px 8px;
+    }
+
+    .ride-card{
+      margin-left:14px;
+      margin-right:14px;
+    }
+
+    .ride-details-panel{
+      margin-left:14px;
+      margin-right:14px;
+    }
+
+    .driver-strip{
+      padding-left:14px;
+      padding-right:14px;
+    }
+
+    .participants{
+      padding-left:14px;
+      padding-right:14px;
+    }
+
+    .messages{
+      padding:16px 14px;
+
+      gap:10px;
+    }
+
+    .msg-row{
+      max-width:85%;
+    }
+
+    .bubble{
+      font-size:15.5px;
+    }
+
+    .typing-indicator{
+      padding-left:14px;
+      padding-right:14px;
+    }
+
+    .chat-footer{
+      padding:10px 12px;
+    }
+
+    .footnote{
+      max-width:420px;
+    }
+  }
+
+  /* =====================================================
+     CELULARES PEQUENOS
+     ===================================================== */
+
+  @media (max-width:380px){
+
+    body{
+      padding:6px 4px 20px;
+    }
+
+    .phone{
+      min-height:540px;
+
+      height:calc(100vh - 80px);
+
+      border-radius:24px;
+
+      border-width:6px;
+    }
+
+    .messages{
+      padding:14px 10px;
+    }
+
+    .msg-row{
+      max-width:90%;
+    }
+
+    .bubble{
+      font-size:14px;
+
+      padding:8px 11px;
+    }
+
+    .ride-route{
+      font-size:11.5px;
+    }
+
+    .ride-time{
+      font-size:11px;
+    }
+  }
+
+  /* =====================================================
+     TELAS BAIXAS
+     ===================================================== */
+
+  @media (max-height:700px) and (min-width:601px){
+
+    .phone{
+      height:calc(100vh - 160px);
+
+      min-height:500px;
+    }
+
+    .messages{
+      padding-top:14px;
+      padding-bottom:14px;
+    }
+  }
+
+  /* =====================================================
+     ACESSIBILIDADE / CONTROLE DE DIMENSÕES
+     ===================================================== */
+
+  img,
+  svg{
+    max-width:100%;
+  }
+
+  input,
+  button{
+    font:inherit;
+  }
+
+  button{
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  input{
+    min-width:0;
   }
 </style>
+
 </head>
 <body>
 
