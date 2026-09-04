@@ -3,777 +3,830 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat da Carona — Unimove</title>
+<title>UniMove · Chat da Carona</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Faster+One&family=Madimi+One&family=Patrick+Hand+SC&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --preto-unimove: #131313;
-    --amarelo-unimove: #f8d410;
-    --azul-unumove: #0F5DED;
-    --verde-unimove: #86FA01;
-    --branco-bege-unimove: #FFF4CC;
-    --fonte-titulos: "Faster One", system-ui;
-    --fonte-subtitulos: "Madimi One", sans-serif;
-    --fonte-textos: "Patrick Hand SC", cursive;
-    font-weight: normal;
-    letter-spacing: -26%;
-    word-spacing: 26%;
+  :root{
+    --preto:#131313;
+    --amarelo:#F8D410;
+    --azul:#0F5DED;
+    --verde:#86FA01;
+    --bege:#FFF4CC;
+    --branco:#ffffff;
+    --cinza-texto:#8a8778;
+    --cinza-borda:#E9E2C5;
+
+    --bg: var(--bege);
+    --bg-card: var(--branco);
+    --texto: var(--preto);
+    --texto-sec: #6f6c5f;
+    --bolha-outro: var(--branco);
+    --bolha-outro-texto: var(--preto);
+    --borda: var(--cinza-borda);
+    --header-bg: var(--branco);
+  }
+  [data-theme="dark"]{
+    --bg: #0c0c0c;
+    --bg-card: #1c1c1c;
+    --texto: var(--bege);
+    --texto-sec: #b8b4a0;
+    --bolha-outro: #262626;
+    --bolha-outro-texto: var(--bege);
+    --borda: #33321f;
+    --header-bg: #181818;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: #e7e2d2;
-    display: flex;
-    justify-content: center;
-    padding: 32px 16px;
-    min-height: 100vh;
-    font-family: var(--fonte-textos);
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: linear-gradient(180deg,#eef0f5 0%, #dfe3ee 100%);
+    font-family:'Patrick Hand SC', sans-serif;
+    color:var(--preto);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 12px 60px;
   }
 
-  .phone {
-    width: 100%;
-    max-width: 420px;
-    height: 860px;
-    background: var(--branco-bege-unimove);
-    border: 4px solid var(--preto-unimove);
-    border-radius: 28px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 8px 8px 0 var(--preto-unimove);
+  .titulo-faster{
+    font-family:'Faster One', sans-serif;
+    letter-spacing:-1px;
+  }
+  .titulo-madimi{
+    font-family:'Madimi One', sans-serif;
   }
 
-  /* ---------- DEMO SWITCHER (fora do "aparelho") ---------- */
-  .demo-bar {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto 14px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
+  /* ---------- Barra de demonstração (não faz parte do produto) ---------- */
+  .demo-bar{
+    width:100%;
+    max-width:420px;
+    background:var(--preto);
+    color:var(--bege);
+    border-radius:16px;
+    padding:14px 16px;
+    margin-bottom:18px;
+    font-family:'Patrick Hand SC', sans-serif;
   }
-  .demo-bar button {
-    font-family: var(--fonte-subtitulos);
-    font-size: 11px;
-    background: var(--preto-unimove);
-    color: var(--branco-bege-unimove);
-    border: 2px solid var(--preto-unimove);
-    border-radius: 20px;
-    padding: 6px 12px;
-    cursor: pointer;
+  .demo-bar .demo-label{
+    font-family:'Madimi One', sans-serif;
+    font-size:12px;
+    color:var(--amarelo);
+    margin-bottom:8px;
+    display:block;
   }
-  .demo-bar button.active { background: var(--amarelo-unimove); color: var(--preto-unimove); }
-
-  /* ---------- CABEÇALHO FIXO ---------- */
-  .header {
-    background: var(--preto-unimove);
-    color: var(--branco-bege-unimove);
-    padding: 14px 14px 12px;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 5;
+  .demo-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .demo-btn{
+    flex:1 1 auto;
+    background:#262626;
+    color:var(--bege);
+    border:1px solid #3a3a3a;
+    border-radius:999px;
+    padding:7px 12px;
+    font-family:'Patrick Hand SC', sans-serif;
+    font-size:13px;
+    cursor:pointer;
+    transition:.15s;
+    white-space:nowrap;
   }
+  .demo-btn:hover{background:#333;}
+  .demo-btn.active{background:var(--azul); border-color:var(--azul); color:#fff;}
 
-  .header-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
+  /* ---------- Mockup do ponto de entrada ---------- */
+  .entrypoint{
+    width:100%; max-width:420px;
+    background:var(--branco);
+    border-radius:16px;
+    padding:14px 16px;
+    margin-bottom:16px;
+    display:flex; align-items:center; gap:12px;
+    box-shadow:0 6px 20px rgba(0,0,0,.06);
+    border:1px solid var(--cinza-borda);
   }
-
-  .back-btn {
-    width: 30px; height: 30px;
-    display: flex; align-items: center; justify-content: center;
-    background: transparent; border: none; color: var(--branco-bege-unimove);
-    font-size: 20px; cursor: pointer; flex-shrink: 0;
+  .entrypoint .ico{
+    width:42px;height:42px;border-radius:12px;
+    background:var(--azul); display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
   }
-
-  .car-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .car-photo {
-    width: 46px; height: 46px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--azul-unumove), #073b96);
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    border: 2px solid var(--branco-bege-unimove);
-  }
-
-  .car-info { min-width: 0; flex: 1; }
-
-  .plate {
-    display: inline-block;
-    font-family: var(--fonte-titulos);
-    font-size: 13px;
-    letter-spacing: 1px;
-    background: var(--amarelo-unimove);
-    color: var(--preto-unimove);
-    padding: 2px 8px 3px;
-    border-radius: 4px;
-    border: 2px solid var(--preto-unimove);
-    transform: rotate(-1deg);
+  .entrypoint .ico svg{width:22px;height:22px;stroke:white;}
+  .entrypoint-text{flex:1;}
+  .entrypoint-text .t1{font-family:'Madimi One', sans-serif; font-size:14px;}
+  .entrypoint-text .t2{font-size:13px; color:var(--cinza-texto);}
+  .badge-unread{
+    background:var(--amarelo);
+    color:var(--preto);
+    font-family:'Madimi One', sans-serif;
+    font-size:12px;
+    min-width:22px;
+    height:22px;
+    border-radius:11px;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 6px;
   }
 
-  .car-model {
-    font-family: var(--fonte-subtitulos);
-    font-size: 12px;
-    color: var(--branco-bege-unimove);
-    margin-top: 3px;
-    opacity: 0.85;
+  /* ---------- Frame do telefone ---------- */
+  .phone{
+    width:100%;
+    max-width:420px;
+    height:800px;
+    background:var(--bg);
+    color:var(--texto);
+    border-radius:36px;
+    border:10px solid var(--preto);
+    box-shadow:0 30px 60px rgba(0,0,0,.35);
+    overflow:hidden;
+    position:relative;
+    display:flex;
+    flex-direction:column;
   }
 
-  .expand-btn {
-    background: transparent;
-    border: 2px solid var(--branco-bege-unimove);
-    color: var(--branco-bege-unimove);
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    font-size: 14px;
-    cursor: pointer;
-    flex-shrink: 0;
+  /* ===== Cabeçalho fixo ===== */
+  .chat-header{
+    background:var(--header-bg);
+    border-bottom:1px solid var(--borda);
+    flex-shrink:0;
+    z-index:5;
+  }
+  .header-top{
+    display:flex; align-items:center; gap:10px;
+    padding:14px 14px 8px;
+  }
+  .back-btn{
+    width:30px;height:30px;border-radius:50%;
+    background:transparent; border:none; cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--texto);
+  }
+  .back-btn svg{width:18px;height:18px;}
+  .header-top .app-name{
+    font-family:'Faster One', sans-serif;
+    color:var(--azul);
+    font-size:15px;
+    flex:1;
+  }
+  .theme-toggle{
+    width:32px;height:32px;border-radius:50%;
+    background:var(--bg); border:1px solid var(--borda);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .theme-toggle svg{width:16px;height:16px;stroke:var(--texto); fill:none;}
+
+  .ride-card{
+    margin:0 14px 12px;
+    background: linear-gradient(135deg, var(--azul), #0a45b8);
+    border-radius:16px;
+    padding:12px 14px;
+    color:#fff;
+    display:flex;
+    gap:12px;
+    position:relative;
+  }
+  .ride-car-photo{
+    width:54px;height:54px;border-radius:12px;
+    background:#fff;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    border:2px solid rgba(255,255,255,.5);
+  }
+  .ride-car-photo svg{width:32px;height:32px;}
+  .ride-info{flex:1; min-width:0;}
+  .ride-plate{
+    font-family:'Madimi One', sans-serif;
+    font-size:17px;
+    letter-spacing:1px;
+    background:var(--amarelo);
+    color:var(--preto);
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:6px;
+    margin-bottom:4px;
+  }
+  .ride-model{
+    font-size:13px;
+    opacity:.92;
+    margin-bottom:6px;
+  }
+  .ride-route{
+    font-family:'Madimi One', sans-serif;
+    font-size:12.5px;
+    display:flex; align-items:center; gap:5px;
+    opacity:.98;
+  }
+  .ride-time{
+    font-size:12px;
+    opacity:.85;
+    margin-top:3px;
+  }
+  .ride-expand{
+    position:absolute;
+    top:10px; right:10px;
+    width:24px;height:24px;
+    border-radius:50%;
+    background:rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    border:none;
+  }
+  .ride-expand svg{width:13px;height:13px; stroke:#fff;}
+
+  .ride-details-panel{
+    margin:-4px 14px 12px;
+    background:var(--bg-card);
+    border:1px solid var(--borda);
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:13px;
+    color:var(--texto-sec);
+    display:none;
+  }
+  .ride-details-panel.open{display:block;}
+  .ride-details-panel div{margin-bottom:4px;}
+  .ride-details-panel b{color:var(--texto); font-family:'Madimi One',sans-serif; font-weight:normal;}
+
+  .driver-strip{
+    display:flex; align-items:center; gap:8px;
+    padding:0 14px 12px;
+  }
+  .avatar{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--amarelo);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Madimi One', sans-serif;
+    font-size:13px;
+    color:var(--preto);
+    flex-shrink:0;
+    cursor:pointer;
+    border:2px solid var(--bg-card);
+  }
+  .driver-strip .avatar{width:38px;height:38px; font-size:14px;}
+  .driver-name{font-family:'Madimi One', sans-serif; font-size:13.5px;}
+  .driver-rating{font-size:12px; color:var(--texto-sec);}
+  .driver-rating b{color:var(--preto); -webkit-text-fill-color:initial;}
+  [data-theme="dark"] .driver-rating b{color:var(--bege);}
+
+  /* ===== Participantes ===== */
+  .participants{
+    display:flex; gap:10px; align-items:center;
+    padding:0 14px 12px;
+    overflow-x:auto;
+  }
+  .participant{
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    position:relative;
+    flex-shrink:0;
+  }
+  .participant .avatar{width:40px;height:40px;font-size:14px;}
+  .participant-name{font-size:11px; color:var(--texto-sec); max-width:52px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .badge-motorista{
+    position:absolute; bottom:14px; right:-4px;
+    background:var(--verde); color:var(--preto);
+    font-family:'Madimi One', sans-serif;
+    font-size:8px;
+    padding:1px 4px;
+    border-radius:6px;
+    border:1.5px solid var(--bg-card);
   }
 
-  .driver-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 10px 0 8px;
-    padding-top: 8px;
-    border-top: 1.5px dashed rgba(255,244,204,0.3);
+  /* ===== Área de mensagens ===== */
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    padding:16px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .day-divider{
+    text-align:center;
+    font-size:12px;
+    color:var(--texto-sec);
+    margin:6px 0;
+  }
+  .day-divider span{
+    background:var(--bg-card);
+    padding:3px 12px;
+    border-radius:999px;
+    border:1px solid var(--borda);
+    font-family:'Madimi One', sans-serif;
+    font-size:10.5px;
+  }
+  .system-msg{
+    text-align:center;
+    font-size:12px;
+    color:var(--texto-sec);
+    padding:4px 20px;
+    line-height:1.4;
+  }
+  .msg-row{ display:flex; gap:8px; max-width:85%; }
+  .msg-row.self{ align-self:flex-end; flex-direction:row-reverse; }
+  .msg-row .avatar{width:26px;height:26px; font-size:10px; margin-top:auto;}
+  .bubble-wrap{display:flex; flex-direction:column; gap:2px;}
+  .msg-row.self .bubble-wrap{align-items:flex-end;}
+  .msg-name{font-size:11px; font-family:'Madimi One', sans-serif; color:var(--texto-sec); margin-left:4px;}
+  .bubble{
+    background:var(--bolha-outro);
+    color:var(--bolha-outro-texto);
+    padding:9px 13px;
+    border-radius:16px 16px 16px 4px;
+    font-size:15.5px;
+    line-height:1.35;
+    box-shadow:0 1px 3px rgba(0,0,0,.06);
+    border:1px solid var(--borda);
+  }
+  .msg-row.self .bubble{
+    background:var(--azul);
+    color:#fff;
+    border-radius:16px 16px 4px 16px;
+    border:none;
+  }
+  .msg-time{font-size:10.5px; color:var(--texto-sec); margin:0 4px;}
+
+  .typing-indicator{
+    display:flex; align-items:center; gap:6px;
+    padding:0 14px 6px;
+    font-size:12.5px;
+    color:var(--texto-sec);
+  }
+  .typing-dots{display:flex; gap:3px;}
+  .typing-dots span{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--texto-sec);
+    animation:blink 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2){animation-delay:.2s;}
+  .typing-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.2;} 40%{opacity:1;}}
+
+  .connection-banner{
+    background:#3a2f00;
+    color:var(--amarelo);
+    font-size:12.5px;
+    text-align:center;
+    padding:6px;
+    display:none;
+  }
+  .connection-banner.show{display:block;}
+
+  /* ===== Rodapé ===== */
+  .chat-footer{
+    flex-shrink:0;
+    background:var(--header-bg);
+    border-top:1px solid var(--borda);
+    padding:10px 12px;
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .chat-footer input{
+    flex:1;
+    border:1px solid var(--borda);
+    background:var(--bg);
+    color:var(--texto);
+    border-radius:999px;
+    padding:10px 14px;
+    font-family:'Patrick Hand SC', sans-serif;
+    font-size:15px;
+    outline:none;
+  }
+  .chat-footer input::placeholder{color:var(--texto-sec);}
+  .send-btn{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--azul);
+    border:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .send-btn svg{width:17px;height:17px; fill:#fff;}
+
+  .archived-notice{
+    background:var(--bg-card);
+    border-top:1px solid var(--borda);
+    padding:10px 16px;
+    font-size:13px;
+    color:var(--texto-sec);
+    text-align:center;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .archived-notice svg{width:14px;height:14px; flex-shrink:0;}
+
+  /* ===== Estados especiais que substituem o corpo ===== */
+  .state-overlay{
+    flex:1;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+    gap:14px;
+  }
+  .state-overlay.show{display:flex;}
+  .state-overlay svg{width:44px;height:44px; stroke:var(--texto-sec); opacity:.7;}
+  .state-overlay .st-title{font-family:'Madimi One', sans-serif; font-size:16px;}
+  .state-overlay .st-text{font-size:14px; color:var(--texto-sec); max-width:260px; line-height:1.5;}
+
+  /* skeleton */
+  .skeleton{ background:var(--bg-card);}
+  .sk-bar{
+    background: linear-gradient(90deg, var(--borda) 25%, #f5f0dd 37%, var(--borda) 63%);
+    background-size:400% 100%;
+    animation: sk 1.4s ease infinite;
+    border-radius:8px;
+  }
+  [data-theme="dark"] .sk-bar{ background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 37%, #2a2a2a 63%); background-size:400% 100%; }
+  @keyframes sk{ 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+
+  .mini-profile-overlay{
+    position:absolute; inset:0;
+    background:rgba(0,0,0,.4);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:20;
+    border-radius:26px;
+  }
+  .mini-profile-overlay.show{display:flex;}
+  .mini-profile-card{
+    background:var(--bg-card);
+    color:var(--texto);
+    border-radius:18px;
+    padding:20px;
+    width:78%;
+    text-align:center;
+  }
+  .mini-profile-card .avatar{width:60px;height:60px; font-size:20px; margin:0 auto 10px;}
+  .mp-name{font-family:'Madimi One', sans-serif; font-size:16px; margin-bottom:2px;}
+  .mp-course{font-size:13px; color:var(--texto-sec); margin-bottom:6px;}
+  .mp-rating{
+    display:inline-flex; align-items:center; gap:4px;
+    background:var(--bg); border:1px solid var(--borda);
+    border-radius:999px; padding:3px 10px; font-size:13px;
+    font-family:'Madimi One', sans-serif;
+    margin-bottom:14px;
+  }
+  .mp-close{
+    background:var(--azul); color:#fff; border:none;
+    border-radius:999px; padding:8px 20px;
+    font-family:'Madimi One', sans-serif; font-size:13px;
+    cursor:pointer;
   }
 
-  .driver-avatar {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--verde-unimove);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--fonte-subtitulos);
-    font-size: 13px;
-    color: var(--preto-unimove);
-    flex-shrink: 0;
-    border: 2px solid var(--branco-bege-unimove);
-  }
-
-  .driver-name {
-    font-family: var(--fonte-subtitulos);
-    font-size: 13px;
-    line-height: 1.3;
-  }
-
-  .driver-rating {
-    font-size: 12px;
-    color: var(--amarelo-unimove);
-    opacity: 0.9;
-  }
-
-  .route-line {
-    font-family: var(--fonte-subtitulos);
-    font-size: 12.5px;
-    color: var(--branco-bege-unimove);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .route-time {
-    font-size: 11.5px;
-    color: var(--amarelo-unimove);
-    margin-left: auto;
-  }
-
-  .details-panel {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.25s ease;
-  }
-  .details-panel.open { max-height: 140px; }
-  .details-panel-inner {
-    padding-top: 10px;
-    margin-top: 10px;
-    border-top: 1.5px dashed rgba(255,244,204,0.3);
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--branco-bege-unimove);
-    opacity: 0.9;
-  }
-
-  /* ---------- PARTICIPANTES ---------- */
-  .participants {
-    display: flex;
-    gap: 10px;
-    padding: 10px 14px;
-    background: var(--amarelo-unimove);
-    border-bottom: 3px solid var(--preto-unimove);
-    overflow-x: auto;
-    flex-shrink: 0;
-  }
-
-  .participant {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    flex-shrink: 0;
-    cursor: pointer;
-    width: 52px;
-  }
-
-  .participant-avatar {
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    background: var(--branco-bege-unimove);
-    border: 2.5px solid var(--preto-unimove);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--fonte-subtitulos);
-    font-size: 14px;
-    color: var(--preto-unimove);
-    position: relative;
-  }
-
-  .participant.motorista .participant-avatar {
-    background: var(--azul-unumove);
-    color: var(--branco-bege-unimove);
-  }
-
-  .badge-motorista {
-    position: absolute;
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--verde-unimove);
-    color: var(--preto-unimove);
-    font-size: 7.5px;
-    font-family: var(--fonte-subtitulos);
-    padding: 1px 4px;
-    border-radius: 6px;
-    border: 1.5px solid var(--preto-unimove);
-    white-space: nowrap;
-  }
-
-  .participant-name {
-    font-size: 10px;
-    font-family: var(--fonte-subtitulos);
-    color: var(--preto-unimove);
-    text-align: center;
-    max-width: 52px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* ---------- ÁREA DE MENSAGENS ---------- */
-  .messages-wrap {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: relative;
-  }
-
-  .load-more {
-    text-align: center;
-    font-size: 11px;
-    font-family: var(--fonte-subtitulos);
-    color: var(--preto-unimove);
-    opacity: 0.55;
-    padding: 4px 0 8px;
-  }
-
-  .sys-msg {
-    align-self: center;
-    font-size: 12px;
-    color: var(--preto-unimove);
-    opacity: 0.65;
-    text-align: center;
-    padding: 4px 10px;
-    max-width: 85%;
-  }
-
-  .welcome-msg {
-    align-self: center;
-    text-align: center;
-    font-size: 13px;
-    color: var(--preto-unimove);
-    background: rgba(15,93,237,0.08);
-    border: 1.5px dashed var(--azul-unumove);
-    border-radius: 12px;
-    padding: 10px 14px;
-    max-width: 90%;
-  }
-
-  .bubble-row {
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
-    max-width: 88%;
-  }
-  .bubble-row.own { align-self: flex-end; flex-direction: row-reverse; }
-  .bubble-row.other { align-self: flex-start; }
-
-  .bubble-avatar {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: var(--branco-bege-unimove);
-    border: 2px solid var(--preto-unimove);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--fonte-subtitulos);
-    font-size: 10px;
-    flex-shrink: 0;
-  }
-
-  .bubble-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .bubble-row.own .bubble-col { align-items: flex-end; }
-
-  .bubble-name {
-    font-size: 10.5px;
-    font-family: var(--fonte-subtitulos);
-    color: var(--preto-unimove);
-    opacity: 0.6;
-    padding: 0 4px;
-  }
-
-  .bubble {
-    padding: 8px 12px;
-    font-size: 15px;
-    line-height: 1.35;
-    border: 2px solid var(--preto-unimove);
-    position: relative;
-    word-break: break-word;
-  }
-
-  .bubble-row.other .bubble {
-    background: #fff;
-    color: var(--preto-unimove);
-    border-radius: 4px 14px 14px 14px;
-  }
-
-  .bubble-row.own .bubble {
-    background: var(--azul-unumove);
-    color: var(--branco-bege-unimove);
-    border-color: var(--preto-unimove);
-    border-radius: 14px 4px 14px 14px;
-  }
-
-  .bubble-time {
-    font-size: 10px;
-    color: var(--preto-unimove);
-    opacity: 0.5;
-    padding: 0 4px;
-  }
-
-  .typing {
-    align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--preto-unimove);
-    opacity: 0.6;
-    padding-left: 34px;
-  }
-  .typing-dots span {
-    display: inline-block;
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--preto-unimove);
-    margin-right: 2px;
-    animation: bounce 1.2s infinite ease-in-out;
-  }
-  .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
-  .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
-  @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
-
-  /* ---------- RECONECTANDO ---------- */
-  .reconnect-banner {
-    background: var(--amarelo-unimove);
-    color: var(--preto-unimove);
-    font-size: 12px;
-    font-family: var(--fonte-subtitulos);
-    text-align: center;
-    padding: 6px;
-    flex-shrink: 0;
-    display: none;
-  }
-  .reconnect-banner.show { display: block; }
-
-  /* ---------- RODAPÉ / INPUT ---------- */
-  .footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    background: var(--branco-bege-unimove);
-    border-top: 3px solid var(--preto-unimove);
-    flex-shrink: 0;
-  }
-
-  .footer input {
-    flex: 1;
-    font-family: var(--fonte-textos);
-    font-size: 15px;
-    padding: 10px 14px;
-    border-radius: 20px;
-    border: 2px solid var(--preto-unimove);
-    background: #fff;
-    outline: none;
-  }
-  .footer input:focus { border-color: var(--azul-unumove); }
-  .footer input::placeholder { color: #999; }
-
-  .send-btn {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--verde-unimove);
-    border: 2.5px solid var(--preto-unimove);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    font-size: 16px;
-    color: var(--preto-unimove);
-  }
-  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .footer.archived {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
-    padding: 12px 14px;
-  }
-  .archived-notice {
-    font-size: 12.5px;
-    color: var(--preto-unimove);
-    opacity: 0.7;
-    text-align: center;
-    font-family: var(--fonte-subtitulos);
-    line-height: 1.4;
-  }
-
-  /* ---------- ESTADOS: SKELETON ---------- */
-  .skel { background: rgba(19,19,19,0.12); border-radius: 8px; }
-  .skel-shimmer {
-    background: linear-gradient(90deg, rgba(19,19,19,0.10) 25%, rgba(19,19,19,0.18) 37%, rgba(19,19,19,0.10) 63%);
-    background-size: 400% 100%;
-    animation: shimmer 1.4s ease infinite;
-    border-radius: 8px;
-  }
-  @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
-
-  /* ---------- SEM PERMISSÃO ---------- */
-  .no-permission {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 32px;
-    text-align: center;
-  }
-  .no-permission-icon {
-    font-size: 40px;
-  }
-  .no-permission h3 {
-    font-family: var(--fonte-subtitulos);
-    font-size: 17px;
-    color: var(--preto-unimove);
-  }
-  .no-permission p {
-    font-size: 13px;
-    color: var(--preto-unimove);
-    opacity: 0.65;
-    max-width: 240px;
-  }
-  .no-permission button {
-    margin-top: 6px;
-    font-family: var(--fonte-subtitulos);
-    font-size: 13px;
-    background: var(--preto-unimove);
-    color: var(--branco-bege-unimove);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-  }
-
-  .unread-badge {
-    position: fixed;
-    display: none;
+  .footnote{
+    max-width:420px; width:100%;
+    text-align:center; font-size:12px; color:#666; margin-top:16px;
   }
 </style>
 </head>
 <body>
 
-<div class="demo-bar" id="demoBar">
-  <button data-state="ativo" class="active">Ativo</button>
-  <button data-state="carregando">Carregando</button>
-  <button data-state="vazio">Vazio</button>
-  <button data-state="arquivado">Arquivado</button>
-  <button data-state="reconectando">Reconectando</button>
-  <button data-state="semPermissao">Sem permissão</button>
+<div class="demo-bar">
+  <span class="demo-label">DEMONSTRAÇÃO · ESTADOS DA TELA (não faz parte do app)</span>
+  <div class="demo-row">
+    <button class="demo-btn active" data-state="ativo">Ativo</button>
+    <button class="demo-btn" data-state="carregando">Carregando</button>
+    <button class="demo-btn" data-state="vazio">Vazio</button>
+    <button class="demo-btn" data-state="arquivado">Arquivado</button>
+    <button class="demo-btn" data-state="erro">Erro conexão</button>
+  </div>
 </div>
 
-<div class="phone">
+<div class="entrypoint">
+  <div class="ico">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="9"/></svg>
+  </div>
+  <div class="entrypoint-text">
+    <div class="t1">Chat da Carona</div>
+    <div class="t2">Setor Bela Vista → UNICEPLAC · 07:40</div>
+  </div>
+  <div class="badge-unread" id="unreadBadge">3</div>
+</div>
 
-  <!-- CABEÇALHO -->
-  <div class="header" id="headerArea">
+<div class="phone" data-theme="light" id="phone">
+
+  <!-- ===== CABEÇALHO FIXO ===== -->
+  <div class="chat-header" id="headerNormal">
     <div class="header-top">
-      <button class="back-btn" aria-label="Voltar">←</button>
-      <div class="car-card">
-        <div class="car-photo">🚗</div>
-        <div class="car-info">
-          <span class="plate">QCM-2A19</span>
-          <div class="car-model">Onix branco</div>
+      <button class="back-btn" aria-label="Voltar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="app-name">CHAT DA CARONA</div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Alternar modo escuro">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+      </button>
+    </div>
+
+    <div class="ride-card">
+      <div class="ride-car-photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0F5DED" stroke-width="1.8"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z"/><circle cx="7" cy="16" r="1"/><circle cx="17" cy="16" r="1"/></svg>
+      </div>
+      <div class="ride-info">
+        <div class="ride-plate">PLB 4A17</div>
+        <div class="ride-model">Onix branco</div>
+        <div class="ride-route">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          Setor Bela Vista → Campus UNICEPLAC
         </div>
+        <div class="ride-time">Saída às 07:40 · chegada prevista 08:15</div>
       </div>
-      <button class="expand-btn" id="expandBtn" aria-label="Ver detalhes da carona">▾</button>
+      <button class="ride-expand" id="rideExpand" aria-label="Ver detalhes da carona">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
     </div>
 
-    <div class="driver-row">
-      <div class="driver-avatar">RS</div>
+    <div class="ride-details-panel" id="rideDetails">
+      <div>📍 <b>Parada intermediária:</b> Terminal Jardim ABC</div>
+      <div>💺 <b>Vagas totais:</b> 3 (2 confirmadas, 1 livre)</div>
+      <div>💰 <b>Valor por vaga:</b> R$ 6,00</div>
+      <div>🎓 <b>Instituição:</b> UNICEPLAC</div>
+    </div>
+
+    <div class="driver-strip">
+      <div class="avatar" data-name="Rhian Almeida" data-course="Administração · 4º período" data-rating="4,8" data-role="Motorista">RA</div>
       <div>
-        <div class="driver-name">Rafael Souza</div>
-        <div class="driver-rating">★ 4.8</div>
+        <div class="driver-name">Rhian Almeida</div>
+        <div class="driver-rating">⭐ <b>4,8</b> · motorista</div>
       </div>
     </div>
 
-    <div class="route-line">
-      <span>Terminal Jardim ABC → Campus UniEvangélica</span>
-      <span class="route-time">7h20</span>
-    </div>
-
-    <div class="details-panel" id="detailsPanel">
-      <div class="details-panel-inner">
-        Paradas: Praça Central (7h30)<br>
-        Valor por vaga: R$ 8,00 · Vagas totais: 4
+    <div class="participants">
+      <div class="participant">
+        <div class="avatar" data-name="Rhian Almeida" data-course="Administração · 4º período" data-rating="4,8" data-role="Motorista">RA</div>
+        <span class="badge-motorista">MOTORISTA</span>
+        <div class="participant-name">Rhian</div>
+      </div>
+      <div class="participant">
+        <div class="avatar" data-name="Ana Clara Souza" data-course="Direito · 2º período" data-rating="4,9" data-role="Passageira">AC</div>
+        <div class="participant-name">Ana Clara</div>
+      </div>
+      <div class="participant">
+        <div class="avatar" data-name="Lucas Ferreira" data-course="Engenharia Civil · 6º período" data-rating="4,7" data-role="Passageiro">LF</div>
+        <div class="participant-name">Lucas</div>
       </div>
     </div>
   </div>
 
-  <!-- PARTICIPANTES -->
-  <div class="participants" id="participantsArea">
-    <div class="participant motorista">
-      <div class="participant-avatar">RS
-        <span class="badge-motorista">Motorista</span>
+  <!-- ===== CABEÇALHO SKELETON (loading) ===== -->
+  <div class="chat-header skeleton" id="headerSkeleton" style="display:none;">
+    <div class="header-top">
+      <button class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="sk-bar" style="width:120px;height:14px;"></div>
+      <div style="width:32px;"></div>
+    </div>
+    <div style="padding:0 14px 12px;">
+      <div class="sk-bar" style="width:100%;height:78px;border-radius:16px;"></div>
+    </div>
+    <div style="padding:0 14px 12px; display:flex; gap:8px;">
+      <div class="sk-bar" style="width:38px;height:38px;border-radius:50%;"></div>
+      <div style="flex:1;">
+        <div class="sk-bar" style="width:60%;height:12px;margin-bottom:6px;"></div>
+        <div class="sk-bar" style="width:40%;height:10px;"></div>
       </div>
-      <div class="participant-name">Rafael</div>
-    </div>
-    <div class="participant">
-      <div class="participant-avatar">MA</div>
-      <div class="participant-name">Maria</div>
-    </div>
-    <div class="participant">
-      <div class="participant-avatar">JP</div>
-      <div class="participant-name">João</div>
-    </div>
-    <div class="participant">
-      <div class="participant-avatar">CA</div>
-      <div class="participant-name">Carla</div>
     </div>
   </div>
 
-  <!-- BANNER RECONEXÃO -->
-  <div class="reconnect-banner" id="reconnectBanner">Reconectando...</div>
+  <div class="connection-banner" id="connBanner">Reconectando...</div>
 
-  <!-- MENSAGENS -->
-  <div class="messages-wrap" id="messagesArea"></div>
+  <!-- ===== CORPO: MENSAGENS ===== -->
+  <div class="messages" id="messagesBody">
 
-  <!-- RODAPÉ -->
-  <div class="footer" id="footerArea">
-    <input type="text" id="msgInput" placeholder="Escreva uma mensagem para o grupo..." />
-    <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>
+    <div class="system-msg">Carona confirmada! Combine aqui os detalhes com o motorista e os outros passageiros.</div>
+    <div class="system-msg">Ana Clara entrou no grupo</div>
+    <div class="system-msg">Lucas Ferreira entrou no grupo</div>
+
+    <div class="day-divider"><span>HOJE</span></div>
+
+    <div class="msg-row">
+      <div class="avatar" data-name="Rhian Almeida" data-course="Administração · 4º período" data-rating="4,8" data-role="Motorista">RA</div>
+      <div class="bubble-wrap">
+        <span class="msg-name">Rhian</span>
+        <div class="bubble">Bom dia, pessoal! Confirmando: saída às 7h40 do Terminal Jardim ABC 🚗</div>
+        <span class="msg-time">07:02</span>
+      </div>
+    </div>
+
+    <div class="msg-row">
+      <div class="avatar" data-name="Ana Clara Souza" data-course="Direito · 2º período" data-rating="4,9" data-role="Passageira">AC</div>
+      <div class="bubble-wrap">
+        <span class="msg-name">Ana Clara</span>
+        <div class="bubble">Combinado! Chego uns 5 minutos antes.</div>
+        <span class="msg-time">07:05</span>
+      </div>
+    </div>
+
+    <div class="msg-row self">
+      <div class="avatar" data-name="Você" data-course="Ciência da Computação · 3º período" data-rating="4,8" data-role="Passageiro">EU</div>
+      <div class="bubble-wrap">
+        <div class="bubble">Posso esperar no ponto de ônibus mesmo, do lado do terminal?</div>
+        <span class="msg-time">07:06</span>
+      </div>
+    </div>
+
+    <div class="msg-row">
+      <div class="avatar" data-name="Rhian Almeida" data-course="Administração · 4º período" data-rating="4,8" data-role="Motorista">RA</div>
+      <div class="bubble-wrap">
+        <span class="msg-name">Rhian</span>
+        <div class="bubble">Pode sim! Vou de Onix branco, placa PLB4A17. Fico ali parado uns 2 minutinhos.</div>
+        <span class="msg-time">07:07</span>
+      </div>
+    </div>
+
+    <div class="system-msg">Lucas Ferreira saiu da carona</div>
+
+    <div class="msg-row">
+      <div class="avatar" data-name="Ana Clara Souza" data-course="Direito · 2º período" data-rating="4,9" data-role="Passageira">AC</div>
+      <div class="bubble-wrap">
+        <span class="msg-name">Ana Clara</span>
+        <div class="bubble">Gente, hoje o trânsito na Sul tá pesado. Vamos sair uns 5 min mais cedo?</div>
+        <span class="msg-time">07:09</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="state-overlay" id="stateEmpty">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <div class="st-title">Carona confirmada!</div>
+    <div class="st-text">Combine aqui os detalhes com o motorista e os outros passageiros. Escreva a primeira mensagem do grupo.</div>
+  </div>
+
+  <div class="state-overlay" id="stateBlocked">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    <div class="st-title">Você não tem acesso a este chat</div>
+    <div class="st-text">Esta conversa é exclusiva de quem faz parte desta carona.</div>
+  </div>
+
+  <div class="typing-indicator" id="typingIndicator">
+    <div class="avatar" style="width:20px;height:20px;font-size:9px;">AC</div>
+    Ana Clara está digitando
+    <div class="typing-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <!-- ===== AVISO DE CHAT ARQUIVADO ===== -->
+  <div class="archived-notice" id="archivedNotice" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8M10 12h4"/></svg>
+    Esta carona já foi concluída — o chat está arquivado, mas você pode consultar o histórico
+  </div>
+
+  <!-- ===== RODAPÉ ===== -->
+  <div class="chat-footer" id="footerNormal">
+    <input type="text" placeholder="Escreva uma mensagem para o grupo..." id="msgInput">
+    <button class="send-btn" aria-label="Enviar">
+      <svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg>
+    </button>
+  </div>
+
+  <!-- ===== MINI PERFIL ===== -->
+  <div class="mini-profile-overlay" id="miniProfileOverlay">
+    <div class="mini-profile-card">
+      <div class="avatar" id="mpAvatar">--</div>
+      <div class="mp-name" id="mpName">--</div>
+      <div class="mp-course" id="mpCourse">--</div>
+      <div class="mp-rating">⭐ <span id="mpRating">--</span></div>
+      <div><button class="mp-close" id="mpClose">Fechar</button></div>
+    </div>
   </div>
 
 </div>
+
+<div class="footnote">UniMove · Chat da Carona — protótipo de tela seguindo o Manual de Marca v1</div>
 
 <script>
-  const messagesArea = document.getElementById('messagesArea');
-  const footerArea = document.getElementById('footerArea');
-  const headerArea = document.getElementById('headerArea');
-  const participantsArea = document.getElementById('participantsArea');
-  const reconnectBanner = document.getElementById('reconnectBanner');
+  const phone = document.getElementById('phone');
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+
+  themeToggle.addEventListener('click', () => {
+    const isDark = phone.getAttribute('data-theme') === 'dark';
+    phone.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeIcon.innerHTML = isDark
+      ? '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>'
+      : '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+  });
+
+  // Expandir detalhes da carona
+  const rideExpand = document.getElementById('rideExpand');
+  const rideDetails = document.getElementById('rideDetails');
+  rideExpand.addEventListener('click', () => {
+    rideDetails.classList.toggle('open');
+    rideExpand.style.transform = rideDetails.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+  // Mini perfil ao tocar em avatares
+  const overlay = document.getElementById('miniProfileOverlay');
+  document.querySelectorAll('.avatar[data-name]').forEach(av => {
+    av.addEventListener('click', () => {
+      document.getElementById('mpAvatar').textContent = av.textContent;
+      document.getElementById('mpName').textContent = av.dataset.name + (av.dataset.role ? ' · ' + av.dataset.role : '');
+      document.getElementById('mpCourse').textContent = av.dataset.course;
+      document.getElementById('mpRating').textContent = av.dataset.rating;
+      overlay.classList.add('show');
+    });
+  });
+  document.getElementById('mpClose').addEventListener('click', () => overlay.classList.remove('show'));
+
+  // Badge de não lidas some ao abrir o chat
+  document.querySelector('.entrypoint').addEventListener('click', () => {
+    document.getElementById('unreadBadge').style.display = 'none';
+  });
+
+  // Envio de mensagem simples (demonstração)
   const msgInput = document.getElementById('msgInput');
-  const sendBtn = document.getElementById('sendBtn');
-  const expandBtn = document.getElementById('expandBtn');
-  const detailsPanel = document.getElementById('detailsPanel');
-  const phone = document.querySelector('.phone');
-
-  expandBtn.addEventListener('click', () => {
-    detailsPanel.classList.toggle('open');
-    expandBtn.textContent = detailsPanel.classList.contains('open') ? '▴' : '▾';
-  });
-
-  const conversa = [
-    { tipo: 'sistema', texto: 'Carona confirmada! Combine aqui os detalhes com o motorista e os outros passageiros.' },
-    { tipo: 'msg', autor: 'Rafael', ini: 'RS', dono: false, texto: 'Pessoal, saio às 7h20 pontualmente no Terminal, ponto de sempre 👍', hora: '07:02' },
-    { tipo: 'msg', autor: 'Maria', ini: 'MA', dono: false, texto: 'Combinado! Vou chegar uns 5 min antes', hora: '07:05' },
-    { tipo: 'sistema', texto: 'João entrou na carona' },
-    { tipo: 'msg', autor: 'Você', ini: 'VC', dono: true, texto: 'Rafael, dá pra parar na praça central? Fica mais perto pra mim', hora: '07:08' },
-    { tipo: 'msg', autor: 'Rafael', ini: 'RS', dono: false, texto: 'Dá sim, sem problema. Nos vemos lá então', hora: '07:09' },
-    { tipo: 'sistema', texto: 'Carla saiu da carona' },
-  ];
-
-  function bolha(m) {
+  const messagesBody = document.getElementById('messagesBody');
+  document.querySelector('.send-btn').addEventListener('click', sendMsg);
+  msgInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMsg(); });
+  function sendMsg(){
+    const val = msgInput.value.trim();
+    if(!val) return;
     const row = document.createElement('div');
-    row.className = 'bubble-row ' + (m.dono ? 'own' : 'other');
+    row.className = 'msg-row self';
+    const now = new Date();
+    const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
     row.innerHTML = `
-      <div class="bubble-avatar">${m.ini}</div>
-      <div class="bubble-col">
-        <span class="bubble-name">${m.autor}</span>
-        <div class="bubble">${m.texto}</div>
-        <span class="bubble-time">${m.hora}</span>
+      <div class="avatar" data-name="Você" data-course="Ciência da Computação · 3º período" data-rating="4,8" data-role="Passageiro">EU</div>
+      <div class="bubble-wrap">
+        <div class="bubble"></div>
+        <span class="msg-time">${time}</span>
       </div>`;
-    return row;
-  }
-
-  function sistemaMsg(texto) {
-    const d = document.createElement('div');
-    d.className = 'sys-msg';
-    d.textContent = texto;
-    return d;
-  }
-
-  function renderAtivo() {
-    messagesArea.innerHTML = '';
-    const loadMore = document.createElement('div');
-    loadMore.className = 'load-more';
-    loadMore.textContent = 'Carregando mensagens anteriores ao rolar para cima...';
-    messagesArea.appendChild(loadMore);
-
-    conversa.forEach(m => {
-      messagesArea.appendChild(m.tipo === 'sistema' ? sistemaMsg(m.texto) : bolha(m));
+    row.querySelector('.bubble').textContent = val;
+    messagesBody.appendChild(row);
+    row.querySelector('.avatar').addEventListener('click', () => {
+      document.getElementById('mpAvatar').textContent = 'EU';
+      document.getElementById('mpName').textContent = 'Você · Passageiro';
+      document.getElementById('mpCourse').textContent = 'Ciência da Computação · 3º período';
+      document.getElementById('mpRating').textContent = '4,8';
+      overlay.classList.add('show');
     });
-
-    const typing = document.createElement('div');
-    typing.className = 'typing';
-    typing.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div> Maria está digitando...`;
-    messagesArea.appendChild(typing);
-
-    footerArea.innerHTML = `
-      <input type="text" id="msgInput" placeholder="Escreva uma mensagem para o grupo..." />
-      <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>`;
-    bindFooter();
-    scrollBottom();
+    msgInput.value = '';
+    messagesBody.scrollTop = messagesBody.scrollHeight;
   }
 
-  function bindFooter() {
-    const input = document.getElementById('msgInput');
-    const btn = document.getElementById('sendBtn');
-    if (!input) return;
-    const enviar = () => {
-      const texto = input.value.trim();
-      if (!texto) return;
-      const agora = new Date();
-      const hora = agora.getHours().toString().padStart(2,'0') + ':' + agora.getMinutes().toString().padStart(2,'0');
-      messagesArea.appendChild(bolha({ autor: 'Você', ini: 'VC', dono: true, texto, hora }));
-      input.value = '';
-      scrollBottom();
-    };
-    btn.addEventListener('click', enviar);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') enviar(); });
+  // ===== Controle de estados de demonstração =====
+  const demoButtons = document.querySelectorAll('.demo-btn');
+  const headerNormal = document.getElementById('headerNormal');
+  const headerSkeleton = document.getElementById('headerSkeleton');
+  const messagesBodyEl = document.getElementById('messagesBody');
+  const stateEmpty = document.getElementById('stateEmpty');
+  const stateBlocked = document.getElementById('stateBlocked');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const archivedNotice = document.getElementById('archivedNotice');
+  const footerNormal = document.getElementById('footerNormal');
+  const connBanner = document.getElementById('connBanner');
+
+  function resetStates(){
+    headerNormal.style.display = '';
+    headerSkeleton.style.display = 'none';
+    messagesBodyEl.style.display = 'flex';
+    stateEmpty.classList.remove('show');
+    stateBlocked.classList.remove('show');
+    typingIndicator.style.display = 'flex';
+    archivedNotice.style.display = 'none';
+    footerNormal.style.display = 'flex';
+    footerNormal.querySelector('input').disabled = false;
+    footerNormal.querySelector('input').placeholder = 'Escreva uma mensagem para o grupo...';
+    footerNormal.style.opacity = 1;
+    connBanner.classList.remove('show');
   }
 
-  function scrollBottom() { messagesArea.scrollTop = messagesArea.scrollHeight; }
+  demoButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      demoButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      resetStates();
+      const state = btn.dataset.state;
 
-  function renderCarregando() {
-    messagesArea.innerHTML = '';
-    for (let i = 0; i < 5; i++) {
-      const row = document.createElement('div');
-      row.className = 'bubble-row ' + (i % 2 === 0 ? 'other' : 'own');
-      const w = 100 + Math.random() * 80;
-      row.innerHTML = `<div class="skel-shimmer" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;"></div>
-        <div class="skel-shimmer" style="width:${w}px;height:38px;border-radius:14px;"></div>`;
-      messagesArea.appendChild(row);
-    }
-    footerArea.innerHTML = `
-      <input type="text" placeholder="Escreva uma mensagem para o grupo..." disabled />
-      <button class="send-btn" disabled aria-label="Enviar mensagem">➤</button>`;
-  }
-
-  function renderVazio() {
-    messagesArea.innerHTML = '';
-    const w = document.createElement('div');
-    w.className = 'welcome-msg';
-    w.textContent = 'Carona confirmada! Combine aqui os detalhes com o motorista e os outros passageiros.';
-    messagesArea.appendChild(w);
-    footerArea.innerHTML = `
-      <input type="text" id="msgInput" placeholder="Escreva uma mensagem para o grupo..." />
-      <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>`;
-    bindFooter();
-  }
-
-  function renderArquivado() {
-    messagesArea.innerHTML = '';
-    conversa.forEach(m => {
-      messagesArea.appendChild(m.tipo === 'sistema' ? sistemaMsg(m.texto) : bolha(m));
+      if(state === 'carregando'){
+        headerNormal.style.display = 'none';
+        headerSkeleton.style.display = 'block';
+        messagesBodyEl.innerHTML = '';
+        for(let i=0;i<4;i++){
+          const w = i % 2 === 0 ? '60%' : '45%';
+          const align = i % 2 === 0 ? 'flex-start' : 'flex-end';
+          messagesBodyEl.innerHTML += `<div style="display:flex; justify-content:${align};"><div class="sk-bar" style="width:${w};height:38px;border-radius:16px;"></div></div>`;
+        }
+        typingIndicator.style.display = 'none';
+        footerNormal.querySelector('input').disabled = true;
+      }
+      else if(state === 'vazio'){
+        messagesBodyEl.style.display = 'none';
+        stateEmpty.classList.add('show');
+        typingIndicator.style.display = 'none';
+      }
+      else if(state === 'arquivado'){
+        typingIndicator.style.display = 'none';
+        archivedNotice.style.display = 'flex';
+        footerNormal.querySelector('input').disabled = true;
+        footerNormal.querySelector('input').placeholder = 'Chat encerrado';
+        footerNormal.style.opacity = .5;
+      }
+      else if(state === 'erro'){
+        connBanner.classList.add('show');
+      }
+      // 'ativo' já é o padrão do resetStates()
     });
-    messagesArea.appendChild(sistemaMsg('Esta carona foi concluída'));
-    footerArea.className = 'footer archived';
-    footerArea.innerHTML = `<div class="archived-notice">Esta carona já foi concluída — o chat está arquivado, mas você pode consultar o histórico</div>`;
-    scrollBottom();
-  }
-
-  function renderReconectando() {
-    renderAtivo();
-    reconnectBanner.classList.add('show');
-  }
-
-  function renderSemPermissao() {
-    headerArea.style.display = 'none';
-    participantsArea.style.display = 'none';
-    footerArea.style.display = 'none';
-    messagesArea.innerHTML = '';
-    const div = document.createElement('div');
-    div.className = 'no-permission';
-    div.innerHTML = `
-      <div class="no-permission-icon">🔒</div>
-      <h3>Você não tem acesso a este chat</h3>
-      <p>Esta conversa é exclusiva para o motorista e os passageiros confirmados desta carona.</p>
-      <button>Voltar para minhas caronas</button>`;
-    messagesArea.appendChild(div);
-  }
-
-  function reset() {
-    footerArea.className = 'footer';
-    reconnectBanner.classList.remove('show');
-    headerArea.style.display = '';
-    participantsArea.style.display = '';
-    footerArea.style.display = '';
-  }
-
-  const estados = {
-    ativo: renderAtivo,
-    carregando: renderCarregando,
-    vazio: renderVazio,
-    arquivado: renderArquivado,
-    reconectando: renderReconectando,
-    semPermissao: renderSemPermissao,
-  };
-
-  document.getElementById('demoBar').addEventListener('click', e => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    document.querySelectorAll('#demoBar button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    reset();
-    estados[btn.dataset.state]();
   });
-
-  renderAtivo();
 </script>
 
 </body>
