@@ -6,7 +6,7 @@
 import { renderHeader, attachHeaderEvents } from './components/Header.js';
 import { renderFooter } from './components/Footer.js';
 
-import { renderLandingView } from './views/LandingView.js';
+import { renderLandingView, attachLandingEvents } from './views/LandingView.js';
 import { renderHomeView, attachHomeEvents } from './views/HomeView.js';
 import { renderSearchRidesView, attachSearchRidesEvents } from './views/SearchRidesView.js';
 import { renderOfferRideView, attachOfferRideEvents } from './views/OfferRideView.js';
@@ -20,7 +20,7 @@ import { renderRegisterView, attachRegisterEvents } from './views/RegisterView.j
 export function parseRoute() {
   const hash = window.location.hash.slice(1) || '/';
   const [path, queryString] = hash.split('?');
-  return { path, queryString: queryString || '' };
+  return { path: path || '/', queryString: queryString || '' };
 }
 
 export function navigateTo(path) {
@@ -36,9 +36,9 @@ export function handleRoute() {
   let viewHtml = '';
   let attachEvents = () => {};
 
-  // Simple path matching & parameter extraction
   if (path === '/' || path === '') {
     viewHtml = renderLandingView();
+    attachEvents = attachLandingEvents;
   } else if (path === '/home') {
     viewHtml = renderHomeView();
     attachEvents = attachHomeEvents;
@@ -74,7 +74,7 @@ export function handleRoute() {
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:500px; margin:2rem auto;">
         <h1 style="font-size:2rem; margin-bottom:0.5rem;">404</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Página não encontrada no UniMove.</p>
-        <a href="#/home" class="btn btn-azul">Ir para a página inicial</a>
+        <a href="#/home" class="btn btn-azul">Ir para a plataforma</a>
       </div>
     `;
   }
@@ -111,9 +111,7 @@ export function handleRoute() {
 export function initRouter() {
   window.addEventListener('hashchange', handleRoute);
   window.addEventListener('authChanged', handleRoute);
-  window.addEventListener('themeChanged', () => {
-    // Keep header icons sync
-  });
+  window.addEventListener('themeChanged', () => {});
 
   // Handle first load
   handleRoute();

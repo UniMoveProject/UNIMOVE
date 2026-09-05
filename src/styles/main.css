@@ -26,8 +26,8 @@
   --bg-card-hover: #FFFDF5;
   --bg-input: #FFFFFF;
   --text-primary: var(--preto-unimove);
-  --text-secondary: rgba(19, 19, 19, 0.72);
-  --text-muted: rgba(19, 19, 19, 0.52);
+  --text-secondary: rgba(19, 19, 19, 0.76);
+  --text-muted: rgba(19, 19, 19, 0.55);
   --border-color: rgba(19, 19, 19, 0.12);
   --border-focus: var(--azul-unimove);
   --shadow-sm: 0 2px 8px rgba(19, 19, 19, 0.06);
@@ -37,7 +37,7 @@
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-full: 9999px;
-  --header-bg: rgba(255, 244, 204, 0.92);
+  --header-bg: rgba(255, 244, 204, 0.94);
 }
 
 /* Modo Escuro (Opção) */
@@ -55,7 +55,7 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
   --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.7);
-  --header-bg: rgba(19, 19, 19, 0.92);
+  --header-bg: rgba(19, 19, 19, 0.94);
 }
 
 /* --- Reset & Global --- */
@@ -462,7 +462,7 @@ a {
   display: block;
 }
 
-/* --- Pills Selector (Motorista / Passageiro / Ciclista) --- */
+/* --- Pills Selector --- */
 .pill-selector {
   display: flex;
   flex-wrap: wrap;
@@ -525,7 +525,9 @@ a {
 .modal-card {
   background-color: var(--bg-card);
   border-radius: var(--radius-lg);
-  max-width: 480px;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
   width: 100%;
   padding: 2rem;
   border: 2px solid var(--border-color);
@@ -552,15 +554,6 @@ a {
   border: 1.5px solid var(--border-color);
   overflow: hidden;
   box-shadow: var(--shadow-md);
-}
-
-.chat-header {
-  padding: 1rem 1.25rem;
-  border-bottom: 1.5px solid var(--border-color);
-  background-color: var(--bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .chat-messages {
@@ -612,10 +605,92 @@ a {
   background-color: var(--bg-card);
 }
 
+/* --- Marquee Strip (Manual & Original Landing) --- */
+.marquee-strip {
+  background-color: var(--amarelo-unimove);
+  color: var(--preto-unimove);
+  padding: 0.85rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+  margin: 2rem 0;
+}
+
+.marquee-content {
+  display: inline-flex;
+  gap: 3rem;
+  animation: marqueeScroll 25s linear infinite;
+  font-family: var(--font-subtitle);
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* --- FAQ Accordion --- */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.faq-item {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-family: var(--font-subtitle);
+  font-size: 1.15rem;
+  color: var(--text-primary);
+}
+
+.faq-q .plus-icon {
+  font-family: var(--font-subtitle);
+  font-size: 1.5rem;
+  color: var(--azul-unimove);
+  transition: transform 0.3s ease;
+}
+
+.faq-item.open .plus-icon {
+  transform: rotate(45deg);
+  color: var(--amarelo-unimove);
+}
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  padding: 0 1.5rem;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.faq-item.open .faq-a {
+  padding-bottom: 1.25rem;
+}
+
 /* --- Footer --- */
 .site-footer {
   border-top: 1.5px solid var(--border-color);
-  padding: 2rem 1rem 3.5rem;
+  padding: 2.5rem 1rem 3.5rem;
   text-align: center;
   font-family: var(--font-subtitle);
   font-size: 0.95rem;
