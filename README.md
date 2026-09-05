@@ -1,156 +1,87 @@
-# UniMove
+# ?? UNIMOVE � Mobilidade Acad�mica & Carona Solid�ria
 
-> **Mobilidade Acadêmica & Carona Solidária**  
-> A rota até a faculdade, dividida com quem faz o mesmo caminho.
+> *A rota at� a faculdade, dividida com quem j� faz o mesmo caminho.*
 
----
-
-## 📋 Sumário
-1. [Sobre o Projeto](#-sobre-o-projeto)
-2. [Recursos Principais](#-recursos-principais)
-3. [Integrantes e Papéis](#-integrantes-e-papéis)
-4. [Especificações de Perfil e Regras de Negócio](#-especificações-de-perfil-e-regras-de-negócio)
-5. [Sistema de Incentivos e Recompensas](#-sistema-de-incentivos-e-recompensas)
-6. [Guia de Estilo & Identidade Visual (Branding)](#-guia-de-estilo--identidade-visual-branding)
-7. [Diretrizes de Responsividade & UI/UX](#-diretrizes-de-responsividade--uiux)
-8. [Instalação e Execução Local](#-instalação-e-execução-local)
-9. [Cronograma e Entregáveis](#-cronograma-e-entregáveis)
+Aplica��o Single Page Application (SPA) desenvolvida em **Vite + Vanilla JS**, integrando todas as funcionalidades da plataforma UniMove sob uma arquitetura limpa, modular e em conformidade estrita com o **Manual de Identidade Visual v1 (2026)**.
 
 ---
 
-## 🚗 Sobre o Projeto
+## ?? Identidade Visual (Manual de Marca)
 
-O **UniMove** é uma plataforma de mobilidade colaborativa idealizada e desenvolvida por estudantes para a comunidade acadêmica do **UNICEPLAC**. O objetivo principal é aproximar alunos que compartilham o mesmo trajeto diário, otimizando vagas ociosas em veículos particulares, reduzindo os custos individuais de deslocamento e aumentando a segurança nas viagens por meio da validação e verificação entre pares da própria instituição.
+- **Fundo Padr�o (Modo Claro)**: Branco-bege `#FFF4CC` (RGB 255, 244, 204) � acolhedor e leve.
+- **Modo Escuro (Opcional)**: Preto UniMove `#131313` (RGB 19, 19, 19).
+- **A��o & Seguran�a**: Azul UniMove `#0F5DED` (RGB 15, 93, 237).
+- **Energia & Destaque**: Amarelo UniMove `#F8D410` (RGB 248, 212, 16).
+- **Economia & Confirma��es**: Verde-claro UniMove `#86FA01` (RGB 134, 250, 1).
 
-### Os 5 Pilares do UniMove
-* 🛡️ **Segurança:** Apenas perfis universitários validados e avaliação em dois sentidos.
-* 💰 **Economia:** Divisão de custos de combustível que custa menos que ônibus ou transportes por aplicativo.
-* 🤝 **Amizade:** Conexão diária entre estudantes da mesma instituição.
-* ⚡ **Praticidade:** Interface direta e poucos toques para publicar ou reservar uma rota.
-* 🗽 **Liberdade:** Escolha flexível de trajetos, horários e companhias de viagem.
-
----
-
-## 🚀 Recursos Principais
-
-* **Busca e Oferta de Caronas:** Seleção de trajetos com origem, destino, horário de saída e vagas disponíveis.
-* **Perfis Diferenciados:** Mapeamento específico para Passageiros, Motoristas e Ciclistas (com rotas adaptadas).
-* **Painel / Dashboard:** Métricas de caronas realizadas, acompanhamento de economia e selos de sustentabilidade (XP).
-* **Sistema de Avaliação:** Feedback mútuo após o encerramento da rota para manter a reputação da rede.
+### Tipografia Oficial
+1. **T�tulos**: `Faster One` (caixa alta com tracking caracter�stico da marca).
+2. **Subt�tulos, R�tulos e Bot�es**: `Madimi One` (amig�vel e jovial).
+3. **Textos, Mensagens e Formul�rios**: `Patrick Hand SC` (acolhedor e humanizado).
 
 ---
 
-## 👥 Integrantes e Papéis
+## ?? Estrutura do Projeto
 
-| Integrante | Papel Principal | Frentes de Atuação |
-| :--- | :--- | :--- |
-| **Gabriel Sousa Sarmento** | Backlog / Branding | Identidade Visual, Definição de Backlog e Layout de Loading Page |
-| **Aleck Armando M. De Melo** | Tester / Front-End | Loading Page, Home, Login e Cadastro de Usuário |
-| **Arthur Ceregatti D. de Oliveira** | Infraestrutura / Documentação | Gestão de Infraestrutura e Documentação de Reuniões |
-| **Breno de Queiroz Chaves** | Front-End / Backlog | Procurar Carona, Oferecer Carona, Meu Perfil e Branding |
-| **Gustavo Braga Costa** | Documentação | Redação e Gestão de Documentos Acadêmicos/Atas |
-| **João Gabriel de S. Rodrigues** | Front-End / Documentação | Desenvolvimento Front-End e Documentação Técnica |
-| **Marco Antônio O. S. Júnior** | Backlog / Branding | Gerenciamento de Backlog e Branding da Plataforma |
-| **Nicoly Vaz Moreira** | Front-End | Desenvolvimento da Landing Page do Projeto |
-
----
-
-## 🔒 Especificações de Perfil e Regras de Negócio
-
-### 1. Usuário Standard (Passageiro / Ciclista)
-* **Atributos:** Nome completo, foto de rosto nítida, CPF (validação obrigatória), idade, telefone celular.
-* **Parâmetros de Preferência (Mulheres):** Filtro de composição de carona (Apenas Mulheres, Apenas Homens ou Sem Preferência).
-* **Perfil Ciclista:** Mapeamento da rota utilizada para navegação conjunta ou apoio.
-
-### 2. Usuário Motorista
-* **Atributos:** Nome completo, foto de rosto nítida, CPF e CNH (validação de autenticidade no cadastro).
-* **Dados do Veículo:** Placa, modelo, foto, capacidade máxima de passageiros e espaço útil no porta-malas.
-* **Recursos & Operação:** Suporte de acessibilidade (ex.: cadeirantes), tempo limite de espera em paradas e estimativa média do valor cobrado por vaga.
-
----
-
-## 🏆 Sistema de Incentivos e Recompensas
-
-Para incentivar o engajamento dos motoristas e a oferta contínua de vagas:
-1. **Estacionamento Prioritário:** Concessão de vagas preferenciais dentro do campus universitário.
-2. **Descontos Acadêmicos:** Programa de abatimento ou pontuação para mensalidade acadêmica.
-3. **Gamificação (XP):** Acúmulo de pontos de experiência por rotas concluídas para troca de benefícios.
-4. **Gorjeta Opcional:** Mecanismo de gratificação voluntária oferecido pelo passageiro ao final da corrida.
-
----
-
-## 🎨 Guia de Estilo & Identidade Visual (Branding)
-
-### Cores Oficiais
-
-| Nome da Cor | Código Hex | RGB | Uso Principal |
-| :--- | :--- | :--- | :--- |
-| **Preto UniMove** | `#131313` | `19, 19, 19` | Fundo principal (Modo Escuro), textos e seriedade |
-| **Amarelo UniMove** | `#F8D410` | `248, 212, 16` | Destaques, chamadas de atenção e tom amigável |
-| **Azul UniMove** | `#0F5DED` | `15, 93, 237` | Cor primária, botões de ação e verificação/segurança |
-| **Verde-claro UniMove**| `#86FA01` | `134, 250, 1` | Confirmações, tags de vagas e indicação de economia |
-| **Branco-bege UniMove**| `#FFF4CC` | `255, 244, 204`| Fundo padrão (Modo Claro) para maior acolhimento |
-
-### Tipografia
-* **Títulos Principais:** `Faster One` (Caixa alta, letter-spacing -26%) — transmite velocidade e praticidade.
-* **Subtítulos e Botões:** `Madimi One` — forma arredondada e jovial.
-* **Texto Corrido e Descrições:** `Patrick Hand SC` — traço manual que aproxima o leitor.
+```
+UniMoveVite/
++-- index.html                   # Ponto de entrada HTML �nico da SPA
++-- package.json                 # Scripts do Vite e depend�ncias
++-- vite.config.js               # Configura��o do Vite
++-- public/                      # Arquivos est�ticos e logos
+�   +-- faricon.png
+�   +-- logo.png
++-- src/
+    +-- styles/
+    �   +-- main.css             # Estilos consolidados (tokens, temas e componentes)
+    +-- services/                # L�gica e backend desacoplado por fun��o
+    �   +-- theme.js             # Alternador de modo Claro/Escuro
+    �   +-- auth.js              # Login, registro e sess�o universit�ria
+    �   +-- rides.js             # Feed, busca com filtros, pedidos e CRUD de caronas
+    �   +-- chat.js              # Troca de mensagens no grupo da carona
+    �   +-- storage.js           # Gerenciamento de estado (localStorage)
+    �   +-- supabaseClient.js    # Conector preparado para futura integra��o com Supabase
+    +-- components/              # Componentes reutiliz�veis
+    �   +-- Header.js            # Topbar com logo em escudo, rotas e alternador de tema
+    �   +-- Footer.js            # Rodap� acad�mico institucional
+    �   +-- RideCard.js          # Card padronizado de exibi��o de carona
+    �   +-- Modal.js             # Janelas modais para confirma��es e mini-perfis
+    +-- views/                   # Telas da aplica��o
+    �   +-- LandingView.js        # Landing page com estat�sticas e 5 sentimentos da marca
+    �   +-- HomeView.js           # Feed do dia e rota em destaque
+    �   +-- SearchRidesView.js   # Filtro e listagem interativa de caronas
+    �   +-- OfferRideView.js     # Formul�rio de publica��o de rotas
+    �   +-- MyRidesView.js       # Painel das caronas do usu�rio
+    �   +-- EditRideView.js      # Edi��o de informa��es da carona
+    �   +-- ChatView.js          # Chat interativo do grupo da carona
+    �   +-- ProfileView.js       # Perfil do estudante e prefer�ncias de mobilidade
+    �   +-- LoginView.js         # Tela de login
+    �   +-- RegisterView.js      # Tela de cadastro com upload de foto e valida��es
+    +-- router.js                # Roteador SPA client-side reativo
+    +-- main.js                  # Inicializador da aplica��o
+```
 
 ---
 
-## 📐 Diretrizes de Responsividade & UI/UX
+## ?? Como Executar
 
-Grade de breakpoints homologada para validação de layout:
+### 1. Instalar depend�ncias
+```bash
+npm install
+```
 
-* **Mobile Pequeno:** `360px` (Androids compactos)
-* **Mobile Padrão:** `390px – 414px` (Smartphones padrão)
-* **Tablet Retrato:** `768px` (Tablets verticais)
-* **Tablet Paisagem / Desktop Pequeno:** `1024px` (Notebooks e tablets horizontais)
-* **Desktop Padrão:** `1280px – 1440px` (Monitores convencionais)
-* **Desktop Grande:** `1920px` (Monitores Full HD / Ultrawide)
+### 2. Rodar em desenvolvimento
+```bash
+npm run dev
+```
 
----
-
-## 💻 Instalação e Execução Local
-
-### Pré-requisitos
-* **Node.js** (v18.0.0 ou superior)
-* **NPM** ou **Yarn**
-* **Git**
-
-### Passo a Passo
-
-1. **Clonar o Repositório:**
-   ```bash
-   git clone https://github.com/seu-usuario/unimove.git
-   cd unimove
-   ```
-
-2. **Instalar as Dependências:**
-   ```bash
-   npm install
-   ```
-
-3. **Executar o Ambiente de Desenvolvimento:**
-   ```bash
-   npm start
-   ```
-   A aplicação estará acessível em `http://localhost:3000` (ou na porta configurada pelo seu bundler).
-
-4. **Gerar Build para Produção:**
-   ```bash
-   npm run build
-   ```
+### 3. Gerar build de produ��o (Vercel)
+```bash
+npm run build
+```
 
 ---
 
-## 📅 Cronograma e Entregáveis
+## ? Integra��o Futura com Supabase
 
-* **24/08:** Entrega do Backlog Completo e Branding.
-* **04/09:** Entrega das Telas do Front-End.
-* **07/09:** Integração Completa e Testes do Front-End.
-* **14/09 a 24/10:** Primeira Apresentação do Projeto.
-* **14/11 a 25/11:** Apresentação Final e Validação.
-
----
-*UniMove — Mobilidade Colaborativa Acadêmica*
+O arquivo `src/services/supabaseClient.js` e a camada de servi�os em `src/services/` j� foram desenhados para trocar facilmente os m�todos de armazenamento local pelas consultas ass�ncronas do Supabase.
