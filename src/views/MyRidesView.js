@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * My Rides View
  * Displays user rides offered as driver and rides joined as passenger.
  */
@@ -14,10 +14,10 @@ export function renderMyRidesView() {
   if (!user) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">??</div>
-        <h1 style="font-size:1.8rem; margin-bottom:0.75rem;">MINHAS CARONAS</h1>
+        <div style="font-size:2.5rem; margin-bottom:1rem;">ðŸ”’</div>
+        <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">MINHAS CARONAS</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
-          Faça login para visualizar e gerenciar as caronas que você oferece e suas vagas reservadas.
+          FaÃ§a login para visualizar e gerenciar as caronas que vocÃª oferece e suas vagas reservadas.
         </p>
         <a href="#/login" class="btn btn-azul">Entrar agora</a>
       </div>
@@ -31,9 +31,9 @@ export function renderMyRidesView() {
       
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
         <div>
-          <h1 style="font-size:2.2rem; margin-bottom:0.25rem;">MINHAS CARONAS</h1>
+          <h1 class="page-title" style="font-size:2.2rem; margin-bottom:0.25rem;">MINHAS CARONAS</h1>
           <p style="color:var(--text-secondary); font-size:1.15rem;">
-            Acompanhe suas rotas publicadas e viagens que você confirmou.
+            Acompanhe suas rotas publicadas e viagens que vocÃª confirmou.
           </p>
         </div>
 
@@ -43,7 +43,7 @@ export function renderMyRidesView() {
       <!-- Caronas que estou oferecendo (Motorista) -->
       <section>
         <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;">
-          <h2 style="font-size:1.5rem;">CARONAS QUE OFEREÇO</h2>
+          <h2 style="font-family:var(--font-subtitle); font-size:1.4rem;">Caronas que ofereÃ§o</h2>
           <span class="badge badge-azul">${offered.length}</span>
         </div>
 
@@ -52,7 +52,7 @@ export function renderMyRidesView() {
             ? offered.map(r => renderRideCard(r, true)).join('')
             : `
               <div class="card" style="text-align:center; padding:2rem 1rem;">
-                <p style="color:var(--text-secondary); margin-bottom:1rem;">Você não tem nenhuma carona publicada no momento.</p>
+                <p style="color:var(--text-secondary); margin-bottom:1rem;">VocÃª nÃ£o tem nenhuma carona publicada no momento.</p>
                 <a href="#/oferecer" class="btn btn-sm btn-outline">Publicar rota</a>
               </div>
             `
@@ -63,7 +63,7 @@ export function renderMyRidesView() {
       <!-- Caronas que estou participando (Passageiro) -->
       <section>
         <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;">
-          <h2 style="font-size:1.5rem;">VIAGENS CONFIRMADAS</h2>
+          <h2 style="font-family:var(--font-subtitle); font-size:1.4rem;">Viagens confirmadas</h2>
           <span class="badge badge-verde">${booked.length}</span>
         </div>
 
@@ -72,7 +72,7 @@ export function renderMyRidesView() {
             ? booked.map(r => renderRideCard(r, false)).join('')
             : `
               <div class="card" style="text-align:center; padding:2rem 1rem;">
-                <p style="color:var(--text-secondary); margin-bottom:1rem;">Você ainda não solicitou vagas em nenhuma carona.</p>
+                <p style="color:var(--text-secondary); margin-bottom:1rem;">VocÃª ainda nÃ£o solicitou vagas em nenhuma carona.</p>
                 <a href="#/busca" class="btn btn-sm btn-azul">Buscar carona</a>
               </div>
             `
@@ -90,7 +90,7 @@ export function attachMyRidesEvents() {
       const rideId = btn.dataset.id;
       showModal({
         title: 'Excluir carona',
-        message: 'Tem certeza que deseja cancelar e excluir esta carona? Colegas que reservaram serão notificados.',
+        message: 'Tem certeza que deseja cancelar e excluir esta carona? Colegas que reservaram serÃ£o notificados.',
         confirmText: 'Sim, excluir',
         cancelText: 'Voltar',
         isDanger: true,

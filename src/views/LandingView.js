@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * Complete Landing Page View
  * Integrates the full institutional landing page from the repository,
  * upgraded with the official Brand Manual visual identity (colors, fonts, layout).
@@ -14,15 +14,15 @@ export function renderLandingView() {
         <!-- Left Hero Text -->
         <div>
           <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(15,93,237,0.1); color:var(--azul-unimove); padding:0.35rem 0.95rem; border-radius:var(--radius-full); font-family:var(--font-subtitle); font-size:0.9rem; margin-bottom:1.25rem;">
-            ?? Exclusivo para estudantes UNICEPLAC
+            üéì Exclusivo para estudantes UNICEPLAC
           </div>
 
-          <h1 style="font-size:clamp(2.2rem, 5vw, 3.4rem); margin-bottom:1.15rem; color:var(--text-primary); line-height:1.05;">
-            CARONAS SOLID¡RIAS ENTRE ESTUDANTES
+          <h1 class="hero-title" style="font-size:clamp(2.2rem, 5vw, 3.4rem); margin-bottom:1.15rem; color:var(--text-primary); line-height:1.05;">
+            CARONAS SOLID√ÅRIAS ENTRE ESTUDANTES
           </h1>
 
           <p style="font-size:1.25rem; color:var(--text-secondary); margin-bottom:2rem; line-height:1.5;">
-            A rota atÈ a faculdade dividida com quem j· faz o mesmo caminho. Menos carro andando vazio, menos gente esperando Ùnibus lotado e mais amizade no trajeto.
+            A rota at√© a faculdade dividida com quem j√° faz o mesmo caminho. Menos carro andando vazio, menos gente esperando √¥nibus lotado e mais amizade no trajeto.
           </p>
 
           <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2rem;">
@@ -32,32 +32,35 @@ export function renderLandingView() {
           </div>
 
           <div style="display:flex; gap:2rem; font-family:var(--font-subtitle); font-size:0.95rem; color:var(--text-muted); flex-wrap:wrap;">
-            <span>? 100% Universit·rio</span>
-            <span>? E-mail institucional</span>
-            <span>? AvaliaÁ„o m˙tua</span>
+            <span>‚úì 100% Universit√°rio</span>
+            <span>‚úì E-mail institucional</span>
+            <span>‚úì Avalia√ß√£o m√∫tua</span>
           </div>
         </div>
 
-        <!-- Right Hero Visual (Rota em Card) -->
+        <!-- Right Hero Visual (Rota em Card com Logo Oficial) -->
         <div style="position:relative;">
           <div class="card" style="background:var(--preto-unimove); color:var(--bege-unimove); border:2px solid var(--amarelo-unimove); padding:2rem; border-radius:24px; position:relative; overflow:hidden; box-shadow:var(--shadow-lg);">
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-              <span class="badge badge-amarelo">Rota ativa hoje</span>
-              <span style="font-family:var(--font-title); font-size:1.1rem; color:var(--bege-unimove);">07:40</span>
+              <div style="display:flex; align-items:center; gap:0.65rem;">
+                <img src="/logo.png" alt="UniMove Logo" style="width:32px; height:36px; object-fit:contain;">
+                <span class="badge badge-amarelo">Rota ativa hoje</span>
+              </div>
+              <span class="time-tag" style="font-family:var(--font-subtitle); font-size:1.15rem; color:var(--bege-unimove);">07:40</span>
             </div>
 
             <!-- Route Nodes -->
             <div style="display:flex; flex-direction:column; gap:1.25rem; position:relative; margin-bottom:1.5rem; padding-left:1.5rem; border-left:3px dashed var(--azul-unimove);">
               <div>
                 <span style="font-size:0.85rem; color:var(--amarelo-unimove); font-family:var(--font-subtitle);">EMBARQUE</span>
-                <div style="font-family:var(--font-subtitle); font-size:1.2rem; color:#fff;">Setor Bela Vista ∑ ValparaÌso</div>
+                <div style="font-family:var(--font-subtitle); font-size:1.2rem; color:#fff;">Setor Bela Vista ¬∑ Valpara√≠so</div>
                 <div style="font-size:0.9rem; opacity:0.8;">Terminal Jardim ABC</div>
               </div>
 
               <div>
                 <span style="font-size:0.85rem; color:var(--verde-unimove); font-family:var(--font-subtitle);">DESTINO</span>
-                <div style="font-family:var(--font-subtitle); font-size:1.2rem; color:#fff;">Campus UNICEPLAC ∑ Gama</div>
+                <div style="font-family:var(--font-subtitle); font-size:1.2rem; color:#fff;">Campus UNICEPLAC ¬∑ Gama</div>
                 <div style="font-size:0.9rem; opacity:0.8;">Chegada prevista: 08:15</div>
               </div>
             </div>
@@ -68,7 +71,7 @@ export function renderLandingView() {
                 <div style="width:36px; height:36px; border-radius:50%; background-color:var(--azul-unimove); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle);">RA</div>
                 <div>
                   <div style="font-family:var(--font-subtitle); font-size:0.95rem; color:#fff;">Rhian Almeida</div>
-                  <div style="font-size:0.8rem; opacity:0.75;">AdministraÁ„o ∑ 4∫ perÌodo</div>
+                  <div style="font-size:0.8rem; opacity:0.75;">Administra√ß√£o ¬∑ 4¬∫ per√≠odo</div>
                 </div>
               </div>
               <span class="badge badge-verde">2 vagas</span>
@@ -82,83 +85,83 @@ export function renderLandingView() {
       <!-- MARQUEE STRIP -->
       <div class="marquee-strip">
         <div class="marquee-content">
-          <span>100% SEGURO & UNIVERSIT¡RIO</span>
-          <span>∑</span>
+          <span>100% SEGURO & UNIVERSIT√ÅRIO</span>
+          <span>¬∑</span>
           <span>EXCLUSIVO UNICEPLAC</span>
-          <span>∑</span>
-          <span>MENOS TR¬NSITO NO GAMA</span>
-          <span>∑</span>
-          <span>DIVIDA O COMBUSTÕVEL</span>
-          <span>∑</span>
-          <span>EMBARQUE COM CONFIAN«A</span>
-          <span>∑</span>
-          <span>100% SEGURO & UNIVERSIT¡RIO</span>
-          <span>∑</span>
+          <span>¬∑</span>
+          <span>MENOS TR√ÇNSITO NO GAMA</span>
+          <span>¬∑</span>
+          <span>DIVIDA O COMBUST√çVEL</span>
+          <span>¬∑</span>
+          <span>EMBARQUE COM CONFIAN√áA</span>
+          <span>¬∑</span>
+          <span>100% SEGURO & UNIVERSIT√ÅRIO</span>
+          <span>¬∑</span>
           <span>EXCLUSIVO UNICEPLAC</span>
-          <span>∑</span>
-          <span>MENOS TR¬NSITO NO GAMA</span>
+          <span>¬∑</span>
+          <span>MENOS TR√ÇNSITO NO GAMA</span>
         </div>
       </div>
 
-      <!-- KEY STATS (Manual p·g 3) -->
+      <!-- KEY STATS (Manual p√°g 3) -->
       <section style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem;">
         <div class="card" style="background-color:var(--preto-unimove); color:var(--bege-unimove); text-align:center; padding:2rem 1.5rem;">
-          <div style="font-family:var(--font-title); font-size:2.8rem; color:var(--amarelo-unimove); margin-bottom:0.5rem;">1.240+</div>
-          <div style="font-family:var(--font-subtitle); font-size:1.15rem;">caronas rodadas</div>
+          <div class="stat-number" style="font-family:var(--font-subtitle); font-size:2.8rem; color:var(--amarelo-unimove); margin-bottom:0.5rem;">1.240+</div>
+          <div class="stat-title" style="font-family:var(--font-subtitle); font-size:1.15rem;">caronas rodadas</div>
         </div>
 
         <div class="card" style="background-color:var(--azul-unimove); color:#FFFFFF; text-align:center; padding:2rem 1.5rem;">
-          <div style="font-family:var(--font-title); font-size:2.8rem; color:var(--bege-unimove); margin-bottom:0.5rem;">R$ 38K</div>
-          <div style="font-family:var(--font-subtitle); font-size:1.15rem;">economizados pela comunidade</div>
+          <div class="stat-number" style="font-family:var(--font-subtitle); font-size:2.8rem; color:var(--bege-unimove); margin-bottom:0.5rem;">R$ 38K</div>
+          <div class="stat-title" style="font-family:var(--font-subtitle); font-size:1.15rem;">economizados pela comunidade</div>
         </div>
 
         <div class="card" style="background-color:var(--verde-unimove); color:var(--preto-unimove); text-align:center; padding:2rem 1.5rem;">
-          <div style="font-family:var(--font-title); font-size:2.8rem; color:var(--preto-unimove); margin-bottom:0.5rem;">4,8 ?</div>
-          <div style="font-family:var(--font-subtitle); font-size:1.15rem;">avaliaÁ„o mÈdia das caronas</div>
+          <div class="stat-number" style="font-family:var(--font-subtitle); font-size:2.8rem; color:var(--preto-unimove); margin-bottom:0.5rem;">4,8 ‚òÖ</div>
+          <div class="stat-title" style="font-family:var(--font-subtitle); font-size:1.15rem;">avalia√ß√£o m√©dia das caronas</div>
         </div>
       </section>
 
-      <!-- COMO FUNCIONA (Manual p·g 3) -->
+      <!-- COMO FUNCIONA (Manual p√°g 3) -->
       <section id="como-funciona" class="card" style="padding:2.5rem 2rem;">
         <div style="text-align:center; max-width:650px; margin:0 auto 2.5rem;">
           <span style="font-family:var(--font-subtitle); font-size:0.95rem; color:var(--azul-unimove);">PRATICIDADE</span>
-          <h2 style="font-size:2rem; margin-top:0.35rem;">COMO FUNCIONA, EM TR S PARADAS</h2>
+          <h2 class="section-title" style="font-size:2rem; margin-top:0.35rem;">Como funciona, em tr√™s paradas</h2>
           <p style="color:var(--text-secondary); font-size:1.15rem;">Simples de usar, barato de manter e seguro de confiar.</p>
         </div>
 
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:2rem;">
           <div class="card" style="background-color:var(--bg-primary); border-top:4px solid var(--azul-unimove);">
-            <div style="width:44px; height:44px; border-radius:50%; background-color:var(--azul-unimove); color:#FFF; display:flex; align-items:center; justify-content:center; font-family:var(--font-title); font-size:1.3rem; margin-bottom:1rem;">1</div>
+            <div style="width:44px; height:44px; border-radius:50%; background-color:var(--azul-unimove); color:#FFF; display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:1rem;">1</div>
             <h3 style="font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:0.5rem;">1. Conte sua rota</h3>
-            <p style="color:var(--text-secondary); font-size:1.05rem;">Cadastre seu ponto de saÌda, hor·rio das aulas e destino no campus UNICEPLAC.</p>
+            <p style="color:var(--text-secondary); font-size:1.05rem;">Cadastre seu ponto de sa√≠da, hor√°rio das aulas e destino no campus UNICEPLAC.</p>
           </div>
 
           <div class="card" style="background-color:var(--bg-primary); border-top:4px solid var(--amarelo-unimove);">
-            <div style="width:44px; height:44px; border-radius:50%; background-color:var(--amarelo-unimove); color:var(--preto-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-title); font-size:1.3rem; margin-bottom:1rem;">2</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:0.5rem;">2. Encontre ou ofereÁa</h3>
+            <div style="width:44px; height:44px; border-radius:50%; background-color:var(--amarelo-unimove); color:var(--preto-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:1rem;">2</div>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:0.5rem;">2. Encontre ou ofere√ßa</h3>
             <p style="color:var(--text-secondary); font-size:1.05rem;">Descubra colegas que fazem o mesmo caminho ou abra as vagas livres do seu carro.</p>
           </div>
 
           <div class="card" style="background-color:var(--bg-primary); border-top:4px solid var(--verde-unimove);">
-            <div style="width:44px; height:44px; border-radius:50%; background-color:var(--verde-unimove); color:var(--preto-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-title); font-size:1.3rem; margin-bottom:1rem;">3</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:0.5rem;">3. Embarque com confianÁa</h3>
-            <p style="color:var(--text-secondary); font-size:1.05rem;">Combine os detalhes no chat do grupo com alunos verificados da prÛpria universidade.</p>
+            <div style="width:44px; height:44px; border-radius:50%; background-color:var(--verde-unimove); color:var(--preto-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:1rem;">3</div>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.3rem; margin-bottom:0.5rem;">3. Embarque com confian√ßa</h3>
+            <p style="color:var(--text-secondary); font-size:1.05rem;">Combine os detalhes no chat do grupo com alunos verificados da pr√≥pria universidade.</p>
           </div>
         </div>
       </section>
 
-      <!-- CALCULADORA DE ECONOMIA (Original Landing Page) -->
+      <!-- CALCULADORA DE ECONOMIA -->
       <section id="calculadora" class="card" style="padding:2.5rem 2rem; border-left:6px solid var(--verde-unimove);">
         <div style="max-width:680px; margin:0 auto; text-align:center;">
-          <span class="badge badge-verde" style="margin-bottom:0.75rem;">?? SimulaÁ„o Financeira</span>
-          <h2 style="font-size:2rem; margin-bottom:0.5rem;">CALCULADORA DE ECONOMIA</h2>
+          <span class="badge badge-verde" style="margin-bottom:0.75rem;">üí∞ Simula√ß√£o Financeira</span>
+          <h2 class="section-title" style="font-size:2rem; margin-bottom:0.5rem;">Calculadora de Economia</h2>
           <p style="color:var(--text-secondary); font-size:1.15rem; margin-bottom:2rem;">
-            Veja quanto vocÍ pode economizar por semestre dividindo caronas no UniMove em vez de usar transporte individual ou Ùnibus caros.
+            Veja quanto voc√™ pode economizar por semestre dividindo caronas no UniMove em vez de usar transporte individual ou √¥nibus caros.
           </p>
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1.25rem; text-align:left; margin-bottom:2rem;">
             <div>
-              <label class="form-label" for="calcGasto">Gasto di·rio estimado (R$)</label>
+              <label class="form-label" for="calcGasto">Gasto di√°rio estimado (R$)</label>
               <input type="number" id="calcGasto" class="form-input" value="18.00" min="1" step="1">
             </div>
 
@@ -175,51 +178,51 @@ export function renderLandingView() {
 
           <div class="card" style="background:var(--preto-unimove); color:var(--bege-unimove); padding:1.5rem; text-align:center; border:2px solid var(--verde-unimove); margin-bottom:1.5rem;">
             <div style="font-size:1.05rem; opacity:0.85; margin-bottom:0.35rem;">Economia total estimada no semestre:</div>
-            <div id="calcResultado" style="font-family:var(--font-title); font-size:3rem; color:var(--verde-unimove);">
+            <div id="calcResultado" style="font-family:var(--font-subtitle); font-size:3rem; color:var(--verde-unimove);">
               R$ 1.620,00
             </div>
           </div>
 
-          <a href="#/cadastro" class="btn btn-lg btn-verde">ComeÁar a economizar agora</a>
+          <a href="#/cadastro" class="btn btn-lg btn-verde">Come√ßar a economizar agora</a>
         </div>
       </section>
 
-      <!-- 5 SENTIMENTOS DA MARCA (Manual p·g 4) -->
+      <!-- 5 SENTIMENTOS DA MARCA (Manual p√°g 4) -->
       <section id="vantagens">
         <div style="text-align:center; margin-bottom:2.25rem;">
-          <h2 style="font-size:2rem; margin-bottom:0.5rem;">CINCO SENTIMENTOS QUE GUIAM O UNIMOVE</h2>
-          <p style="color:var(--text-secondary); font-size:1.15rem;">Tudo construÌdo para reforÁar seguranÁa e conex„o entre alunos.</p>
+          <h2 class="section-title" style="font-size:2rem; margin-bottom:0.5rem;">Cinco sentimentos que guiam o UniMove</h2>
+          <p style="color:var(--text-secondary); font-size:1.15rem;">Tudo constru√≠do para refor√ßar seguran√ßa e conex√£o entre alunos.</p>
         </div>
 
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
           <div class="card" style="border-top:4px solid var(--azul-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">???</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">SeguranÁa</h3>
-            <p style="font-size:1rem; color:var(--text-secondary);">Perfil universit·rio verificado e avaliaÁ„o em dois sentidos.</p>
+            <div style="font-size:2rem; margin-bottom:0.5rem;">üõ°Ô∏è</div>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Seguran√ßa</h3>
+            <p style="font-size:1rem; color:var(--text-secondary);">Perfil universit√°rio verificado e avalia√ß√£o em dois sentidos.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--verde-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">??</div>
+            <div style="font-size:2rem; margin-bottom:0.5rem;">üí∏</div>
             <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Economia</h3>
-            <p style="font-size:1rem; color:var(--text-secondary);">Dividir combustÌvel custa menos que Ùnibus ou corridas por app.</p>
+            <p style="font-size:1rem; color:var(--text-secondary);">Dividir combust√≠vel custa menos que √¥nibus ou corridas por app.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--amarelo-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">??</div>
+            <div style="font-size:2rem; margin-bottom:0.5rem;">ü§ù</div>
             <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Amizade</h3>
-            <p style="font-size:1rem; color:var(--text-secondary);">Colegas da mesma universidade compartilhando a rotina di·ria.</p>
+            <p style="font-size:1rem; color:var(--text-secondary);">Colegas da mesma universidade compartilhando a rotina di√°ria.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--azul-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">?</div>
+            <div style="font-size:2rem; margin-bottom:0.5rem;">‚ö°</div>
             <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Praticidade</h3>
             <p style="font-size:1rem; color:var(--text-secondary);">Cadastrar a rota, encontrar e embarcar leva minutos.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--verde-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">??</div>
+            <div style="font-size:2rem; margin-bottom:0.5rem;">üß≠</div>
             <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Liberdade</h3>
-            <p style="font-size:1rem; color:var(--text-secondary);">Cada estudante escolhe sua rota, hor·rio e com quem viaja.</p>
+            <p style="font-size:1rem; color:var(--text-secondary);">Cada estudante escolhe sua rota, hor√°rio e com quem viaja.</p>
           </div>
         </div>
       </section>
@@ -227,39 +230,39 @@ export function renderLandingView() {
       <!-- FAQ ACCORDION -->
       <section id="faq" class="card" style="padding:2.5rem 2rem;">
         <div style="text-align:center; max-width:650px; margin:0 auto 2rem;">
-          <span style="font-family:var(--font-subtitle); font-size:0.95rem; color:var(--azul-unimove);">TIRA-D⁄VIDAS</span>
-          <h2 style="font-size:2rem; margin-top:0.35rem;">PERGUNTAS FREQUENTES</h2>
-          <p style="color:var(--text-secondary); font-size:1.15rem;">Entenda como o UniMove funciona na pr·tica.</p>
+          <span style="font-family:var(--font-subtitle); font-size:0.95rem; color:var(--azul-unimove);">TIRA-D√öVIDAS</span>
+          <h2 class="section-title" style="font-size:2rem; margin-top:0.35rem;">Perguntas Frequentes</h2>
+          <p style="color:var(--text-secondary); font-size:1.15rem;">Entenda como o UniMove funciona na pr√°tica.</p>
         </div>
 
         <div class="faq-list">
           <div class="faq-item">
             <button type="button" class="faq-q">
-              <span>O UniMove È realmente exclusivo para estudantes da Uniceplac?</span>
+              <span>O UniMove √© realmente exclusivo para estudantes da Uniceplac?</span>
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>Sim! Para se cadastrar e ter acesso ‡s caronas, È obrigatÛrio possuir e validar um e-mail institucional (@uniceplac.edu.br), garantindo que todos os participantes sejam alunos da instituiÁ„o.</p>
+              <p>Sim! Para se cadastrar e ter acesso √†s caronas, √© obrigat√≥rio possuir e validar um e-mail institucional (@uniceplac.edu.br), garantindo que todos os participantes sejam alunos da institui√ß√£o.</p>
             </div>
           </div>
 
           <div class="faq-item">
             <button type="button" class="faq-q">
-              <span>… cobrado algum valor pelas caronas?</span>
+              <span>√â cobrado algum valor pelas caronas?</span>
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>O UniMove È uma plataforma solid·ria e colaborativa. Os motoristas podem definir apenas uma ajuda de custo simbÛlica volunt·ria para rateio de combustÌvel, sem qualquer cobranÁa comercial.</p>
+              <p>O UniMove √© uma plataforma solid√°ria e colaborativa. Os motoristas podem definir apenas uma ajuda de custo simb√≥lica volunt√°ria para rateio de combust√≠vel, sem qualquer cobran√ßa comercial.</p>
             </div>
           </div>
 
           <div class="faq-item">
             <button type="button" class="faq-q">
-              <span>Como È garantida a seguranÁa dos trajetos?</span>
+              <span>Como √© garantida a seguran√ßa dos trajetos?</span>
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>AlÈm da validaÁ„o acadÍmica obrigatÛria, todos os motoristas e passageiros possuem histÛrico com avaliaÁ„o por estrelas, detalhes de curso/semestre e chat do grupo antes do embarque.</p>
+              <p>Al√©m da valida√ß√£o acad√™mica obrigat√≥ria, todos os motoristas e passageiros possuem hist√≥rico com avalia√ß√£o por estrelas, detalhes de curso/semestre e chat do grupo antes do embarque.</p>
             </div>
           </div>
 
@@ -269,7 +272,7 @@ export function renderLandingView() {
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>Sim! No seu perfil vocÍ pode alternar livremente entre oferecer carona quando estiver de carro ou pedir carona nos dias em que precisar.</p>
+              <p>Sim! No seu perfil voc√™ pode alternar livremente entre oferecer carona quando estiver de carro ou pedir carona nos dias em que precisar.</p>
             </div>
           </div>
         </div>
@@ -277,29 +280,17 @@ export function renderLandingView() {
 
       <!-- FINAL CTA -->
       <section class="card" style="background:var(--preto-unimove); color:var(--bege-unimove); text-align:center; padding:3.5rem 1.5rem; border:2px solid var(--azul-unimove);">
-        <h2 style="font-size:clamp(2rem, 5vw, 3rem); margin-bottom:1rem; color:#fff;">
-          SUA ROTA, DIVIDIDA COM CONFIAN«A
+        <h2 style="font-family:var(--font-subtitle); font-size:clamp(1.8rem, 4vw, 2.5rem); margin-bottom:1rem; color:#fff;">
+          Sua rota, dividida com confian√ßa
         </h2>
         <p style="color:var(--bege-unimove); font-size:1.25rem; max-width:620px; margin:0 auto 2rem; opacity:0.9;">
           Cadastre-se hoje mesmo e comece a rodar junto com seus colegas de faculdade.
         </p>
         <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
           <a href="#/cadastro" class="btn btn-lg btn-amarelo">Criar minha conta gratuita</a>
-          <a href="#/login" class="btn btn-lg btn-azul">J· tenho conta (Entrar)</a>
+          <a href="#/login" class="btn btn-lg btn-azul">J√° tenho conta (Entrar)</a>
         </div>
       </section>
-
-      <!-- MODAIS DE TERMOS E PRIVACIDADE -->
-      <div class="modal-overlay" id="landingModalOverlay">
-        <div class="modal-card">
-          <h3 id="landingModalTitle" style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:1rem;">Termos de Uso</h3>
-          <div id="landingModalContent" style="font-size:1.05rem; line-height:1.6; color:var(--text-secondary); margin-bottom:1.5rem; max-height:60vh; overflow-y:auto;">
-          </div>
-          <div style="display:flex; justify-content:flex-end;">
-            <button type="button" class="btn btn-sm btn-azul" id="landingModalClose">Fechar</button>
-          </div>
-        </div>
-      </div>
 
     </div>
   `;

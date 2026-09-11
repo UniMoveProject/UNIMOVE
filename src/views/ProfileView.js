@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * Profile View
  * Student profile, vehicle data, mobility preferences and logout.
  */
@@ -12,10 +12,10 @@ export function renderProfileView() {
   if (!user) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">??</div>
-        <h1 style="font-size:1.8rem; margin-bottom:0.75rem;">MEU PERFIL</h1>
+        <div style="font-size:2.5rem; margin-bottom:1rem;">üîí</div>
+        <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">MEU PERFIL</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
-          FaÁa login para ver e atualizar seus dados pessoais e de mobilidade.
+          Fa√ßa login para ver e atualizar seus dados pessoais e de mobilidade.
         </p>
         <a href="#/login" class="btn btn-azul">Entrar agora</a>
       </div>
@@ -33,14 +33,14 @@ export function renderProfileView() {
       <!-- Profile Header Card -->
       <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.25rem;">
         <div style="display:flex; align-items:center; gap:1.25rem;">
-          <div style="width:72px; height:72px; border-radius:50%; background-image:url('${user.avatar}'); background-size:cover; background-position:center; border:3px solid var(--azul-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-title); font-size:1.5rem; color:#fff;">
+          <div style="width:72px; height:72px; border-radius:50%; background-image:url('${user.avatar}'); background-size:cover; background-position:center; border:3px solid var(--azul-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:1.5rem; color:#fff;">
             ${!user.avatar ? user.nome.slice(0, 2).toUpperCase() : ''}
           </div>
           <div>
-            <h1 style="font-size:1.8rem; margin-bottom:0.2rem;">${user.nome}</h1>
-            <p style="color:var(--text-secondary); font-size:1.05rem;">${user.curso} ∑ ${user.periodo}</p>
+            <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.2rem;">${user.nome}</h1>
+            <p style="color:var(--text-secondary); font-size:1.05rem;">${user.curso} ¬∑ ${user.periodo}</p>
             <div style="display:flex; gap:0.5rem; margin-top:0.35rem;">
-              <span class="badge badge-verde">? ${user.avaliacoes || '5.0'} (${user.totalCaronas || 0} caronas)</span>
+              <span class="badge badge-verde">‚≠ê ${user.avaliacoes || '5.0'} (${user.totalCaronas || 0} caronas)</span>
               <span class="badge badge-soft">${user.campus || 'Campus UNICEPLAC'}</span>
             </div>
           </div>
@@ -53,7 +53,7 @@ export function renderProfileView() {
 
       <!-- Profile Edit Form -->
       <div class="card" style="padding:2rem;">
-        <h2 style="font-size:1.5rem; margin-bottom:1.25rem;">DADOS CADASTRAIS & PREFER NCIAS</h2>
+        <h2 style="font-family:var(--font-subtitle); font-size:1.4rem; margin-bottom:1.25rem;">Dados cadastrais & prefer√™ncias</h2>
 
         <form id="profileForm" style="display:flex; flex-direction:column; gap:1.25rem;">
           
@@ -81,33 +81,33 @@ export function renderProfileView() {
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="profilePeriodo">PerÌodo / Semestre</label>
+              <label class="form-label" for="profilePeriodo">Per√≠odo / Semestre</label>
               <input type="text" id="profilePeriodo" class="form-input" value="${user.periodo || ''}">
             </div>
           </div>
 
           <!-- Mobility Roles -->
           <div class="form-group">
-            <label class="form-label">Como vocÍ se move no UniMove?</label>
+            <label class="form-label">Como voc√™ se move no UniMove?</label>
             <div class="pill-selector">
               <label class="pill-option">
                 <input type="checkbox" name="profileRole" value="motorista" ${isMotorista ? 'checked' : ''}>
-                <span class="pill-label">?? Motorista</span>
+                <span class="pill-label">üöó Motorista</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="profileRole" value="passageiro" ${isPassageiro ? 'checked' : ''}>
-                <span class="pill-label">?? Passageiro</span>
+                <span class="pill-label">üéí Passageiro</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="profileRole" value="ciclista" ${isCiclista ? 'checked' : ''}>
-                <span class="pill-label">?? Ciclista</span>
+                <span class="pill-label">üö≤ Ciclista</span>
               </label>
             </div>
           </div>
 
           <!-- Vehicle Information -->
           <div style="background-color:var(--bg-primary); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
-            <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin-bottom:0.75rem;">InformaÁıes do VeÌculo</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin-bottom:0.75rem;">Informa√ß√µes do Ve√≠culo</h3>
             
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
               <div>
@@ -179,7 +179,7 @@ export function attachProfileEvents() {
       updateProfile(updated);
 
       showModal({
-        title: '? Perfil atualizado',
+        title: '‚úì Perfil atualizado',
         message: 'Seus dados foram atualizados com sucesso.',
         confirmText: 'Ok',
         cancelText: '',

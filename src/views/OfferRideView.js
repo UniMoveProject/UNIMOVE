@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * Offer Ride View
  * Form for registered students to publish a new ride route.
  */
@@ -13,10 +13,10 @@ export function renderOfferRideView() {
   if (!user) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">??</div>
-        <h1 style="font-size:1.8rem; margin-bottom:0.75rem;">ACESSO AO UNIMOVE</h1>
+        <div style="font-size:2.5rem; margin-bottom:1rem;">üîí</div>
+        <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">ACESSO AO UNIMOVE</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
-          VocÍ precisa estar logado com seu perfil universit·rio para abrir vagas e oferecer caronas.
+          Voc√™ precisa estar logado com seu perfil universit√°rio para abrir vagas e oferecer caronas.
         </p>
         <a href="#/login" class="btn btn-azul">Entrar na minha conta</a>
       </div>
@@ -30,8 +30,8 @@ export function renderOfferRideView() {
       <div class="card" style="padding:2.25rem;">
         
         <div style="margin-bottom:1.75rem;">
-          <span style="font-family:var(--font-subtitle); font-size:0.9rem; color:var(--azul-unimove);">MOTORISTA SOLID¡RIO</span>
-          <h1 style="font-size:2rem; margin:0.35rem 0;">OFERECER UMA CARONA</h1>
+          <span style="font-family:var(--font-subtitle); font-size:0.9rem; color:var(--azul-unimove);">MOTORISTA SOLID√ÅRIO</span>
+          <h1 class="page-title" style="font-size:2rem; margin:0.35rem 0;">OFERECER UMA CARONA</h1>
           <p style="color:var(--text-secondary); font-size:1.15rem;">
             Abra as vagas do seu carro para colegas da faculdade e divida os custos da rota.
           </p>
@@ -42,7 +42,7 @@ export function renderOfferRideView() {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
             <div class="form-group">
               <label class="form-label" for="rideOrigem">Ponto de partida / Bairro *</label>
-              <input type="text" id="rideOrigem" class="form-input" placeholder="Ex: Setor Bela Vista - ValparaÌso" required>
+              <input type="text" id="rideOrigem" class="form-input" placeholder="Ex: Setor Bela Vista - Valpara√≠so" required>
             </div>
 
             <div class="form-group">
@@ -65,17 +65,17 @@ export function renderOfferRideView() {
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1.25rem;">
             <div class="form-group">
-              <label class="form-label" for="rideHorarioSaida">Hor·rio de SaÌda *</label>
+              <label class="form-label" for="rideHorarioSaida">Hor√°rio de Sa√≠da *</label>
               <input type="time" id="rideHorarioSaida" class="form-input" required value="07:40">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="rideHorarioChegada">Previs„o de Chegada</label>
+              <label class="form-label" for="rideHorarioChegada">Previs√£o de Chegada</label>
               <input type="time" id="rideHorarioChegada" class="form-input" value="08:15">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="rideVagas">Vagas disponÌveis *</label>
+              <label class="form-label" for="rideVagas">Vagas dispon√≠veis *</label>
               <input type="number" id="rideVagas" class="form-input" min="1" max="6" value="3" required>
             </div>
 
@@ -86,7 +86,7 @@ export function renderOfferRideView() {
           </div>
 
           <div style="background-color:var(--bg-primary); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
-            <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin-bottom:0.75rem;">Dados do VeÌculo</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin-bottom:0.75rem;">Dados do Ve√≠culo</h3>
             
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
               <div>
@@ -141,10 +141,10 @@ export function attachOfferRideEvents() {
     const res = offerRide(rideData);
     if (res.success) {
       showModal({
-        title: '?? Carona publicada com sucesso!',
-        message: 'Sua rota j· est· disponÌvel para seus colegas da faculdade encontrarem e combinarem o trajeto.',
+        title: 'üöó Carona publicada com sucesso!',
+        message: 'Sua rota j√° est√° dispon√≠vel para seus colegas da faculdade encontrarem e combinarem o trajeto.',
         confirmText: 'Ver minhas caronas',
-        cancelText: 'P·gina inicial',
+        cancelText: 'P√°gina inicial',
         onConfirm: () => {
           window.location.hash = '#/minhas-caronas';
         }

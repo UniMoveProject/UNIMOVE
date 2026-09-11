@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * Chat View
  * Real-time ride group conversation matching the Brand Manual guidelines.
  */
@@ -15,10 +15,10 @@ export function renderChatView(rideId) {
   if (!ride) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">??</div>
-        <h1 style="font-size:1.8rem; margin-bottom:0.75rem;">CHAT N√O ENCONTRADO</h1>
+        <div style="font-size:2.5rem; margin-bottom:1rem;">üîç</div>
+        <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">CHAT N√ÉO ENCONTRADO</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
-          Esta conversa n„o est· disponÌvel ou a carona foi encerrada.
+          Esta conversa n√£o est√° dispon√≠vel ou a carona foi encerrada.
         </p>
         <a href="#/busca" class="btn btn-azul">Ver caronas ativas</a>
       </div>
@@ -33,14 +33,14 @@ export function renderChatView(rideId) {
       <!-- Top Ride Summary Banner -->
       <div class="card" style="margin-bottom:1rem; padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
         <div>
-          <div style="font-family:var(--font-title); font-size:0.95rem; color:var(--azul-unimove);">
-            CHAT DA CARONA ∑ ${ride.horarioSaida}
+          <div style="font-family:var(--font-subtitle); font-size:0.95rem; color:var(--azul-unimove);">
+            CHAT DA CARONA ¬∑ ${ride.horarioSaida}
           </div>
-          <div style="font-family:var(--font-subtitle); font-size:1.1rem; color:var(--text-primary);">
-            ${ride.origem} ? ${ride.destino}
+          <div style="font-family:var(--font-subtitle); font-size:1.15rem; color:var(--text-primary);">
+            ${ride.origem} ‚ûî ${ride.destino}
           </div>
-          <div style="font-size:0.9rem; color:var(--text-muted);">
-            Motorista: <strong>${ride.motoristaNome}</strong> ∑ ${ride.veiculo} (${ride.placa})
+          <div style="font-size:0.92rem; color:var(--text-muted);">
+            Motorista: <strong>${ride.motoristaNome}</strong> ¬∑ ${ride.veiculo} (${ride.placa})
           </div>
         </div>
 
@@ -70,13 +70,13 @@ export function renderChatView(rideId) {
                 <div style="font-family:var(--font-subtitle); font-size:0.85rem; opacity:0.85; margin-bottom:0.2rem;">
                   ${msg.senderNome} (${msg.senderRole})
                 </div>
-                <div>${msg.text}</div>
+                <div class="chat-msg-text">${msg.text}</div>
                 <span class="chat-time">${msg.time}</span>
               </div>
             </div>
           `).join('') : `
             <div style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">
-              <div style="font-size:2rem; margin-bottom:0.5rem;">??</div>
+              <div style="font-size:2rem; margin-bottom:0.5rem;">üí¨</div>
               <p>Nenhuma mensagem enviada ainda.</p>
               <p style="font-size:0.95rem;">Envie uma mensagem para combinar o ponto de encontro com o grupo!</p>
             </div>
@@ -114,14 +114,14 @@ export function attachChatEvents() {
       const rating = av.dataset.rating;
 
       showModal({
-        title: `?? ${name}`,
+        title: `üë§ ${name}`,
         message: `
           <div style="display:flex; flex-direction:column; gap:0.4rem;">
-            <div><strong>FunÁ„o:</strong> ${role}</div>
+            <div><strong>Fun√ß√£o:</strong> ${role}</div>
             <div><strong>Curso:</strong> ${course}</div>
-            <div><strong>AvaliaÁ„o na comunidade:</strong> ? ${rating}</div>
-            <div style="margin-top:0.5rem; font-size:0.9rem; color:var(--verde-unimove); font-weight:bold;">
-              ? Aluno verificado na instituiÁ„o
+            <div><strong>Avalia√ß√£o na comunidade:</strong> ‚≠ê ${rating}</div>
+            <div style="margin-top:0.5rem; font-size:0.95rem; color:var(--verde-unimove); font-weight:bold;">
+              ‚úì Aluno verificado na institui√ß√£o
             </div>
           </div>
         `,
@@ -163,9 +163,9 @@ export function attachChatEvents() {
 
             <div class="chat-bubble">
               <div style="font-family:var(--font-subtitle); font-size:0.85rem; opacity:0.85; margin-bottom:0.2rem;">
-                VocÍ (${msg.senderRole})
+                Voc√™ (${msg.senderRole})
               </div>
-              <div>${msg.text}</div>
+              <div class="chat-msg-text">${msg.text}</div>
               <span class="chat-time">${msg.time}</span>
             </div>
           </div>

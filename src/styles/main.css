@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    UNIMOVE - MASTER STYLESHEET (Vite SPA)
    Baseado no Manual de Marca UniMove v1 (2026)
    ========================================================================== */
@@ -7,27 +7,31 @@
 
 /* --- Design Tokens --- */
 :root {
-  /* Cores Oficiais da Marca */
+  /* Cores Oficiais da Marca (Manual pág 5) */
   --preto-unimove: #131313;
   --amarelo-unimove: #F8D410;
   --azul-unimove: #0F5DED;
   --verde-unimove: #86FA01;
   --bege-unimove: #FFF4CC;
 
-  /* Fontes */
-  --font-title: 'Faster One', cursive, sans-serif;
+  /* Fontes Oficiais (Manual pág 7):
+     - Títulos: Faster One (sempre em caixa alta, transmite velocidade)
+     - Subtítulos e Botões: Madimi One (redonda e amigável)
+     - Textos: Patrick Hand SC (traço à mão acolhedor)
+  */
+  --font-title: 'Faster One', 'Madimi One', cursive, sans-serif;
   --font-subtitle: 'Madimi One', sans-serif;
-  --font-body: 'Patrick Hand SC', cursive, sans-serif;
+  --font-body: 'Patrick Hand SC', 'Patrick Hand', cursive, sans-serif;
 
-  /* Modo Claro (Padr�o) */
+  /* Modo Claro (Padrão - Manual pág 10) */
   --bg-primary: var(--bege-unimove);
   --bg-secondary: #FFFFFF;
   --bg-card: #FFFFFF;
   --bg-card-hover: #FFFDF5;
   --bg-input: #FFFFFF;
   --text-primary: var(--preto-unimove);
-  --text-secondary: rgba(19, 19, 19, 0.76);
-  --text-muted: rgba(19, 19, 19, 0.55);
+  --text-secondary: rgba(19, 19, 19, 0.78);
+  --text-muted: rgba(19, 19, 19, 0.58);
   --border-color: rgba(19, 19, 19, 0.12);
   --border-focus: var(--azul-unimove);
   --shadow-sm: 0 2px 8px rgba(19, 19, 19, 0.06);
@@ -37,10 +41,10 @@
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-full: 9999px;
-  --header-bg: rgba(255, 244, 204, 0.94);
+  --header-bg: rgba(255, 244, 204, 0.95);
 }
 
-/* Modo Escuro (Op��o) */
+/* Modo Escuro (Opção - Manual pág 10) */
 [data-theme="dark"] {
   --bg-primary: var(--preto-unimove);
   --bg-secondary: #1C1C1C;
@@ -48,14 +52,14 @@
   --bg-card-hover: #262626;
   --bg-input: #272727;
   --text-primary: var(--bege-unimove);
-  --text-secondary: rgba(255, 244, 204, 0.78);
-  --text-muted: rgba(255, 244, 204, 0.5);
+  --text-secondary: rgba(255, 244, 204, 0.82);
+  --text-muted: rgba(255, 244, 204, 0.55);
   --border-color: rgba(255, 244, 204, 0.15);
   --border-focus: var(--amarelo-unimove);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
   --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.7);
-  --header-bg: rgba(19, 19, 19, 0.94);
+  --header-bg: rgba(19, 19, 19, 0.95);
 }
 
 /* --- Reset & Global --- */
@@ -84,34 +88,45 @@ body {
   overflow-x: hidden;
 }
 
-/* Marca d�gua sutil de fundo (Manual p�g 6) */
+/* Marca dágua oficial de fundo (Manual pág 6) */
 .brand-watermark-bg {
   position: fixed;
-  right: -5vw;
-  bottom: -5vw;
-  width: 45vw;
-  max-width: 500px;
+  right: -6vw;
+  bottom: -6vw;
+  width: 40vw;
+  max-width: 450px;
   opacity: 0.04;
   pointer-events: none;
   z-index: 0;
 }
 
-/* --- Tipografia --- */
-h1, h2, h3, .font-title {
+[data-theme="dark"] .brand-watermark-bg {
+  opacity: 0.06;
+}
+
+/* --- Tipografia Estrita (Regra 4: Título vs Subtítulo vs Texto) --- */
+
+/* TÍTULOS PRINCIPAIS: Faster One (sempre em caixa alta) */
+h1, .font-title, .brand-title, .page-title, .hero-title {
   font-family: var(--font-title);
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
   text-transform: uppercase;
   line-height: 1.05;
   font-weight: 400;
 }
 
-h4, h5, h6, .font-subtitle {
+/* SUBTÍTULOS E DESTAQUES: Madimi One (redonda e jovial) */
+h2, h3, h4, h5, h6, 
+.font-subtitle, .section-title, .card-title, .stat-title,
+.btn, .badge, .form-label, .nav-link, .pill-label, .price-tag, .time-tag {
   font-family: var(--font-subtitle);
   font-weight: 400;
   line-height: 1.25;
+  text-transform: none;
 }
 
-p, span, input, textarea, select, label {
+/* TEXTOS E PARÁGRAFOS: Patrick Hand SC (traço à mão acolhedor) */
+p, span, input, textarea, select, label, .form-hint, .faq-a, .chat-msg-text {
   font-family: var(--font-body);
 }
 
@@ -145,7 +160,7 @@ a {
   background-color: var(--header-bg);
   backdrop-filter: blur(10px);
   border-bottom: 1.5px solid var(--border-color);
-  transition: border-color 0.25s ease;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .header-inner {
@@ -161,35 +176,32 @@ a {
 .brand-logo-link {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
-.brand-shield-icon {
-  width: 34px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.brand-shield-img {
+  width: 36px;
+  height: 42px;
+  object-fit: contain;
+  display: block;
 }
 
 .brand-title {
-  font-family: var(--font-title);
-  font-size: 1.65rem;
-  letter-spacing: -0.06em;
+  font-size: 1.7rem;
+  letter-spacing: -0.05em;
   color: var(--text-primary);
 }
 
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .nav-link {
-  font-family: var(--font-subtitle);
   font-size: 0.95rem;
   color: var(--text-secondary);
-  padding: 0.35rem 0.65rem;
+  padding: 0.4rem 0.75rem;
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
   position: relative;
@@ -242,7 +254,7 @@ a {
   gap: 0.5rem;
   background-color: var(--bg-card);
   border: 1.5px solid var(--border-color);
-  padding: 0.25rem 0.75rem 0.25rem 0.35rem;
+  padding: 0.25rem 0.85rem 0.25rem 0.35rem;
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -258,13 +270,13 @@ a {
   border-radius: 50%;
   background-color: var(--azul-unimove);
   color: #FFFFFF;
-  font-family: var(--font-subtitle);
   font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background-size: cover;
   background-position: center;
+  font-family: var(--font-subtitle);
 }
 
 /* Mobile menu toggle */
@@ -279,7 +291,6 @@ a {
 
 /* --- Buttons --- */
 .btn {
-  font-family: var(--font-subtitle);
   font-size: 1rem;
   padding: 0.65rem 1.35rem;
   border-radius: var(--radius-full);
@@ -357,7 +368,6 @@ a {
 
 /* --- Badges & Chips --- */
 .badge {
-  font-family: var(--font-subtitle);
   font-size: 0.82rem;
   padding: 0.2rem 0.65rem;
   border-radius: var(--radius-full);
@@ -412,7 +422,6 @@ a {
 
 .form-label {
   display: block;
-  font-family: var(--font-subtitle);
   font-size: 0.95rem;
   margin-bottom: 0.4rem;
   color: var(--text-primary);
@@ -489,7 +498,6 @@ a {
   border: 1.5px solid var(--border-color);
   background-color: var(--bg-card);
   cursor: pointer;
-  font-family: var(--font-subtitle);
   font-size: 0.95rem;
   transition: all 0.2s ease;
 }
@@ -525,7 +533,7 @@ a {
 .modal-card {
   background-color: var(--bg-card);
   border-radius: var(--radius-lg);
-  max-width: 600px;
+  max-width: 540px;
   max-height: 85vh;
   overflow-y: auto;
   width: 100%;
@@ -605,7 +613,7 @@ a {
   background-color: var(--bg-card);
 }
 
-/* --- Marquee Strip (Manual & Original Landing) --- */
+/* --- Marquee Strip --- */
 .marquee-strip {
   background-color: var(--amarelo-unimove);
   color: var(--preto-unimove);
@@ -692,7 +700,6 @@ a {
   border-top: 1.5px solid var(--border-color);
   padding: 2.5rem 1rem 3.5rem;
   text-align: center;
-  font-family: var(--font-subtitle);
   font-size: 0.95rem;
   color: var(--text-muted);
   background-color: var(--bg-primary);

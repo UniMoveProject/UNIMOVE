@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * Search Rides View
  * Search and list available rides with interactive booking.
  */
@@ -21,12 +21,12 @@ export function renderSearchRidesView(queryString = '') {
       
       <!-- Search Filters Card -->
       <section class="card" style="padding:1.75rem;">
-        <h1 style="font-size:1.8rem; margin-bottom:1.25rem;">BUSCAR CARONA</h1>
+        <h1 class="page-title" style="font-size:1.8rem; margin-bottom:1.25rem;">BUSCAR CARONA</h1>
         
         <form id="searchFilterForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
           <div>
             <label class="form-label" for="searchOrigem">Origem / Bairro</label>
-            <input type="text" id="searchOrigem" class="form-input" placeholder="Ex: Valparaíso, Asa Sul, Ceilândia" value="${initialOrigem}">
+            <input type="text" id="searchOrigem" class="form-input" placeholder="Ex: ValparaÃ­so, Asa Sul, CeilÃ¢ndia" value="${initialOrigem}">
           </div>
 
           <div>
@@ -40,7 +40,7 @@ export function renderSearchRidesView(queryString = '') {
           </div>
 
           <div>
-            <label class="form-label" for="searchVagas">Vagas mínimas</label>
+            <label class="form-label" for="searchVagas">Vagas mÃ­nimas</label>
             <select id="searchVagas" class="form-select">
               <option value="1">1 vaga</option>
               <option value="2">2 vagas</option>
@@ -58,7 +58,7 @@ export function renderSearchRidesView(queryString = '') {
       <!-- Results Section -->
       <section>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-          <h2 style="font-size:1.5rem;" id="resultsTitle">RESULTADOS ENCONTRADOS (${rides.length})</h2>
+          <h2 style="font-family:var(--font-subtitle); font-size:1.4rem;" id="resultsTitle">Resultados encontrados (${rides.length})</h2>
         </div>
 
         <div id="ridesContainer">
@@ -66,10 +66,10 @@ export function renderSearchRidesView(queryString = '') {
             ? rides.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('')
             : `
               <div class="card" style="text-align:center; padding:3rem 1.5rem;">
-                <div style="font-size:2.5rem; margin-bottom:1rem;">??</div>
-                <h3 style="font-family:var(--font-subtitle); font-size:1.4rem; margin-bottom:0.5rem;">Nenhuma carona encontrada</h3>
+                <div style="font-size:2.5rem; margin-bottom:1rem;">ðŸš—</div>
+                <h3 style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:0.5rem;">Nenhuma carona encontrada</h3>
                 <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem;">
-                  Nenhuma carona por aqui ainda. Que tal oferecer a sua rota até a faculdade para ajudar outros colegas?
+                  Nenhuma carona por aqui ainda. Que tal oferecer a sua rota atÃ© a faculdade para ajudar outros colegas?
                 </p>
                 <a href="#/oferecer" class="btn btn-amarelo">Oferecer carona agora</a>
               </div>
@@ -97,17 +97,17 @@ export function attachSearchRidesEvents() {
     const results = searchRides({ origem, destino, horario, vagasMinimas });
     const user = getCurrentUser();
 
-    title.textContent = `RESULTADOS ENCONTRADOS (${results.length})`;
+    title.textContent = `Resultados encontrados (${results.length})`;
     if (results.length > 0) {
       container.innerHTML = results.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('');
       attachBookingEvents();
     } else {
       container.innerHTML = `
         <div class="card" style="text-align:center; padding:3rem 1.5rem;">
-          <div style="font-size:2.5rem; margin-bottom:1rem;">??</div>
-          <h3 style="font-family:var(--font-subtitle); font-size:1.4rem; margin-bottom:0.5rem;">Nenhuma carona por aqui ainda</h3>
+          <div style="font-size:2.5rem; margin-bottom:1rem;">ðŸš—</div>
+          <h3 style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:0.5rem;">Nenhuma carona por aqui ainda</h3>
           <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem;">
-            Que tal oferecer a sua rota até a faculdade e economizar no trajeto?
+            Que tal oferecer a sua rota atÃ© a faculdade e economizar no trajeto?
           </p>
           <a href="#/oferecer" class="btn btn-amarelo">Oferecer carona</a>
         </div>
@@ -140,15 +140,15 @@ export function attachSearchRidesEvents() {
         }
 
         showModal({
-          title: 'Confirmar solicitação de vaga',
-          message: 'Você deseja confirmar seu embarque nesta carona? Seu nome e curso serão compartilhados no grupo da viagem.',
+          title: 'Confirmar solicitaÃ§Ã£o de vaga',
+          message: 'VocÃª deseja confirmar seu embarque nesta carona? Seu nome e curso serÃ£o compartilhados no grupo da viagem.',
           confirmText: 'Confirmar embarque',
           onConfirm: () => {
             const res = bookRide(rideId);
             if (res.success) {
               showModal({
-                title: '?? Sua carona está confirmada!',
-                message: `Você agora faz parte da rota com ${res.ride.motoristaNome}. Acesse o chat do grupo para combinar os detalhes.`,
+                title: 'ðŸŽ‰ Sua carona estÃ¡ confirmada!',
+                message: `VocÃª agora faz parte da rota com ${res.ride.motoristaNome}. Acesse o chat do grupo para combinar os detalhes.`,
                 confirmText: 'Ir para o chat',
                 cancelText: 'Fechar',
                 onConfirm: () => {

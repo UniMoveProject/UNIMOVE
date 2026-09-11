@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * Register View
  * Student onboarding form with input validation, masks and photo upload preview.
  */
@@ -12,10 +12,11 @@ export function renderRegisterView() {
       <div class="card" style="padding:2.25rem;">
         
         <div style="text-align:center; margin-bottom:1.75rem;">
-          <span style="font-family:var(--font-subtitle); font-size:0.95rem; color:var(--azul-unimove);">NOVO CADASTRO UNIVERSIT¡RIO</span>
-          <h1 style="font-size:2.2rem; margin:0.35rem 0 0.5rem;">CRIAR CONTA</h1>
+          <img src="/logo.png" alt="UniMove Logo" style="width:54px; height:60px; object-fit:contain; margin-bottom:0.75rem;">
+          <div style="font-family:var(--font-subtitle); font-size:0.95rem; color:var(--azul-unimove);">NOVO CADASTRO UNIVERSIT√ÅRIO</div>
+          <h1 class="page-title" style="font-size:2.2rem; margin:0.35rem 0 0.5rem;">CRIAR CONTA</h1>
           <p style="color:var(--text-secondary); font-size:1.05rem;">
-            Junte-se ‡ maior rede de caronas colaborativas da faculdade.
+            Junte-se √† maior rede de caronas colaborativas da faculdade.
           </p>
         </div>
 
@@ -27,7 +28,7 @@ export function renderRegisterView() {
           <!-- Avatar Preview & Upload -->
           <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
             <div id="regAvatarPreview" style="width:84px; height:84px; border-radius:50%; background-color:var(--bg-primary); border:2px dashed var(--azul-unimove); display:flex; align-items:center; justify-content:center; font-size:2rem; cursor:pointer; background-size:cover; background-position:center;">
-              ??
+              üì∑
             </div>
             <label for="regAvatarInput" style="font-family:var(--font-subtitle); font-size:0.9rem; color:var(--azul-unimove); cursor:pointer;">
               Adicionar foto de perfil
@@ -69,7 +70,7 @@ export function renderRegisterView() {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="regCurso">Curso</label>
-              <input type="text" id="regCurso" class="form-input" placeholder="Ex: AdministraÁ„o, Direito..." value="AdministraÁ„o">
+              <input type="text" id="regCurso" class="form-input" placeholder="Ex: Administra√ß√£o, Direito..." value="Administra√ß√£o">
             </div>
 
             <div class="form-group" style="margin:0;">
@@ -82,7 +83,7 @@ export function renderRegisterView() {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem;">
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="regSenha">Senha de acesso *</label>
-              <input type="password" id="regSenha" class="form-input" placeholder="MÌnimo 8 caracteres" required>
+              <input type="password" id="regSenha" class="form-input" placeholder="M√≠nimo 8 caracteres" required>
             </div>
 
             <div class="form-group" style="margin:0;">
@@ -93,19 +94,19 @@ export function renderRegisterView() {
 
           <!-- Mobility Roles -->
           <div class="form-group" style="margin:0;">
-            <label class="form-label">Como vocÍ pretende se mover no UniMove? (pode marcar mais de uma)</label>
+            <label class="form-label">Como voc√™ pretende se mover no UniMove? (pode marcar mais de uma)</label>
             <div class="pill-selector">
               <label class="pill-option">
                 <input type="checkbox" name="regRole" value="motorista">
-                <span class="pill-label">?? Motorista</span>
+                <span class="pill-label">üöó Motorista</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="regRole" value="passageiro" checked>
-                <span class="pill-label">?? Passageiro</span>
+                <span class="pill-label">üéí Passageiro</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="regRole" value="ciclista">
-                <span class="pill-label">?? Ciclista</span>
+                <span class="pill-label">üö≤ Ciclista</span>
               </label>
             </div>
           </div>
@@ -116,7 +117,7 @@ export function renderRegisterView() {
         </form>
 
         <div style="text-align:center; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-color); font-size:1rem; color:var(--text-secondary);">
-          J· tem conta? <a href="#/login" style="color:var(--azul-unimove); font-family:var(--font-subtitle); font-weight:bold;">Entrar</a>
+          J√° tem conta? <a href="#/login" style="color:var(--azul-unimove); font-family:var(--font-subtitle); font-weight:bold;">Entrar</a>
         </div>
 
       </div>
@@ -184,19 +185,19 @@ export function attachRegisterEvents() {
       const roles = Array.from(document.querySelectorAll('input[name="regRole"]:checked')).map(el => el.value);
 
       if (roles.length === 0) {
-        errorMsg.textContent = '? Escolha pelo menos uma forma como vocÍ vai se mover (Motorista, Passageiro ou Ciclista).';
+        errorMsg.textContent = '‚ö† Escolha pelo menos uma forma como voc√™ vai se mover (Motorista, Passageiro ou Ciclista).';
         errorMsg.classList.add('show');
         return;
       }
 
       if (senha.length < 6) {
-        errorMsg.textContent = '? A senha deve conter pelo menos 6 caracteres.';
+        errorMsg.textContent = '‚ö† A senha deve conter pelo menos 6 caracteres.';
         errorMsg.classList.add('show');
         return;
       }
 
       if (senha !== confirmaSenha) {
-        errorMsg.textContent = '? As senhas n„o conferem. Tente novamente.';
+        errorMsg.textContent = '‚ö† As senhas n√£o conferem. Tente novamente.';
         errorMsg.classList.add('show');
         return;
       }
@@ -217,8 +218,8 @@ export function attachRegisterEvents() {
       if (res.success) {
         errorMsg.classList.remove('show');
         showModal({
-          title: '?? Cadastro realizado com sucesso!',
-          message: `Bem-vindo(a) ao UniMove, ${nome.split(' ')[0]}! Seu perfil universit·rio j· est· ativo.`,
+          title: 'üéâ Cadastro realizado com sucesso!',
+          message: `Bem-vindo(a) ao UniMove, ${nome.split(' ')[0]}! Seu perfil universit√°rio j√° est√° ativo.`,
           confirmText: 'Acessar o aplicativo',
           cancelText: '',
           onConfirm: () => {
@@ -226,7 +227,7 @@ export function attachRegisterEvents() {
           }
         });
       } else {
-        errorMsg.textContent = `? ${res.error}`;
+        errorMsg.textContent = `‚ö† ${res.error}`;
         errorMsg.classList.add('show');
       }
     });

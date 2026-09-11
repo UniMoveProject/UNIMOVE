@@ -1,4 +1,4 @@
-/**
+Ôªø/**
  * Edit Ride View
  * Allows the driver to modify details of an active ride.
  */
@@ -14,10 +14,10 @@ export function renderEditRideView(rideId) {
   if (!user || !ride || ride.motoristaId !== user.id) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">??</div>
-        <h1 style="font-size:1.8rem; margin-bottom:0.75rem;">ACESSO N√O PERMITIDO</h1>
+        <div style="font-size:2.5rem; margin-bottom:1rem;">‚ö†Ô∏è</div>
+        <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">ACESSO N√ÉO PERMITIDO</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
-          Esta carona n„o existe ou vocÍ n„o tem permiss„o para edit·-la.
+          Esta carona n√£o existe ou voc√™ n√£o tem permiss√£o para edit√°-la.
         </p>
         <a href="#/minhas-caronas" class="btn btn-azul">Voltar para Minhas Caronas</a>
       </div>
@@ -30,9 +30,9 @@ export function renderEditRideView(rideId) {
         
         <div style="margin-bottom:1.75rem;">
           <span style="font-family:var(--font-subtitle); font-size:0.9rem; color:var(--azul-unimove);">GERENCIAR ROTA</span>
-          <h1 style="font-size:2rem; margin:0.35rem 0;">EDITAR CARONA</h1>
+          <h1 class="page-title" style="font-size:2rem; margin:0.35rem 0;">EDITAR CARONA</h1>
           <p style="color:var(--text-secondary); font-size:1.15rem;">
-            Atualize o hor·rio, vagas ou ajuda de custo da sua rota.
+            Atualize o hor√°rio, vagas ou ajuda de custo da sua rota.
           </p>
         </div>
 
@@ -64,17 +64,17 @@ export function renderEditRideView(rideId) {
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1.25rem;">
             <div class="form-group">
-              <label class="form-label" for="editHorarioSaida">Hor·rio de SaÌda *</label>
+              <label class="form-label" for="editHorarioSaida">Hor√°rio de Sa√≠da *</label>
               <input type="time" id="editHorarioSaida" class="form-input" value="${ride.horarioSaida}" required>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="editHorarioChegada">Previs„o de Chegada</label>
+              <label class="form-label" for="editHorarioChegada">Previs√£o de Chegada</label>
               <input type="time" id="editHorarioChegada" class="form-input" value="${ride.horarioChegada || ''}">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="editVagas">Vagas disponÌveis *</label>
+              <label class="form-label" for="editVagas">Vagas dispon√≠veis *</label>
               <input type="number" id="editVagas" class="form-input" min="1" max="6" value="${ride.vagasDisponiveis}" required>
             </div>
 
@@ -85,7 +85,7 @@ export function renderEditRideView(rideId) {
           </div>
 
           <div style="background-color:var(--bg-primary); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
-            <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin-bottom:0.75rem;">Dados do VeÌculo</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin-bottom:0.75rem;">Dados do Ve√≠culo</h3>
             
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
               <div>
@@ -107,7 +107,7 @@ export function renderEditRideView(rideId) {
 
           <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1rem;">
             <a href="#/minhas-caronas" class="btn btn-outline">Cancelar</a>
-            <button type="submit" class="btn btn-azul">Salvar alteraÁıes</button>
+            <button type="submit" class="btn btn-azul">Salvar altera√ß√µes</button>
           </div>
         </form>
 
@@ -141,7 +141,7 @@ export function attachEditRideEvents() {
     const res = updateRide(rideId, updatedData);
     if (res.success) {
       showModal({
-        title: '? AlteraÁıes salvas',
+        title: '‚úì Altera√ß√µes salvas',
         message: 'Os detalhes da carona foram atualizados com sucesso.',
         confirmText: 'Voltar para minhas caronas',
         cancelText: 'Continuar editando',

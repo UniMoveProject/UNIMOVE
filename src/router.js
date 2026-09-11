@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SPA Router
  * Coordinates client-side routing, view rendering and lifecycle event attachments.
  */
@@ -73,18 +73,16 @@ export function handleRoute() {
     viewHtml = `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:500px; margin:2rem auto;">
         <h1 style="font-size:2rem; margin-bottom:0.5rem;">404</h1>
-        <p style="color:var(--text-secondary); margin-bottom:1.5rem;">P�gina n�o encontrada no UniMove.</p>
+        <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Página não encontrada no UniMove.</p>
         <a href="#/home" class="btn btn-azul">Ir para a plataforma</a>
       </div>
     `;
   }
 
-  // Watermark SVG from brand manual
+  // Marca dágua oficial do manual de marca (Manual pág 6)
   const watermarkSvg = `
     <div class="brand-watermark-bg">
-      <svg viewBox="0 0 100 120" fill="currentColor">
-        <path d="M50 5 L88 22 L88 65 C88 92 50 115 50 115 C50 115 12 92 12 65 L12 22 Z"/>
-      </svg>
+      <img src="/logo.png" alt="UniMove Shield" style="width:100%; height:auto; opacity:0.18; filter:grayscale(0.2);" />
     </div>
   `;
 
@@ -104,8 +102,13 @@ export function handleRoute() {
   attachHeaderEvents();
   attachEvents();
 
-  // Scroll to top
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  // Scroll to top if not an in-page anchor
+  if (!window.location.hash.includes('#como-funciona') && 
+      !window.location.hash.includes('#calculadora') && 
+      !window.location.hash.includes('#vantagens') && 
+      !window.location.hash.includes('#faq')) {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
 }
 
 export function initRouter() {
