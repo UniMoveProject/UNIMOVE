@@ -1,6 +1,6 @@
 ﻿/**
  * Home View (Feed Principal da Plataforma)
- * Conforming strictly to the Brand Manual (pages 8 & 10).
+ * Conforming strictly to the Brand Manual (pages 8 & 10) without emojis.
  */
 
 import { getAllRides } from '../services/rides.js';
@@ -36,9 +36,9 @@ export function renderHomeView() {
         </div>
 
         <div style="display:flex; gap:1.5rem; flex-wrap:wrap; border-top:1px solid var(--border-color); padding-top:1rem; font-family:var(--font-subtitle); font-size:0.95rem;">
-          <span style="color:var(--text-secondary);">📍 Origem: <strong style="color:var(--text-primary);">Setor Bela Vista</strong></span>
-          <span style="color:var(--text-secondary);">🚏 Encontro: <strong style="color:var(--text-primary);">Terminal Jardim ABC</strong></span>
-          <span style="color:var(--text-secondary);">🏁 Destino: <strong style="color:var(--azul-unimove);">Campus UNICEPLAC (08:15)</strong></span>
+          <span style="color:var(--text-secondary);">Origem: <strong style="color:var(--text-primary);">Setor Bela Vista</strong></span>
+          <span style="color:var(--text-secondary);">Encontro: <strong style="color:var(--text-primary);">Terminal Jardim ABC</strong></span>
+          <span style="color:var(--text-secondary);">Destino: <strong style="color:var(--azul-unimove);">Campus UNICEPLAC (08:15)</strong></span>
           <span class="badge badge-verde">2 vagas abertas</span>
         </div>
       </section>

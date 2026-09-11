@@ -1,7 +1,6 @@
 ﻿/**
  * Complete Landing Page View
- * Integrates the full institutional landing page from the repository,
- * upgraded with the official Brand Manual visual identity (colors, fonts, layout).
+ * Professional collegiate layout strictly without emojis.
  */
 
 export function renderLandingView() {
@@ -14,7 +13,7 @@ export function renderLandingView() {
         <!-- Left Hero Text -->
         <div>
           <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(15,93,237,0.1); color:var(--azul-unimove); padding:0.35rem 0.95rem; border-radius:var(--radius-full); font-family:var(--font-subtitle); font-size:0.9rem; margin-bottom:1.25rem;">
-            🎓 Exclusivo para estudantes UNICEPLAC
+            Exclusivo para estudantes UNICEPLAC
           </div>
 
           <h1 class="hero-title" style="font-size:clamp(2.2rem, 5vw, 3.4rem); margin-bottom:1.15rem; color:var(--text-primary); line-height:1.05;">
@@ -32,13 +31,13 @@ export function renderLandingView() {
           </div>
 
           <div style="display:flex; gap:2rem; font-family:var(--font-subtitle); font-size:0.95rem; color:var(--text-muted); flex-wrap:wrap;">
-            <span>✓ 100% Universitário</span>
-            <span>✓ E-mail institucional</span>
-            <span>✓ Avaliação mútua</span>
+            <span>100% Universitário</span>
+            <span>E-mail institucional</span>
+            <span>Avaliação mútua</span>
           </div>
         </div>
 
-        <!-- Right Hero Visual (Rota em Card com Logo Oficial) -->
+        <!-- Right Hero Visual -->
         <div style="position:relative;">
           <div class="card" style="background:var(--preto-unimove); color:var(--bege-unimove); border:2px solid var(--amarelo-unimove); padding:2rem; border-radius:24px; position:relative; overflow:hidden; box-shadow:var(--shadow-lg);">
             
@@ -103,7 +102,7 @@ export function renderLandingView() {
         </div>
       </div>
 
-      <!-- KEY STATS (Manual pág 3) -->
+      <!-- KEY STATS -->
       <section style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem;">
         <div class="card" style="background-color:var(--preto-unimove); color:var(--bege-unimove); text-align:center; padding:2rem 1.5rem;">
           <div class="stat-number" style="font-family:var(--font-subtitle); font-size:2.8rem; color:var(--amarelo-unimove); margin-bottom:0.5rem;">1.240+</div>
@@ -116,12 +115,12 @@ export function renderLandingView() {
         </div>
 
         <div class="card" style="background-color:var(--verde-unimove); color:var(--preto-unimove); text-align:center; padding:2rem 1.5rem;">
-          <div class="stat-number" style="font-family:var(--font-subtitle); font-size:2.8rem; color:var(--preto-unimove); margin-bottom:0.5rem;">4,8 ★</div>
+          <div class="stat-number" style="font-family:var(--font-subtitle); font-size:2.8rem; color:var(--preto-unimove); margin-bottom:0.5rem;">4,8 / 5.0</div>
           <div class="stat-title" style="font-family:var(--font-subtitle); font-size:1.15rem;">avaliação média das caronas</div>
         </div>
       </section>
 
-      <!-- COMO FUNCIONA (Manual pág 3) -->
+      <!-- COMO FUNCIONA -->
       <section id="como-funciona" class="card" style="padding:2.5rem 2rem;">
         <div style="text-align:center; max-width:650px; margin:0 auto 2.5rem;">
           <span style="font-family:var(--font-subtitle); font-size:0.95rem; color:var(--azul-unimove);">PRATICIDADE</span>
@@ -153,7 +152,7 @@ export function renderLandingView() {
       <!-- CALCULADORA DE ECONOMIA -->
       <section id="calculadora" class="card" style="padding:2.5rem 2rem; border-left:6px solid var(--verde-unimove);">
         <div style="max-width:680px; margin:0 auto; text-align:center;">
-          <span class="badge badge-verde" style="margin-bottom:0.75rem;">💰 Simulação Financeira</span>
+          <span class="badge badge-verde" style="margin-bottom:0.75rem;">Simulação Financeira</span>
           <h2 class="section-title" style="font-size:2rem; margin-bottom:0.5rem;">Calculadora de Economia</h2>
           <p style="color:var(--text-secondary); font-size:1.15rem; margin-bottom:2rem;">
             Veja quanto você pode economizar por semestre dividindo caronas no UniMove em vez de usar transporte individual ou ônibus caros.
@@ -187,7 +186,7 @@ export function renderLandingView() {
         </div>
       </section>
 
-      <!-- 5 SENTIMENTOS DA MARCA (Manual pág 4) -->
+      <!-- 5 SENTIMENTOS DA MARCA -->
       <section id="vantagens">
         <div style="text-align:center; margin-bottom:2.25rem;">
           <h2 class="section-title" style="font-size:2rem; margin-bottom:0.5rem;">Cinco sentimentos que guiam o UniMove</h2>
@@ -196,32 +195,27 @@ export function renderLandingView() {
 
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem;">
           <div class="card" style="border-top:4px solid var(--azul-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">🛡️</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Segurança</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem; color:var(--azul-unimove);">Segurança</h3>
             <p style="font-size:1rem; color:var(--text-secondary);">Perfil universitário verificado e avaliação em dois sentidos.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--verde-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">💸</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Economia</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem; color:var(--verde-unimove);">Economia</h3>
             <p style="font-size:1rem; color:var(--text-secondary);">Dividir combustível custa menos que ônibus ou corridas por app.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--amarelo-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">🤝</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Amizade</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem; color:var(--text-primary);">Amizade</h3>
             <p style="font-size:1rem; color:var(--text-secondary);">Colegas da mesma universidade compartilhando a rotina diária.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--azul-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">⚡</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Praticidade</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem; color:var(--azul-unimove);">Praticidade</h3>
             <p style="font-size:1rem; color:var(--text-secondary);">Cadastrar a rota, encontrar e embarcar leva minutos.</p>
           </div>
 
           <div class="card" style="border-top:4px solid var(--verde-unimove);">
-            <div style="font-size:2rem; margin-bottom:0.5rem;">🧭</div>
-            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem;">Liberdade</h3>
+            <h3 style="font-family:var(--font-subtitle); font-size:1.2rem; margin-bottom:0.35rem; color:var(--verde-unimove);">Liberdade</h3>
             <p style="font-size:1rem; color:var(--text-secondary);">Cada estudante escolhe sua rota, horário e com quem viaja.</p>
           </div>
         </div>
@@ -242,7 +236,7 @@ export function renderLandingView() {
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>Sim! Para se cadastrar e ter acesso às caronas, é obrigatório possuir e validar um e-mail institucional (@uniceplac.edu.br), garantindo que todos os participantes sejam alunos da instituição.</p>
+              <p>Sim. Para se cadastrar e ter acesso às caronas, é obrigatório possuir e validar um e-mail institucional (@uniceplac.edu.br), garantindo que todos os participantes sejam alunos da instituição.</p>
             </div>
           </div>
 
@@ -262,7 +256,7 @@ export function renderLandingView() {
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>Além da validação acadêmica obrigatória, todos os motoristas e passageiros possuem histórico com avaliação por estrelas, detalhes de curso/semestre e chat do grupo antes do embarque.</p>
+              <p>Além da validação acadêmica obrigatória, todos os motoristas e passageiros possuem histórico com avaliação por notas, detalhes de curso/semestre e chat do grupo antes do embarque.</p>
             </div>
           </div>
 
@@ -272,7 +266,7 @@ export function renderLandingView() {
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>Sim! No seu perfil você pode alternar livremente entre oferecer carona quando estiver de carro ou pedir carona nos dias em que precisar.</p>
+              <p>Sim. No seu perfil você pode alternar livremente entre oferecer carona quando estiver de carro ou pedir carona nos dias em que precisar.</p>
             </div>
           </div>
         </div>
@@ -297,7 +291,6 @@ export function renderLandingView() {
 }
 
 export function attachLandingEvents() {
-  // Scroll to calculator
   const scrollCalcBtn = document.getElementById('btnScrollCalc');
   if (scrollCalcBtn) {
     scrollCalcBtn.addEventListener('click', () => {
@@ -306,7 +299,6 @@ export function attachLandingEvents() {
     });
   }
 
-  // Live Calculator
   const calcGasto = document.getElementById('calcGasto');
   const calcDias = document.getElementById('calcDias');
   const calcSemanas = document.getElementById('calcSemanas');
@@ -324,7 +316,6 @@ export function attachLandingEvents() {
     [calcGasto, calcDias, calcSemanas].forEach(el => el.addEventListener('input', calculate));
   }
 
-  // FAQ Accordion
   document.querySelectorAll('.faq-q').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.parentElement;

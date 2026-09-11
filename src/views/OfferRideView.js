@@ -1,6 +1,6 @@
 ﻿/**
  * Offer Ride View
- * Form for registered students to publish a new ride route.
+ * Form for registered students to publish a new ride route (No emojis).
  */
 
 import { getCurrentUser } from '../services/auth.js';
@@ -13,7 +13,6 @@ export function renderOfferRideView() {
   if (!user) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">🔒</div>
         <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">ACESSO AO UNIMOVE</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
           Você precisa estar logado com seu perfil universitário para abrir vagas e oferecer caronas.
@@ -141,7 +140,7 @@ export function attachOfferRideEvents() {
     const res = offerRide(rideData);
     if (res.success) {
       showModal({
-        title: '🚗 Carona publicada com sucesso!',
+        title: 'Carona publicada com sucesso',
         message: 'Sua rota já está disponível para seus colegas da faculdade encontrarem e combinarem o trajeto.',
         confirmText: 'Ver minhas caronas',
         cancelText: 'Página inicial',

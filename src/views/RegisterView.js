@@ -1,6 +1,6 @@
 ﻿/**
  * Register View
- * Student onboarding form with input validation, masks and photo upload preview.
+ * Student onboarding form with input validation, masks and photo upload preview (No emojis).
  */
 
 import { registerUser } from '../services/auth.js';
@@ -27,8 +27,8 @@ export function renderRegisterView() {
           
           <!-- Avatar Preview & Upload -->
           <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
-            <div id="regAvatarPreview" style="width:84px; height:84px; border-radius:50%; background-color:var(--bg-primary); border:2px dashed var(--azul-unimove); display:flex; align-items:center; justify-content:center; font-size:2rem; cursor:pointer; background-size:cover; background-position:center;">
-              📷
+            <div id="regAvatarPreview" style="width:84px; height:84px; border-radius:50%; background-color:var(--bg-primary); border:2px dashed var(--azul-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:0.9rem; color:var(--azul-unimove); cursor:pointer; background-size:cover; background-position:center;">
+              Foto
             </div>
             <label for="regAvatarInput" style="font-family:var(--font-subtitle); font-size:0.9rem; color:var(--azul-unimove); cursor:pointer;">
               Adicionar foto de perfil
@@ -98,15 +98,15 @@ export function renderRegisterView() {
             <div class="pill-selector">
               <label class="pill-option">
                 <input type="checkbox" name="regRole" value="motorista">
-                <span class="pill-label">🚗 Motorista</span>
+                <span class="pill-label">Motorista</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="regRole" value="passageiro" checked>
-                <span class="pill-label">🎒 Passageiro</span>
+                <span class="pill-label">Passageiro</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="regRole" value="ciclista">
-                <span class="pill-label">🚲 Ciclista</span>
+                <span class="pill-label">Ciclista</span>
               </label>
             </div>
           </div>
@@ -135,7 +135,6 @@ export function attachRegisterEvents() {
 
   let avatarDataUrl = '';
 
-  // Photo preview
   avatarPreview.addEventListener('click', () => avatarInput.click());
   avatarInput.addEventListener('change', () => {
     const file = avatarInput.files[0];
@@ -150,7 +149,6 @@ export function attachRegisterEvents() {
     }
   });
 
-  // CPF Mask
   cpfInput.addEventListener('input', () => {
     let v = cpfInput.value.replace(/\D/g, '').slice(0, 11);
     v = v.replace(/(\d{3})(\d)/, '$1.$2');
@@ -159,7 +157,6 @@ export function attachRegisterEvents() {
     cpfInput.value = v;
   });
 
-  // Telefone Mask
   telInput.addEventListener('input', () => {
     let v = telInput.value.replace(/\D/g, '').slice(0, 11);
     if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
@@ -185,19 +182,19 @@ export function attachRegisterEvents() {
       const roles = Array.from(document.querySelectorAll('input[name="regRole"]:checked')).map(el => el.value);
 
       if (roles.length === 0) {
-        errorMsg.textContent = '⚠ Escolha pelo menos uma forma como você vai se mover (Motorista, Passageiro ou Ciclista).';
+        errorMsg.textContent = 'Escolha pelo menos uma forma como você vai se mover (Motorista, Passageiro ou Ciclista).';
         errorMsg.classList.add('show');
         return;
       }
 
       if (senha.length < 6) {
-        errorMsg.textContent = '⚠ A senha deve conter pelo menos 6 caracteres.';
+        errorMsg.textContent = 'A senha deve conter pelo menos 6 caracteres.';
         errorMsg.classList.add('show');
         return;
       }
 
       if (senha !== confirmaSenha) {
-        errorMsg.textContent = '⚠ As senhas não conferem. Tente novamente.';
+        errorMsg.textContent = 'As senhas não conferem. Tente novamente.';
         errorMsg.classList.add('show');
         return;
       }
@@ -218,7 +215,7 @@ export function attachRegisterEvents() {
       if (res.success) {
         errorMsg.classList.remove('show');
         showModal({
-          title: '🎉 Cadastro realizado com sucesso!',
+          title: 'Cadastro realizado com sucesso',
           message: `Bem-vindo(a) ao UniMove, ${nome.split(' ')[0]}! Seu perfil universitário já está ativo.`,
           confirmText: 'Acessar o aplicativo',
           cancelText: '',
@@ -227,7 +224,7 @@ export function attachRegisterEvents() {
           }
         });
       } else {
-        errorMsg.textContent = `⚠ ${res.error}`;
+        errorMsg.textContent = res.error;
         errorMsg.classList.add('show');
       }
     });

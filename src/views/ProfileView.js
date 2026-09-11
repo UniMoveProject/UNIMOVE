@@ -1,6 +1,6 @@
 ﻿/**
  * Profile View
- * Student profile, vehicle data, mobility preferences and logout.
+ * Student profile, vehicle data, mobility preferences and logout (No emojis).
  */
 
 import { getCurrentUser, updateProfile, logout } from '../services/auth.js';
@@ -12,7 +12,6 @@ export function renderProfileView() {
   if (!user) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">🔒</div>
         <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">MEU PERFIL</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
           Faça login para ver e atualizar seus dados pessoais e de mobilidade.
@@ -40,7 +39,7 @@ export function renderProfileView() {
             <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.2rem;">${user.nome}</h1>
             <p style="color:var(--text-secondary); font-size:1.05rem;">${user.curso} · ${user.periodo}</p>
             <div style="display:flex; gap:0.5rem; margin-top:0.35rem;">
-              <span class="badge badge-verde">⭐ ${user.avaliacoes || '5.0'} (${user.totalCaronas || 0} caronas)</span>
+              <span class="badge badge-verde">Nota ${user.avaliacoes || '5.0'} (${user.totalCaronas || 0} caronas)</span>
               <span class="badge badge-soft">${user.campus || 'Campus UNICEPLAC'}</span>
             </div>
           </div>
@@ -92,15 +91,15 @@ export function renderProfileView() {
             <div class="pill-selector">
               <label class="pill-option">
                 <input type="checkbox" name="profileRole" value="motorista" ${isMotorista ? 'checked' : ''}>
-                <span class="pill-label">🚗 Motorista</span>
+                <span class="pill-label">Motorista</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="profileRole" value="passageiro" ${isPassageiro ? 'checked' : ''}>
-                <span class="pill-label">🎒 Passageiro</span>
+                <span class="pill-label">Passageiro</span>
               </label>
               <label class="pill-option">
                 <input type="checkbox" name="profileRole" value="ciclista" ${isCiclista ? 'checked' : ''}>
-                <span class="pill-label">🚲 Ciclista</span>
+                <span class="pill-label">Ciclista</span>
               </label>
             </div>
           </div>
@@ -179,7 +178,7 @@ export function attachProfileEvents() {
       updateProfile(updated);
 
       showModal({
-        title: '✓ Perfil atualizado',
+        title: 'Perfil atualizado',
         message: 'Seus dados foram atualizados com sucesso.',
         confirmText: 'Ok',
         cancelText: '',

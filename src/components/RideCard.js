@@ -1,6 +1,6 @@
 ﻿/**
  * RideCard Component
- * Displays ride information according to the Brand Manual specifications.
+ * Displays ride information according to the Brand Manual specifications (No emojis).
  */
 
 export function renderRideCard(ride, isOwner = false) {
@@ -14,7 +14,7 @@ export function renderRideCard(ride, isOwner = false) {
           <div>
             <div style="display:flex; align-items:center; gap:0.5rem;">
               <h3 style="font-family:var(--font-subtitle); font-size:1.15rem; text-transform:none; margin:0;">${ride.motoristaNome}</h3>
-              <span class="badge badge-amarelo" style="font-size:0.8rem;">★ ${ride.motoristaAvaliacao.toFixed(1)}</span>
+              <span class="badge badge-amarelo" style="font-size:0.8rem;">Nota ${ride.motoristaAvaliacao.toFixed(1)}</span>
             </div>
             <p style="font-size:0.92rem; color:var(--text-muted); margin:0;">${ride.motoristaCurso} · ${ride.veiculo} (${ride.cor})</p>
           </div>
@@ -37,10 +37,10 @@ export function renderRideCard(ride, isOwner = false) {
           ROTA · SAÍDA ${ride.horarioSaida} ${ride.horarioChegada ? `· CHEGADA ${ride.horarioChegada}` : ''}
         </div>
         <div style="display:flex; align-items:center; gap:0.65rem; font-family:var(--font-subtitle); font-size:1.05rem; flex-wrap:wrap;">
-          <span style="color:var(--text-primary);">📍 ${ride.origem}</span>
+          <span style="color:var(--text-primary);"><strong style="font-size:0.85rem; color:var(--text-muted);">DE:</strong> ${ride.origem}</span>
           ${ride.pontoEncontro ? `<span style="color:var(--text-muted); font-size:0.95rem;">(${ride.pontoEncontro})</span>` : ''}
           <span style="color:var(--azul-unimove); font-weight:bold;">→</span>
-          <span style="color:var(--azul-unimove);">${ride.destino}</span>
+          <span style="color:var(--azul-unimove);"><strong style="font-size:0.85rem; color:var(--azul-unimove);">PARA:</strong> ${ride.destino}</span>
         </div>
       </div>
 
@@ -48,17 +48,17 @@ export function renderRideCard(ride, isOwner = false) {
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
         <div style="display:flex; gap:0.5rem;">
           <a href="#/chat/${ride.id}" class="btn btn-sm btn-outline" title="Abrir chat da carona">
-            💬 Chat do grupo
+            Chat do grupo
           </a>
         </div>
 
         <div style="display:flex; gap:0.5rem;">
           ${isOwner ? `
-            <a href="#/editar-carona/${ride.id}" class="btn btn-sm btn-outline">✏️ Editar</a>
+            <a href="#/editar-carona/${ride.id}" class="btn btn-sm btn-outline">Editar</a>
             <button type="button" class="btn btn-sm btn-outline btn-delete-ride" data-id="${ride.id}" style="color:#d32f2f; border-color:rgba(211,47,47,0.3);">Excluir</button>
           ` : `
             <button type="button" class="btn btn-sm btn-azul btn-pedir-carona" data-id="${ride.id}" ${ride.vagasDisponiveis <= 0 ? 'disabled' : ''}>
-              ${ride.vagasDisponiveis > 0 ? '🚗 Pedir carona' : 'Esgotado'}
+              ${ride.vagasDisponiveis > 0 ? 'Pedir carona' : 'Esgotado'}
             </button>
           `}
         </div>

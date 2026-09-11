@@ -1,6 +1,6 @@
 ﻿/**
  * Edit Ride View
- * Allows the driver to modify details of an active ride.
+ * Allows the driver to modify details of an active ride (No emojis).
  */
 
 import { getRideById, updateRide } from '../services/rides.js';
@@ -14,7 +14,6 @@ export function renderEditRideView(rideId) {
   if (!user || !ride || ride.motoristaId !== user.id) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">⚠️</div>
         <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">ACESSO NÃO PERMITIDO</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
           Esta carona não existe ou você não tem permissão para editá-la.
@@ -141,7 +140,7 @@ export function attachEditRideEvents() {
     const res = updateRide(rideId, updatedData);
     if (res.success) {
       showModal({
-        title: '✓ Alterações salvas',
+        title: 'Alterações salvas',
         message: 'Os detalhes da carona foram atualizados com sucesso.',
         confirmText: 'Voltar para minhas caronas',
         cancelText: 'Continuar editando',

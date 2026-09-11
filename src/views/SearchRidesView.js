@@ -1,6 +1,6 @@
 ﻿/**
  * Search Rides View
- * Search and list available rides with interactive booking.
+ * Search and list available rides with interactive booking (No emojis).
  */
 
 import { searchRides, bookRide } from '../services/rides.js';
@@ -66,7 +66,6 @@ export function renderSearchRidesView(queryString = '') {
             ? rides.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('')
             : `
               <div class="card" style="text-align:center; padding:3rem 1.5rem;">
-                <div style="font-size:2.5rem; margin-bottom:1rem;">🚗</div>
                 <h3 style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:0.5rem;">Nenhuma carona encontrada</h3>
                 <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem;">
                   Nenhuma carona por aqui ainda. Que tal oferecer a sua rota até a faculdade para ajudar outros colegas?
@@ -104,7 +103,6 @@ export function attachSearchRidesEvents() {
     } else {
       container.innerHTML = `
         <div class="card" style="text-align:center; padding:3rem 1.5rem;">
-          <div style="font-size:2.5rem; margin-bottom:1rem;">🚗</div>
           <h3 style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:0.5rem;">Nenhuma carona por aqui ainda</h3>
           <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem;">
             Que tal oferecer a sua rota até a faculdade e economizar no trajeto?
@@ -147,7 +145,7 @@ export function attachSearchRidesEvents() {
             const res = bookRide(rideId);
             if (res.success) {
               showModal({
-                title: '🎉 Sua carona está confirmada!',
+                title: 'Sua carona está confirmada',
                 message: `Você agora faz parte da rota com ${res.ride.motoristaNome}. Acesse o chat do grupo para combinar os detalhes.`,
                 confirmText: 'Ir para o chat',
                 cancelText: 'Fechar',

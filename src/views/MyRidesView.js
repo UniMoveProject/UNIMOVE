@@ -1,6 +1,6 @@
 ﻿/**
  * My Rides View
- * Displays user rides offered as driver and rides joined as passenger.
+ * Displays user rides offered as driver and rides joined as passenger (No emojis).
  */
 
 import { getMyRides, deleteRide } from '../services/rides.js';
@@ -14,7 +14,6 @@ export function renderMyRidesView() {
   if (!user) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">🔒</div>
         <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">MINHAS CARONAS</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
           Faça login para visualizar e gerenciar as caronas que você oferece e suas vagas reservadas.

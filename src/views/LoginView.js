@@ -1,6 +1,6 @@
 ﻿/**
  * Login View
- * University authentication screen with error feedback and demo credentials.
+ * University authentication screen with error feedback and demo credentials (No emojis).
  */
 
 import { login } from '../services/auth.js';
@@ -20,7 +20,7 @@ export function renderLoginView() {
         </div>
 
         <div id="loginErrorMsg" class="form-error-msg" style="background-color:rgba(229,57,53,0.1); border:1px solid rgba(229,57,53,0.3); padding:0.65rem 1rem; border-radius:var(--radius-md); margin-bottom:1.25rem; text-align:center;">
-          ⚠ E-mail institucional ou senha incorretos.
+          E-mail institucional ou senha incorretos.
         </div>
 
         <form id="loginForm" style="display:flex; flex-direction:column; gap:1.15rem;">
@@ -78,7 +78,7 @@ export function attachLoginEvents() {
         errorMsg.classList.remove('show');
         window.location.hash = '#/home';
       } else {
-        errorMsg.textContent = `⚠ ${res.error}`;
+        errorMsg.textContent = res.error;
         errorMsg.classList.add('show');
       }
     });

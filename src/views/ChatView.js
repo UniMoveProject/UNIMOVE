@@ -1,6 +1,6 @@
 ﻿/**
  * Chat View
- * Real-time ride group conversation matching the Brand Manual guidelines.
+ * Real-time ride group conversation matching the Brand Manual guidelines (No emojis).
  */
 
 import { getRideById } from '../services/rides.js';
@@ -15,7 +15,6 @@ export function renderChatView(rideId) {
   if (!ride) {
     return `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:600px; margin:2rem auto;">
-        <div style="font-size:2.5rem; margin-bottom:1rem;">🔍</div>
         <h1 class="page-title" style="font-size:1.8rem; margin-bottom:0.75rem;">CHAT NÃO ENCONTRADO</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">
           Esta conversa não está disponível ou a carona foi encerrada.
@@ -37,7 +36,7 @@ export function renderChatView(rideId) {
             CHAT DA CARONA · ${ride.horarioSaida}
           </div>
           <div style="font-family:var(--font-subtitle); font-size:1.15rem; color:var(--text-primary);">
-            ${ride.origem} ➔ ${ride.destino}
+            ${ride.origem} → ${ride.destino}
           </div>
           <div style="font-size:0.92rem; color:var(--text-muted);">
             Motorista: <strong>${ride.motoristaNome}</strong> · ${ride.veiculo} (${ride.placa})
@@ -76,9 +75,8 @@ export function renderChatView(rideId) {
             </div>
           `).join('') : `
             <div style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">
-              <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
               <p>Nenhuma mensagem enviada ainda.</p>
-              <p style="font-size:0.95rem;">Envie uma mensagem para combinar o ponto de encontro com o grupo!</p>
+              <p style="font-size:0.95rem;">Envie uma mensagem para combinar o ponto de encontro com o grupo.</p>
             </div>
           `}
         </div>
@@ -114,14 +112,14 @@ export function attachChatEvents() {
       const rating = av.dataset.rating;
 
       showModal({
-        title: `👤 ${name}`,
+        title: `Perfil de ${name}`,
         message: `
           <div style="display:flex; flex-direction:column; gap:0.4rem;">
             <div><strong>Função:</strong> ${role}</div>
             <div><strong>Curso:</strong> ${course}</div>
-            <div><strong>Avaliação na comunidade:</strong> ⭐ ${rating}</div>
+            <div><strong>Avaliação na comunidade:</strong> Nota ${rating}</div>
             <div style="margin-top:0.5rem; font-size:0.95rem; color:var(--verde-unimove); font-weight:bold;">
-              ✓ Aluno verificado na instituição
+              Aluno verificado na instituição
             </div>
           </div>
         `,

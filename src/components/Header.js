@@ -1,13 +1,14 @@
 ﻿/**
  * Header Component
- * Adapts dynamically between:
- * 1. Landing Page Header (only landing page in-page smooth-scroll section links, login/register CTA, theme switch)
- * 2. Auth Page Header (clean header with link back to landing page)
- * 3. Platform App Header (internal app navigation: Início, Buscar carona, Oferecer carona, Minhas caronas, Perfil)
+ * Adapts dynamically without any emojis (uses clean SVG icons and professional typography).
  */
 
 import { getCurrentUser } from '../services/auth.js';
 import { toggleTheme, getInitialTheme } from '../services/theme.js';
+
+const MOON_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+const SUN_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const MENU_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
 
 export function renderHeader(currentPath = '/') {
   const user = getCurrentUser();
@@ -16,18 +17,16 @@ export function renderHeader(currentPath = '/') {
   const isLanding = (currentPath === '/' || currentPath === '');
   const isAuth = (currentPath === '/login' || currentPath === '/cadastro');
 
-  // 1. LANDING PAGE HEADER (Exclusivo da Landing Page, com scroll suave entre as seções)
+  // 1. LANDING PAGE HEADER
   if (isLanding) {
     return `
       <header class="site-header">
         <div class="header-inner">
-          <!-- Logo Oficial -->
           <a href="#/" class="brand-logo-link" title="UniMove - Mobilidade Acadêmica">
             <img src="/logo.png" alt="UniMove Logo" class="brand-shield-img">
             <span class="brand-title">UNIMOVE</span>
           </a>
 
-          <!-- Links de Seções da Própria Landing Page -->
           <nav class="header-nav" id="headerNav">
             <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="hero-top">Início</a>
             <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="como-funciona">Como funciona</a>
@@ -36,17 +35,16 @@ export function renderHeader(currentPath = '/') {
             <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="faq">FAQ</a>
           </nav>
 
-          <!-- Ações da Landing Page (Entrar / Criar conta) -->
           <div class="header-actions">
             <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Alternar modo claro / escuro" aria-label="Modo Claro/Escuro">
-              ${isDark ? '🌙' : '☀️'}
+              ${isDark ? SUN_ICON : MOON_ICON}
             </button>
 
             <a href="#/login" class="btn btn-sm btn-outline">Entrar</a>
             <a href="#/cadastro" class="btn btn-sm btn-azul">Criar conta</a>
 
             <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-              ☰
+              ${MENU_ICON}
             </button>
           </div>
         </div>
@@ -54,7 +52,7 @@ export function renderHeader(currentPath = '/') {
     `;
   }
 
-  // 2. AUTH PAGES HEADER (Login / Cadastro)
+  // 2. AUTH PAGES HEADER
   if (isAuth) {
     return `
       <header class="site-header">
@@ -65,12 +63,12 @@ export function renderHeader(currentPath = '/') {
           </a>
 
           <nav class="header-nav">
-            <a href="#/" class="nav-link">← Voltar para o Início</a>
+            <a href="#/" class="nav-link">Voltar para o Início</a>
           </nav>
 
           <div class="header-actions">
             <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Alternar modo claro / escuro" aria-label="Modo Claro/Escuro">
-              ${isDark ? '🌙' : '☀️'}
+              ${isDark ? SUN_ICON : MOON_ICON}
             </button>
             ${currentPath === '/login' 
               ? `<a href="#/cadastro" class="btn btn-sm btn-azul">Criar conta</a>` 
@@ -82,7 +80,7 @@ export function renderHeader(currentPath = '/') {
     `;
   }
 
-  // 3. PLATAFORMA APP HEADER (Pós-login: Home, Busca, Oferecer, Minhas Caronas, Perfil, Chat)
+  // 3. PLATAFORMA APP HEADER
   return `
     <header class="site-header">
       <div class="header-inner">
@@ -91,7 +89,6 @@ export function renderHeader(currentPath = '/') {
           <span class="brand-title">UNIMOVE</span>
         </a>
 
-        <!-- Links Internos da Plataforma -->
         <nav class="header-nav" id="headerNav">
           <a href="#/home" class="nav-link ${currentPath === '/home' ? 'active' : ''}">Início</a>
           <a href="#/busca" class="nav-link ${currentPath === '/busca' ? 'active' : ''}">Buscar carona</a>
@@ -101,7 +98,7 @@ export function renderHeader(currentPath = '/') {
 
         <div class="header-actions">
           <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Alternar modo claro / escuro" aria-label="Modo Claro/Escuro">
-            ${isDark ? '🌙' : '☀️'}
+            ${isDark ? SUN_ICON : MOON_ICON}
           </button>
 
           ${user ? `
@@ -116,7 +113,7 @@ export function renderHeader(currentPath = '/') {
           `}
 
           <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-            ☰
+            ${MENU_ICON}
           </button>
         </div>
       </div>
@@ -129,7 +126,7 @@ export function attachHeaderEvents() {
   if (themeBtn) {
     themeBtn.addEventListener('click', () => {
       const next = toggleTheme();
-      themeBtn.textContent = next === 'dark' ? '🌙' : '☀️';
+      themeBtn.innerHTML = next === 'dark' ? SUN_ICON : MOON_ICON;
     });
   }
 
@@ -141,7 +138,6 @@ export function attachHeaderEvents() {
     });
   }
 
-  // Smooth scroll para links da Landing Page
   document.querySelectorAll('.landing-nav-link').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
