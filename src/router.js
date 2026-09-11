@@ -18,9 +18,20 @@ import { renderLoginView, attachLoginEvents } from './views/LoginView.js';
 import { renderRegisterView, attachRegisterEvents } from './views/RegisterView.js';
 
 export function parseRoute() {
-  const hash = window.location.hash.slice(1) || '/';
-  const [path, queryString] = hash.split('?');
-  return { path: path || '/', queryString: queryString || '' };
+  let rawHash = window.location.hash.slice(1) || '/';
+  
+  // Tratar âncoras da Landing Page como rota Landing ('/')
+  const landingAnchors = ['como-funciona', 'calculadora', 'vantagens', 'faq', 'hero-top', ''];
+  if (landingAnchors.includes(rawHash) || rawHash === '/') {
+    return { path: '/', queryString: '', anchor: rawHash };
+  }
+
+  if (!rawHash.startsWith('/')) {
+    rawHash = '/' + rawHash;
+  }
+
+  const [path, queryString] = rawHash.split('?');
+  return { path: path || '/', queryString: queryString || '', anchor: '' };
 }
 
 export function navigateTo(path) {
@@ -31,7 +42,7 @@ export function handleRoute() {
   const app = document.getElementById('app');
   if (!app) return;
 
-  const { path, queryString } = parseRoute();
+  const { path, queryString, anchor } = parseRoute();
 
   let viewHtml = '';
   let attachEvents = () => {};
@@ -72,14 +83,14 @@ export function handleRoute() {
     // 404 fallback
     viewHtml = `
       <div class="card" style="text-align:center; padding:3rem 1.5rem; max-width:500px; margin:2rem auto;">
-        <h1 style="font-size:2rem; margin-bottom:0.5rem;">404</h1>
+        <h1 class="page-title" style="font-size:2rem; margin-bottom:0.5rem;">404</h1>
         <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Página não encontrada no UniMove.</p>
-        <a href="#/home" class="btn btn-azul">Ir para a plataforma</a>
+        <a href="#/" class="btn btn-azul">Ir para a página inicial</a>
       </div>
     `;
   }
 
-  // Marca dágua oficial do manual de marca (Manual pág 6)
+  // Marca dágua oficial do manual de marca
   const watermarkSvg = `
     <div class="brand-watermark-bg">
       <img src="/logo.png" alt="UniMove Shield" style="width:100%; height:auto; opacity:0.18; filter:grayscale(0.2);" />
@@ -102,13 +113,16 @@ export function handleRoute() {
   attachHeaderEvents();
   attachEvents();
 
-  // Scroll to top if not an in-page anchor
-  if (!window.location.hash.includes('#como-funciona') && 
-      !window.location.hash.includes('#calculadora') && 
-      !window.location.hash.includes('#vantagens') && 
-      !window.location.hash.includes('#faq')) {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+  // Scroll logic
+  if (anchor && anchor !== '' && anchor !== '/') {
+    const el = document.getElementById(anchor);
+    if (el) {
+      setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 50);
+      return;
+    }
   }
+
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 export function initRouter() {

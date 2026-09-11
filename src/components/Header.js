@@ -1,7 +1,7 @@
 ﻿/**
  * Header Component
  * Adapts dynamically between:
- * 1. Landing Page Header (only landing page section links, login/register CTA, theme switch)
+ * 1. Landing Page Header (only landing page in-page smooth-scroll section links, login/register CTA, theme switch)
  * 2. Auth Page Header (clean header with link back to landing page)
  * 3. Platform App Header (internal app navigation: Início, Buscar carona, Oferecer carona, Minhas caronas, Perfil)
  */
@@ -16,7 +16,7 @@ export function renderHeader(currentPath = '/') {
   const isLanding = (currentPath === '/' || currentPath === '');
   const isAuth = (currentPath === '/login' || currentPath === '/cadastro');
 
-  // 1. LANDING PAGE HEADER (Sem links de plataforma, apenas seções da landing page)
+  // 1. LANDING PAGE HEADER (Exclusivo da Landing Page, com scroll suave entre as seções)
   if (isLanding) {
     return `
       <header class="site-header">
@@ -27,16 +27,16 @@ export function renderHeader(currentPath = '/') {
             <span class="brand-title">UNIMOVE</span>
           </a>
 
-          <!-- Links Exclusivos da Landing Page -->
+          <!-- Links de Seções da Própria Landing Page -->
           <nav class="header-nav" id="headerNav">
-            <a href="#/" class="nav-link active">Início</a>
-            <a href="#como-funciona" class="nav-link">Como funciona</a>
-            <a href="#calculadora" class="nav-link">Simular economia</a>
-            <a href="#vantagens" class="nav-link">Vantagens</a>
-            <a href="#faq" class="nav-link">FAQ</a>
+            <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="hero-top">Início</a>
+            <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="como-funciona">Como funciona</a>
+            <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="calculadora">Simular economia</a>
+            <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="vantagens">Vantagens</a>
+            <a href="javascript:void(0)" class="nav-link landing-nav-link" data-scroll="faq">FAQ</a>
           </nav>
 
-          <!-- Ações da Landing Page -->
+          <!-- Ações da Landing Page (Entrar / Criar conta) -->
           <div class="header-actions">
             <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Alternar modo claro / escuro" aria-label="Modo Claro/Escuro">
               ${isDark ? '🌙' : '☀️'}
@@ -82,7 +82,7 @@ export function renderHeader(currentPath = '/') {
     `;
   }
 
-  // 3. PLATAFORMA APP HEADER (Home, Busca, Oferecer, Minhas Caronas, Perfil, Chat)
+  // 3. PLATAFORMA APP HEADER (Pós-login: Home, Busca, Oferecer, Minhas Caronas, Perfil, Chat)
   return `
     <header class="site-header">
       <div class="header-inner">
@@ -91,7 +91,7 @@ export function renderHeader(currentPath = '/') {
           <span class="brand-title">UNIMOVE</span>
         </a>
 
-        <!-- Links da Plataforma -->
+        <!-- Links Internos da Plataforma -->
         <nav class="header-nav" id="headerNav">
           <a href="#/home" class="nav-link ${currentPath === '/home' ? 'active' : ''}">Início</a>
           <a href="#/busca" class="nav-link ${currentPath === '/busca' ? 'active' : ''}">Buscar carona</a>
@@ -140,4 +140,23 @@ export function attachHeaderEvents() {
       nav.classList.toggle('mobile-open');
     });
   }
+
+  // Smooth scroll para links da Landing Page
+  document.querySelectorAll('.landing-nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.dataset.scroll;
+      if (targetId === 'hero-top') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+      if (nav && nav.classList.contains('mobile-open')) {
+        nav.classList.remove('mobile-open');
+      }
+    });
+  });
 }
