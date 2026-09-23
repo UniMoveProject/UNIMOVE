@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Login View
  * University authentication screen with error feedback and demo credentials (No emojis).
  */
@@ -68,12 +68,12 @@ export function attachLoginEvents() {
   }
 
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value;
       const senha = document.getElementById('loginSenha').value;
 
-      const res = login(email, senha);
+      const res = await login(email, senha);
       if (res.success) {
         errorMsg.classList.remove('show');
         window.location.hash = '#/home';

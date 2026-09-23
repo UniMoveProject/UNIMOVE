@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Authentication Service
  * Handles user login, registration, and profile management.
  * Uses Supabase Auth when configured, falls back to localStorage.
@@ -97,7 +97,13 @@ export async function updateProfileSupabase(updatedData) {
 
 // ── localStorage fallback ─────────────────────────────────────────────────────
 
-export function login(email, password) {
+export async function login(email, password) {
+  if (isSupabaseConfigured) {
+    // Use Supabase authentication
+    return await loginWithSupabase(email, password);
+  }
+
+  // Fallback to localStorage
   const users = getAllUsers();
   const normalizedEmail = email.trim().toLowerCase();
   const found = users.find(u => u.email.toLowerCase() === normalizedEmail && u.senha === password);

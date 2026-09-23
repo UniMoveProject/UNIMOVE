@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Storage Service
  * LocalStorage state management with mock persistence.
  * Prepared to seamlessly swap to Supabase client queries.
@@ -48,6 +48,23 @@ const INITIAL_USERS = [
     avaliacoes: 4.8,
     totalCaronas: 12,
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'usr_test',
+    nome: 'Test User',
+    email: 'test.user@uniceplac.edu.br',
+    senha: 'Test123!',
+    curso: 'Engenharia de Software',
+    periodo: '1º período',
+    campus: 'Campus UNICEPLAC',
+    idade: 22,
+    cidade: 'Goiânia',
+    telefone: '(61) 90000-0000',
+    roles: ['passageiro'],
+    veiculo: null,
+    avaliacoes: 5.0,
+    totalCaronas: 0,
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80'
   }
 ];
 
