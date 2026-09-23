@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Rides Service
  * Handles listing, filtering, offering, booking, editing, and deleting rides.
  * Uses Supabase when configured, falls back to localStorage.
@@ -13,16 +13,19 @@ import { supabase, isSupabaseConfigured } from './supabaseClient.js';
 export async function getAllRidesSupabase() {
   const { data, error } = await supabase
     .from('rides')
-    .select(`*, profiles:motorista_id (nome, avatar, curso, periodo, avaliacoes, total_caronas)`)
+    .select(`*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
     .order('created_at', { ascending: false });
-  if (error) return [];
+  if (error) {
+    console.error('Erro em getAllRidesSupabase:', error);
+    return [];
+  }
   return data.map(mapRide);
 }
 
 export async function searchRidesSupabase(filters = {}) {
   let query = supabase
     .from('rides')
-    .select(`*, profiles:motorista_id (nome, avatar, curso, periodo, avaliacoes, total_caronas)`)
+    .select(`*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
     .eq('status', 'ativa');
 
   if (filters.origem) query = query.ilike('origem', `%${filters.origem}%`);
@@ -113,8 +116,8 @@ export async function getMyRidesSupabase() {
   if (!user) return { offered: [], booked: [] };
 
   const [{ data: offered }, { data: bookedPassengers }] = await Promise.all([
-    supabase.from('rides').select(`*, profiles:motorista_id (nome, avatar, curso, periodo, avaliacoes, total_caronas)`).eq('motorista_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('ride_passengers').select(`rides (*, profiles:motorista_id (nome, avatar, curso, periodo, avaliacoes, total_caronas))`).eq('passenger_id', user.id),
+    supabase.from('rides').select(`*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`).eq('motorista_id', user.id).order('created_at', { ascending: false }),
+    supabase.from('ride_passengers').select(`rides (*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas))`).eq('passageiro_id', user.id),
   ]);
 
   return {
@@ -130,7 +133,7 @@ function mapRide(r) {
     id: r.id,
     motoristaId: r.motorista_id,
     motoristaNome: p.nome || 'Motorista',
-    motoristaFoto: p.avatar || '',
+    motoristaFoto: p.avatar_url || '',
     motoristaCurso: `${p.curso || 'Estudante'} - ${p.periodo || ''}`,
     motoristaAvaliacao: p.avaliacoes || 5.0,
     totalCaronas: p.total_caronas || 0,
