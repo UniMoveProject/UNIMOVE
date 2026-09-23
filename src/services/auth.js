@@ -48,28 +48,46 @@ export async function registerWithSupabase(userData) {
   const { data, error } = await supabase.auth.signUp({
     email: userData.email.trim().toLowerCase(),
     password: userData.senha,
+    options: {
+      data: {
+        nome: userData.nome.trim(),
+        curso: userData.curso || 'Engenharia de Software',
+        campus: userData.campus || 'Campus UNICEPLAC',
+      }
+    }
   });
-  if (error) return { success: false, error: 'Nao foi possivel criar a conta. Tente novamente.' };
 
-  // upsert profile
-  await supabase.from('profiles').upsert({
+  if (error) return { success: false, error: error.message || 'Nao foi possivel criar a conta.' };
+  if (!data?.user) return { success: false, error: 'Erro ao registrar usuario.' };
+
+  // upsert profile with correct column names matching database schema
+  const profilePayload = {
     id: data.user.id,
     nome: userData.nome.trim(),
-    cpf: userData.cpf,
-    idade: parseInt(userData.idade, 10),
-    sexo: userData.sexo,
-    telefone: userData.telefone,
+    email: userData.email.trim().toLowerCase(),
+    cpf: userData.cpf || null,
+    idade: parseInt(userData.idade, 10) || null,
+    sexo: userData.sexo || null,
+    telefone: userData.telefone || null,
     curso: userData.curso || 'Engenharia de Software',
     periodo: userData.periodo || '1o periodo',
     campus: userData.campus || 'Campus UNICEPLAC',
     roles: userData.roles || ['passageiro'],
-    veiculo: userData.veiculo || null,
-    avatar: userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+    avatar_url: userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
     avaliacoes: 5.0,
     total_caronas: 0,
-  });
+  };
 
-  const user = { id: data.user.id, email: userData.email, nome: userData.nome.trim() };
+  if (userData.veiculo && typeof userData.veiculo === 'object') {
+    profilePayload.veiculo_modelo = userData.veiculo.modelo || null;
+    profilePayload.veiculo_cor = userData.veiculo.cor || null;
+    profilePayload.veiculo_placa = userData.veiculo.placa || null;
+  }
+
+  const { error: profileError } = await supabase.from('profiles').upsert(profilePayload);
+  if (profileError) console.warn('Erro ao atualizar perfil apos signup:', profileError.message);
+
+  const user = { id: data.user.id, email: userData.email, nome: userData.nome.trim(), ...profilePayload };
   setCurrentUser(user);
   return { success: true, user };
 }
@@ -83,9 +101,21 @@ export async function updateProfileSupabase(updatedData) {
   const currentUser = getCurrentUser();
   if (!currentUser) return { success: false, error: 'Usuario nao autenticado.' };
 
+  const payload = { ...updatedData };
+  if (payload.avatar) {
+    payload.avatar_url = payload.avatar;
+    delete payload.avatar;
+  }
+  if (payload.veiculo && typeof payload.veiculo === 'object') {
+    payload.veiculo_modelo = payload.veiculo.modelo;
+    payload.veiculo_cor = payload.veiculo.cor;
+    payload.veiculo_placa = payload.veiculo.placa;
+    delete payload.veiculo;
+  }
+
   const { error } = await supabase
     .from('profiles')
-    .update(updatedData)
+    .update(payload)
     .eq('id', currentUser.id);
 
   if (error) return { success: false, error: error.message };
@@ -119,8 +149,8 @@ export function logout() {
   setCurrentUser(null);
 }
 
-export function registerUser(userData) {
-  if (isSupabaseConfigured) return registerWithSupabase(userData);
+export async function registerUser(userData) {
+  if (isSupabaseConfigured) return await registerWithSupabase(userData);
 
   const users = getAllUsers();
   const normalizedEmail = userData.email.trim().toLowerCase();
@@ -152,8 +182,8 @@ export function registerUser(userData) {
   return { success: true, user: newUser };
 }
 
-export function updateProfile(updatedData) {
-  if (isSupabaseConfigured) return updateProfileSupabase(updatedData);
+export async function updateProfile(updatedData) {
+  if (isSupabaseConfigured) return await updateProfileSupabase(updatedData);
 
   const currentUser = getCurrentUser();
   if (!currentUser) return { success: false, error: 'Usuario nao autenticado.' };

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Register View
  * Student onboarding form with input validation, masks and photo upload preview (No emojis).
  */
@@ -166,7 +166,7 @@ export function attachRegisterEvents() {
   });
 
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const nome = document.getElementById('regNome').value.trim();
@@ -199,7 +199,7 @@ export function attachRegisterEvents() {
         return;
       }
 
-      const res = registerUser({
+      const res = await registerUser({
         nome,
         email,
         cpf,

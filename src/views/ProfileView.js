@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Profile View
  * Student profile, vehicle data, mobility preferences and logout (No emojis).
  */
@@ -157,7 +157,7 @@ export function attachProfileEvents() {
   }
 
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const roles = Array.from(document.querySelectorAll('input[name="profileRole"]:checked')).map(el => el.value);
@@ -175,7 +175,7 @@ export function attachProfileEvents() {
         }
       };
 
-      updateProfile(updated);
+      await updateProfile(updated);
 
       showModal({
         title: 'Perfil atualizado',
