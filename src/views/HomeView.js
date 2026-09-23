@@ -8,24 +8,21 @@ import { renderRideCard } from '../components/RideCard.js';
 import { getCurrentUser } from '../services/auth.js';
 
 export function renderHomeView() {
-  const user = getCurrentUser();
-  const rides = getAllRides().slice(0, 6);
-
   return `
     <div style="display:flex; flex-direction:column; gap:2rem;">
       
-      <!-- Top Greetings & Hero Card (Manual pág 10) -->
+      <!-- Hero Card -->
       <section class="card" style="background:var(--bg-card); border-left:6px solid var(--amarelo-unimove); padding:1.75rem 2rem;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem;">
           <div>
             <div style="font-family:var(--font-subtitle); font-size:1.05rem; color:var(--azul-unimove); letter-spacing:0.02em;">
-              ROTA DE HOJE · 07:40
+              BEM-VINDO AO UNIMOVE
             </div>
             <h1 class="page-title" style="font-size:clamp(1.8rem, 4vw, 2.5rem); margin:0.35rem 0 0.25rem; color:var(--text-primary);">
-              EMBARQUE COM CONFIANÇA
+              EMBARQUE COM CONFIANCA
             </h1>
             <p style="color:var(--text-secondary); font-size:1.15rem;">
-              Rhian conduz hoje saindo do <strong>Terminal Jardim ABC</strong> até o <strong>Campus UNICEPLAC</strong>, com 2 vagas disponíveis por <strong>R$ 6,00</strong>.
+              Encontre ou ofereca caronas para o <strong>Campus UNICEPLAC</strong> de forma segura e economica.
             </p>
           </div>
 
@@ -34,21 +31,14 @@ export function renderHomeView() {
             <a href="#/oferecer" class="btn btn-amarelo">Oferecer carona</a>
           </div>
         </div>
-
-        <div style="display:flex; gap:1.5rem; flex-wrap:wrap; border-top:1px solid var(--border-color); padding-top:1rem; font-family:var(--font-subtitle); font-size:0.95rem;">
-          <span style="color:var(--text-secondary);">Origem: <strong style="color:var(--text-primary);">Setor Bela Vista</strong></span>
-          <span style="color:var(--text-secondary);">Encontro: <strong style="color:var(--text-primary);">Terminal Jardim ABC</strong></span>
-          <span style="color:var(--text-secondary);">Destino: <strong style="color:var(--azul-unimove);">Campus UNICEPLAC (08:15)</strong></span>
-          <span class="badge badge-verde">2 vagas abertas</span>
-        </div>
       </section>
 
       <!-- Quick Route Search Bar -->
       <section class="card" style="padding:1.5rem;">
-        <h2 style="font-family:var(--font-subtitle); font-size:1.4rem; margin-bottom:1rem;">Para onde você vai hoje?</h2>
+        <h2 style="font-family:var(--font-subtitle); font-size:1.4rem; margin-bottom:1rem;">Para onde voce vai hoje?</h2>
         <form id="quickSearchForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)) 120px; gap:1rem; align-items:flex-end;">
           <div>
-            <label class="form-label" for="quickOrigem">De onde você sai?</label>
+            <label class="form-label" for="quickOrigem">De onde voce sai?</label>
             <input type="text" id="quickOrigem" class="form-input" placeholder="Ex: Setor Bela Vista, Asa Sul, Gama...">
           </div>
           <div>
@@ -64,12 +54,12 @@ export function renderHomeView() {
       <!-- Available Rides List -->
       <section>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
-          <h2 style="font-family:var(--font-subtitle); font-size:1.5rem;">Caronas disponíveis</h2>
-          <a href="#/busca" style="font-family:var(--font-subtitle); color:var(--azul-unimove); font-size:0.95rem;">Ver todas →</a>
+          <h2 style="font-family:var(--font-subtitle); font-size:1.5rem;">Caronas disponiveis</h2>
+          <a href="#/busca" style="font-family:var(--font-subtitle); color:var(--azul-unimove); font-size:0.95rem;">Ver todas</a>
         </div>
 
-        <div id="homeRidesList">
-          ${rides.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('')}
+        <div id="homeRidesList" style="color:var(--text-secondary); padding:1rem 0;">
+          Carregando caronas...
         </div>
       </section>
 
@@ -77,7 +67,27 @@ export function renderHomeView() {
   `;
 }
 
+export async function loadHomeRides() {
+  const user = getCurrentUser();
+  const container = document.getElementById('homeRidesList');
+  if (!container) return;
+
+  try {
+    const rides = await getAllRides();
+    const recent = rides.slice(0, 6);
+    if (recent.length === 0) {
+      container.innerHTML = '<p style="color:var(--text-secondary);">Nenhuma carona disponivel no momento.</p>';
+    } else {
+      container.innerHTML = recent.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('');
+    }
+  } catch (err) {
+    container.innerHTML = '<p style="color:var(--text-secondary);">Erro ao carregar caronas. Tente novamente.</p>';
+  }
+}
+
 export function attachHomeEvents() {
+  loadHomeRides();
+
   const form = document.getElementById('quickSearchForm');
   if (form) {
     form.addEventListener('submit', (e) => {
