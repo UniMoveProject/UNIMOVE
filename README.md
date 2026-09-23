@@ -34,7 +34,7 @@ O **UniMove** é uma plataforma de mobilidade colaborativa idealizada e desenvol
 ## 🚀 Recursos Principais
 
 * **Busca e Oferta de Caronas:** Seleção de trajetos com origem, destino, horário de saída e vagas disponíveis.
-* **Perfis Diferenciados:** Mapeamento específico para Passageiros, Motoristas e Ciclistas (com rotas adaptadas).
+* **Perfis Diferenciados:** Mapeamento específico para Passageiros e Motoristas(com rotas adaptadas).
 * **Painel / Dashboard:** Métricas de caronas realizadas, acompanhamento de economia e selos de sustentabilidade (XP).
 * **Sistema de Avaliação:** Feedback mútuo após o encerramento da rota para manter a reputação da rede.
 
@@ -57,10 +57,9 @@ O **UniMove** é uma plataforma de mobilidade colaborativa idealizada e desenvol
 
 ## 🔒 Especificações de Perfil e Regras de Negócio
 
-### 1. Usuário Standard (Passageiro / Ciclista)
+### 1. Usuário Standard (Passageiro)
 * **Atributos:** Nome completo, foto de rosto nítida, CPF (validação obrigatória), idade, telefone celular.
 * **Parâmetros de Preferência (Mulheres):** Filtro de composição de carona (Apenas Mulheres, Apenas Homens ou Sem Preferência).
-* **Perfil Ciclista:** Mapeamento da rota utilizada para navegação conjunta ou apoio.
 
 ### 2. Usuário Motorista
 * **Atributos:** Nome completo, foto de rosto nítida, CPF e CNH (validação de autenticidade no cadastro).
