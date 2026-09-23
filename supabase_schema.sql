@@ -78,13 +78,17 @@ ALTER TABLE public.ride_passengers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de Profiles
-CREATE POLICY "Perfis visíveis para todos os estudantes autenticados"
+CREATE POLICY "Perfis visíveis para todos"
   ON public.profiles FOR SELECT
-  USING (auth.role() = 'authenticated');
+  USING (true);
 
 CREATE POLICY "Usuários podem atualizar seu próprio perfil"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id);
+
+CREATE POLICY "Permitir inserção de perfil no cadastro"
+  ON public.profiles FOR INSERT
+  WITH CHECK (true);
 
 -- Políticas de Rides
 CREATE POLICY "Caronas visíveis para todos"
