@@ -1,4 +1,4 @@
-﻿-- ==========================================================================
+-- ==========================================================================
 -- UNIMOVE - ESQUEMA DE BANCO DE DADOS (SUPABASE POSTGRESQL)
 -- Execute este script no SQL Editor do seu painel do Supabase.
 -- ==========================================================================
@@ -138,7 +138,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
