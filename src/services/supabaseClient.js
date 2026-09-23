@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Supabase Client Wrapper
  * Exposes the initialized Supabase client and a flag indicating whether it is configured.
  * If the required environment variables are missing, the client is not instantiated.
@@ -10,6 +10,12 @@ const url = import.meta.env.VITE_SUPABASE_URL;
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const isSupabaseConfigured = Boolean(url && anonKey);
+
+if (isSupabaseConfigured) {
+  console.log('[UniMove] Supabase conectado com sucesso:', url);
+} else {
+  console.warn('[UniMove] Supabase NAO configurado (faltando VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY). Usando localStorage no navegador.');
+}
 
 export const supabase = isSupabaseConfigured ? createClient(url, anonKey) : null;
 
