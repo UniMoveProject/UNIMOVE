@@ -27,12 +27,12 @@ export function renderLoginView() {
           
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label" for="loginEmail">E-mail institucional</label>
-            <input type="email" id="loginEmail" class="form-input" placeholder="seu.nome@uniceplac.edu.br" value="rhian.almeida@uniceplac.edu.br" required>
+            <input type="email" id="loginEmail" class="form-input" placeholder="seu.nome@uniceplac.edu.br" value="teste@uniceplac.edu.br" required>
           </div>
 
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label" for="loginSenha">Senha</label>
-            <input type="password" id="loginSenha" class="form-input" placeholder="Digite sua senha" value="UniMove123!" required>
+            <input type="password" id="loginSenha" class="form-input" placeholder="Digite sua senha" value="123456" required>
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.95rem;">
