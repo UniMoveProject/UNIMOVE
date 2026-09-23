@@ -15,6 +15,7 @@ if (isSupabaseConfigured) {
   console.log('[UniMove] Supabase conectado com sucesso:', url);
 } else {
   console.warn('[UniMove] Supabase NAO configurado (faltando VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY). Usando localStorage no navegador.');
+  console.log('[UniMove Debug] VITE_ keys no build:', Object.keys(import.meta.env).filter(k => k.startsWith('VITE_')));
 }
 
 export const supabase = isSupabaseConfigured ? createClient(url, anonKey) : null;
