@@ -11,31 +11,56 @@ import { supabase, isSupabaseConfigured } from './supabaseClient.js';
 // ── Supabase Rides ─────────────────────────────────────────────────────────────
 
 export async function getAllRidesSupabase() {
-  const { data, error } = await supabase
-    .from('rides')
-    .select(`*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
-    .order('created_at', { ascending: false });
-  if (error) {
-    console.error('Erro em getAllRidesSupabase:', error);
+  try {
+    const { data, error } = await supabase
+      .from('rides')
+      .select(`*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      // Fallback query without explicit foreign key alias
+      const { data: fallbackData, error: fallbackErr } = await supabase
+        .from('rides')
+        .select(`*`)
+        .order('created_at', { ascending: false });
+      if (fallbackErr) {
+        console.error('Erro em getAllRidesSupabase:', fallbackErr.message);
+        return [];
+      }
+      return (fallbackData || []).map(mapRide);
+    }
+    return (data || []).map(mapRide);
+  } catch (e) {
+    console.error('Exceção em getAllRidesSupabase:', e);
     return [];
   }
-  return data.map(mapRide);
 }
 
 export async function searchRidesSupabase(filters = {}) {
-  let query = supabase
-    .from('rides')
-    .select(`*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
-    .eq('status', 'ativa');
+  try {
+    let query = supabase
+      .from('rides')
+      .select(`*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
+      .eq('status', 'ativa');
 
-  if (filters.origem) query = query.ilike('origem', `%${filters.origem}%`);
-  if (filters.destino) query = query.ilike('destino', `%${filters.destino}%`);
-  if (filters.horario) query = query.gte('horario_saida', filters.horario);
-  if (filters.vagasMinimas) query = query.gte('vagas_disponiveis', parseInt(filters.vagasMinimas, 10));
+    if (filters.origem) query = query.ilike('origem', `%${filters.origem}%`);
+    if (filters.destino) query = query.ilike('destino', `%${filters.destino}%`);
+    if (filters.horario) query = query.gte('horario_saida', filters.horario);
+    if (filters.vagasMinimas) query = query.gte('vagas_disponiveis', parseInt(filters.vagasMinimas, 10));
 
-  const { data, error } = await query.order('horario_saida', { ascending: true });
-  if (error) return [];
-  return data.map(mapRide);
+    const { data, error } = await query.order('horario_saida', { ascending: true });
+    if (error) {
+      let fallbackQuery = supabase.from('rides').select(`*`).eq('status', 'ativa');
+      if (filters.origem) fallbackQuery = fallbackQuery.ilike('origem', `%${filters.origem}%`);
+      if (filters.destino) fallbackQuery = fallbackQuery.ilike('destino', `%${filters.destino}%`);
+      const { data: fallbackData } = await fallbackQuery.order('horario_saida', { ascending: true });
+      return (fallbackData || []).map(mapRide);
+    }
+    return (data || []).map(mapRide);
+  } catch (e) {
+    console.error('Exceção em searchRidesSupabase:', e);
+    return [];
+  }
 }
 
 export async function offerRideSupabase(rideData) {
@@ -93,19 +118,19 @@ export async function bookRideSupabase(rideId) {
   const user = getCurrentUser();
   if (!user) return { success: false, error: 'Voce precisa estar logado para pedir carona.' };
 
-  // Check if already booked
+  // Check if already booked using passageiro_id column name
   const { data: existing } = await supabase
     .from('ride_passengers')
     .select('id')
     .eq('ride_id', rideId)
-    .eq('passenger_id', user.id)
-    .single();
+    .eq('passageiro_id', user.id)
+    .maybeSingle();
 
   if (existing) return { success: false, error: 'Voce ja confirmou presenca nesta carona!' };
 
   const { error } = await supabase
     .from('ride_passengers')
-    .insert({ ride_id: rideId, passenger_id: user.id });
+    .insert({ ride_id: rideId, passageiro_id: user.id });
 
   if (error) return { success: false, error: error.message };
   return { success: true };
@@ -115,15 +140,20 @@ export async function getMyRidesSupabase() {
   const user = getCurrentUser();
   if (!user) return { offered: [], booked: [] };
 
-  const [{ data: offered }, { data: bookedPassengers }] = await Promise.all([
-    supabase.from('rides').select(`*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`).eq('motorista_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('ride_passengers').select(`rides (*, profiles (nome, avatar_url, curso, periodo, avaliacoes, total_caronas))`).eq('passageiro_id', user.id),
-  ]);
+  try {
+    const [{ data: offered }, { data: bookedPassengers }] = await Promise.all([
+      supabase.from('rides').select(`*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`).eq('motorista_id', user.id).order('created_at', { ascending: false }),
+      supabase.from('ride_passengers').select(`rides (*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas))`).eq('passageiro_id', user.id),
+    ]);
 
-  return {
-    offered: (offered || []).map(mapRide),
-    booked: (bookedPassengers || []).map(p => mapRide(p.rides)).filter(Boolean),
-  };
+    return {
+      offered: (offered || []).map(mapRide).filter(Boolean),
+      booked: (bookedPassengers || []).map(p => mapRide(p?.rides)).filter(Boolean),
+    };
+  } catch (e) {
+    console.error('Erro em getMyRidesSupabase:', e);
+    return { offered: [], booked: [] };
+  }
 }
 
 function mapRide(r) {

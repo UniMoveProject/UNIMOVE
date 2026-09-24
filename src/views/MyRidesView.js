@@ -1,4 +1,4 @@
-﻿/**
+/**
  * My Rides View
  * Displays user rides offered as driver and rides joined as passenger (No emojis).
  */
@@ -23,8 +23,6 @@ export function renderMyRidesView() {
     `;
   }
 
-  const { offered, booked } = getMyRides();
-
   return `
     <div style="display:flex; flex-direction:column; gap:2.5rem;">
       
@@ -43,19 +41,11 @@ export function renderMyRidesView() {
       <section>
         <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;">
           <h2 style="font-family:var(--font-subtitle); font-size:1.4rem;">Caronas que ofereço</h2>
-          <span class="badge badge-azul">${offered.length}</span>
+          <span class="badge badge-azul" id="offeredBadge">...</span>
         </div>
 
-        <div>
-          ${offered.length > 0 
-            ? offered.map(r => renderRideCard(r, true)).join('')
-            : `
-              <div class="card" style="text-align:center; padding:2rem 1rem;">
-                <p style="color:var(--text-secondary); margin-bottom:1rem;">Você não tem nenhuma carona publicada no momento.</p>
-                <a href="#/oferecer" class="btn btn-sm btn-outline">Publicar rota</a>
-              </div>
-            `
-          }
+        <div id="offeredContainer" style="color:var(--text-secondary); padding:1rem 0;">
+          Carregando suas caronas...
         </div>
       </section>
 
@@ -63,19 +53,11 @@ export function renderMyRidesView() {
       <section>
         <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;">
           <h2 style="font-family:var(--font-subtitle); font-size:1.4rem;">Viagens confirmadas</h2>
-          <span class="badge badge-verde">${booked.length}</span>
+          <span class="badge badge-verde" id="bookedBadge">...</span>
         </div>
 
-        <div>
-          ${booked.length > 0 
-            ? booked.map(r => renderRideCard(r, false)).join('')
-            : `
-              <div class="card" style="text-align:center; padding:2rem 1rem;">
-                <p style="color:var(--text-secondary); margin-bottom:1rem;">Você ainda não solicitou vagas em nenhuma carona.</p>
-                <a href="#/busca" class="btn btn-sm btn-azul">Buscar carona</a>
-              </div>
-            `
-          }
+        <div id="bookedContainer" style="color:var(--text-secondary); padding:1rem 0;">
+          Carregando reservas...
         </div>
       </section>
 
@@ -83,7 +65,53 @@ export function renderMyRidesView() {
   `;
 }
 
-export function attachMyRidesEvents() {
+export async function loadMyRidesData() {
+  const offeredContainer = document.getElementById('offeredContainer');
+  const bookedContainer = document.getElementById('bookedContainer');
+  const offeredBadge = document.getElementById('offeredBadge');
+  const bookedBadge = document.getElementById('bookedBadge');
+
+  if (!offeredContainer || !bookedContainer) return;
+
+  try {
+    const res = await getMyRides();
+    const offered = res?.offered || [];
+    const booked = res?.booked || [];
+
+    if (offeredBadge) offeredBadge.textContent = offered.length;
+    if (bookedBadge) bookedBadge.textContent = booked.length;
+
+    if (offered.length > 0) {
+      offeredContainer.innerHTML = offered.map(r => renderRideCard(r, true)).join('');
+    } else {
+      offeredContainer.innerHTML = `
+        <div class="card" style="text-align:center; padding:2rem 1rem;">
+          <p style="color:var(--text-secondary); margin-bottom:1rem;">Você não tem nenhuma carona publicada no momento.</p>
+          <a href="#/oferecer" class="btn btn-sm btn-outline">Publicar rota</a>
+        </div>
+      `;
+    }
+
+    if (booked.length > 0) {
+      bookedContainer.innerHTML = booked.map(r => renderRideCard(r, false)).join('');
+    } else {
+      bookedContainer.innerHTML = `
+        <div class="card" style="text-align:center; padding:2rem 1rem;">
+          <p style="color:var(--text-secondary); margin-bottom:1rem;">Você ainda não solicitou vagas em nenhuma carona.</p>
+          <a href="#/busca" class="btn btn-sm btn-azul">Buscar carona</a>
+        </div>
+      `;
+    }
+
+    attachDeleteEvents();
+  } catch (err) {
+    console.error('Erro ao carregar minhas caronas:', err);
+    if (offeredContainer) offeredContainer.innerHTML = '<p style="color:var(--text-secondary);">Erro ao carregar dados.</p>';
+    if (bookedContainer) bookedContainer.innerHTML = '<p style="color:var(--text-secondary);">Erro ao carregar dados.</p>';
+  }
+}
+
+function attachDeleteEvents() {
   document.querySelectorAll('.btn-delete-ride').forEach(btn => {
     btn.addEventListener('click', () => {
       const rideId = btn.dataset.id;
@@ -93,11 +121,15 @@ export function attachMyRidesEvents() {
         confirmText: 'Sim, excluir',
         cancelText: 'Voltar',
         isDanger: true,
-        onConfirm: () => {
-          deleteRide(rideId);
-          window.dispatchEvent(new HashChangeEvent('hashchange'));
+        onConfirm: async () => {
+          await deleteRide(rideId);
+          loadMyRidesData();
         }
       });
     });
   });
+}
+
+export function attachMyRidesEvents() {
+  loadMyRidesData();
 }
