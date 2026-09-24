@@ -10,26 +10,45 @@ import { supabase, isSupabaseConfigured } from './supabaseClient.js';
 
 // ── Supabase Rides ─────────────────────────────────────────────────────────────
 
+async function enrichRidesWithProfiles(ridesList) {
+  if (!ridesList || ridesList.length === 0) return [];
+
+  const motoristaIds = [...new Set(ridesList.map(r => r.motorista_id).filter(Boolean))];
+  const profilesMap = {};
+
+  if (motoristaIds.length > 0) {
+    try {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, nome, avatar_url, curso, periodo, avaliacoes, total_caronas')
+        .in('id', motoristaIds);
+
+      (profiles || []).forEach(p => {
+        profilesMap[p.id] = p;
+      });
+    } catch (e) {
+      console.warn('Aviso ao buscar perfis dos motoristas:', e);
+    }
+  }
+
+  return ridesList.map(r => {
+    const p = profilesMap[r.motorista_id] || r.profiles || {};
+    return mapRide({ ...r, profiles: p });
+  });
+}
+
 export async function getAllRidesSupabase() {
   try {
-    const { data, error } = await supabase
+    const { data: rides, error } = await supabase
       .from('rides')
-      .select(`*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) {
-      // Fallback query without explicit foreign key alias
-      const { data: fallbackData, error: fallbackErr } = await supabase
-        .from('rides')
-        .select(`*`)
-        .order('created_at', { ascending: false });
-      if (fallbackErr) {
-        console.error('Erro em getAllRidesSupabase:', fallbackErr.message);
-        return [];
-      }
-      return (fallbackData || []).map(mapRide);
+      console.error('Erro em getAllRidesSupabase:', error.message);
+      return [];
     }
-    return (data || []).map(mapRide);
+    return await enrichRidesWithProfiles(rides || []);
   } catch (e) {
     console.error('Exceção em getAllRidesSupabase:', e);
     return [];
@@ -38,25 +57,19 @@ export async function getAllRidesSupabase() {
 
 export async function searchRidesSupabase(filters = {}) {
   try {
-    let query = supabase
-      .from('rides')
-      .select(`*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`)
-      .eq('status', 'ativa');
+    let query = supabase.from('rides').select('*').eq('status', 'ativa');
 
     if (filters.origem) query = query.ilike('origem', `%${filters.origem}%`);
     if (filters.destino) query = query.ilike('destino', `%${filters.destino}%`);
     if (filters.horario) query = query.gte('horario_saida', filters.horario);
     if (filters.vagasMinimas) query = query.gte('vagas_disponiveis', parseInt(filters.vagasMinimas, 10));
 
-    const { data, error } = await query.order('horario_saida', { ascending: true });
+    const { data: rides, error } = await query.order('horario_saida', { ascending: true });
     if (error) {
-      let fallbackQuery = supabase.from('rides').select(`*`).eq('status', 'ativa');
-      if (filters.origem) fallbackQuery = fallbackQuery.ilike('origem', `%${filters.origem}%`);
-      if (filters.destino) fallbackQuery = fallbackQuery.ilike('destino', `%${filters.destino}%`);
-      const { data: fallbackData } = await fallbackQuery.order('horario_saida', { ascending: true });
-      return (fallbackData || []).map(mapRide);
+      console.error('Erro em searchRidesSupabase:', error.message);
+      return [];
     }
-    return (data || []).map(mapRide);
+    return await enrichRidesWithProfiles(rides || []);
   } catch (e) {
     console.error('Exceção em searchRidesSupabase:', e);
     return [];
@@ -118,7 +131,6 @@ export async function bookRideSupabase(rideId) {
   const user = getCurrentUser();
   if (!user) return { success: false, error: 'Voce precisa estar logado para pedir carona.' };
 
-  // Check if already booked using passageiro_id column name
   const { data: existing } = await supabase
     .from('ride_passengers')
     .select('id')
@@ -141,14 +153,32 @@ export async function getMyRidesSupabase() {
   if (!user) return { offered: [], booked: [] };
 
   try {
-    const [{ data: offered }, { data: bookedPassengers }] = await Promise.all([
-      supabase.from('rides').select(`*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas)`).eq('motorista_id', user.id).order('created_at', { ascending: false }),
-      supabase.from('ride_passengers').select(`rides (*, profiles:motorista_id (nome, avatar_url, curso, periodo, avaliacoes, total_caronas))`).eq('passageiro_id', user.id),
+    const { data: offeredRides } = await supabase
+      .from('rides')
+      .select('*')
+      .eq('motorista_id', user.id)
+      .order('created_at', { ascending: false });
+
+    const { data: bookedEntries } = await supabase
+      .from('ride_passengers')
+      .select('ride_id')
+      .eq('passageiro_id', user.id);
+
+    const bookedIds = (bookedEntries || []).map(b => b.ride_id).filter(Boolean);
+    let bookedRides = [];
+    if (bookedIds.length > 0) {
+      const { data: bRides } = await supabase.from('rides').select('*').in('id', bookedIds);
+      bookedRides = bRides || [];
+    }
+
+    const [enrichedOffered, enrichedBooked] = await Promise.all([
+      enrichRidesWithProfiles(offeredRides || []),
+      enrichRidesWithProfiles(bookedRides || [])
     ]);
 
     return {
-      offered: (offered || []).map(mapRide).filter(Boolean),
-      booked: (bookedPassengers || []).map(p => mapRide(p?.rides)).filter(Boolean),
+      offered: enrichedOffered,
+      booked: enrichedBooked,
     };
   } catch (e) {
     console.error('Erro em getMyRidesSupabase:', e);
