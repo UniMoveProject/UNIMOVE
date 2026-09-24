@@ -129,8 +129,9 @@ export async function deleteRideSupabase(id) {
 
 export async function bookRideSupabase(rideId) {
   const user = getCurrentUser();
-  if (!user) return { success: false, error: 'Voce precisa estar logado para pedir carona.' };
+  if (!user) return { success: false, error: 'Você precisa estar logado para pedir carona.' };
 
+  // Check if already booked
   const { data: existing } = await supabase
     .from('ride_passengers')
     .select('id')
@@ -138,15 +139,35 @@ export async function bookRideSupabase(rideId) {
     .eq('passageiro_id', user.id)
     .maybeSingle();
 
-  if (existing) return { success: false, error: 'Voce ja confirmou presenca nesta carona!' };
+  if (existing) return { success: false, error: 'Você já confirmou presença nesta carona!' };
 
-  const { error } = await supabase
+  // Check if there are available seats
+  const { data: ride } = await supabase
+    .from('rides')
+    .select('vagas_disponiveis, motorista_id')
+    .eq('id', rideId)
+    .single();
+
+  if (!ride) return { success: false, error: 'Carona não encontrada.' };
+  if (ride.motorista_id === user.id) return { success: false, error: 'Você não pode pedir carona na sua própria oferta!' };
+  if (ride.vagas_disponiveis <= 0) return { success: false, error: 'Todas as vagas desta carona já foram preenchidas.' };
+
+  // Insert passenger
+  const { error: insertError } = await supabase
     .from('ride_passengers')
     .insert({ ride_id: rideId, passageiro_id: user.id });
 
-  if (error) return { success: false, error: error.message };
+  if (insertError) return { success: false, error: insertError.message };
+
+  // Decrement available seats
+  await supabase
+    .from('rides')
+    .update({ vagas_disponiveis: ride.vagas_disponiveis - 1 })
+    .eq('id', rideId);
+
   return { success: true };
 }
+
 
 export async function getMyRidesSupabase() {
   const user = getCurrentUser();
@@ -186,7 +207,7 @@ export async function getMyRidesSupabase() {
   }
 }
 
-function mapRide(r) {
+function mapRide(r, passengers = []) {
   if (!r) return null;
   const p = r.profiles || {};
   return {
@@ -205,16 +226,66 @@ function mapRide(r) {
     data: r.data,
     vagasTotais: r.vagas_totais,
     vagasDisponiveis: r.vagas_disponiveis,
+    vagasOcupadas: (r.vagas_totais || 0) - (r.vagas_disponiveis || 0),
     preco: r.preco,
     veiculo: r.veiculo,
     cor: r.cor,
     placa: r.placa,
     status: r.status,
-    passageiros: [],
+    passageiros: passengers,
   };
 }
 
-// ── localStorage fallback ─────────────────────────────────────────────────────
+// Busca uma carona pelo ID com lista de passageiros (para o Chat)
+export async function getRideWithPassengers(rideId) {
+  if (!isSupabaseConfigured) {
+    return getRideById(rideId);
+  }
+
+  try {
+    // Fetch ride + driver profile
+    const { data: ride, error } = await supabase
+      .from('rides')
+      .select('*')
+      .eq('id', rideId)
+      .single();
+
+    if (error || !ride) return null;
+
+    // Fetch driver profile
+    const { data: driverProfile } = await supabase
+      .from('profiles')
+      .select('id, nome, avatar_url, curso, periodo, avaliacoes, total_caronas')
+      .eq('id', ride.motorista_id)
+      .single();
+
+    // Fetch passengers
+    const { data: passengerEntries } = await supabase
+      .from('ride_passengers')
+      .select('passageiro_id, status')
+      .eq('ride_id', rideId)
+      .eq('status', 'confirmado');
+
+    const passengerIds = (passengerEntries || []).map(pe => pe.passageiro_id);
+    let passengerProfiles = [];
+
+    if (passengerIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, nome, avatar_url, curso, periodo, avaliacoes')
+        .in('id', passengerIds);
+      passengerProfiles = profiles || [];
+    }
+
+    const enrichedRide = { ...ride, profiles: driverProfile || {} };
+    return mapRide(enrichedRide, passengerProfiles);
+  } catch (e) {
+    console.error('Erro em getRideWithPassengers:', e);
+    return null;
+  }
+}
+
+
 
 export function getAllRidesLocal() {
   return getStoredData(RIDES_KEY, []);
