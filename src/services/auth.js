@@ -60,6 +60,11 @@ export async function registerWithSupabase(userData) {
   if (error) return { success: false, error: error.message || 'Nao foi possivel criar a conta.' };
   if (!data?.user) return { success: false, error: 'Erro ao registrar usuario.' };
 
+  let avatarUrl = userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
+  if (avatarUrl.startsWith('data:') && avatarUrl.length > 3000) {
+    avatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
+  }
+
   // upsert profile with correct column names matching database schema
   const profilePayload = {
     id: data.user.id,
@@ -73,7 +78,7 @@ export async function registerWithSupabase(userData) {
     periodo: userData.periodo || '1o periodo',
     campus: userData.campus || 'Campus UNICEPLAC',
     roles: userData.roles || ['passageiro'],
-    avatar_url: userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+    avatar_url: avatarUrl,
     avaliacoes: 5.0,
     total_caronas: 0,
   };
@@ -85,7 +90,10 @@ export async function registerWithSupabase(userData) {
   }
 
   const { error: profileError } = await supabase.from('profiles').upsert(profilePayload);
-  if (profileError) console.warn('Erro ao atualizar perfil apos signup:', profileError.message);
+  if (profileError) {
+    console.error('Erro ao salvar perfil no Supabase:', profileError.message);
+    await supabase.from('profiles').update(profilePayload).eq('id', data.user.id);
+  }
 
   const user = { id: data.user.id, email: userData.email, nome: userData.nome.trim(), ...profilePayload };
   setCurrentUser(user);
