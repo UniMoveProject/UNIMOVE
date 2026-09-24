@@ -45,20 +45,19 @@ export async function loginWithSupabase(email, password) {
 }
 
 export async function registerWithSupabase(userData) {
+  const email = userData.email.trim().toLowerCase();
+  const password = userData.senha;
+
   const { data, error } = await supabase.auth.signUp({
-    email: userData.email.trim().toLowerCase(),
-    password: userData.senha,
-    options: {
-      data: {
-        nome: userData.nome.trim(),
-        curso: userData.curso || 'Engenharia de Software',
-        campus: userData.campus || 'Campus UNICEPLAC',
-      }
-    }
+    email,
+    password,
   });
 
-  if (error) return { success: false, error: error.message || 'Nao foi possivel criar a conta.' };
-  if (!data?.user) return { success: false, error: 'Erro ao registrar usuario.' };
+  if (error) {
+    console.error('Erro no Supabase signUp:', error);
+    return { success: false, error: error.message || 'Não foi possível criar a conta.' };
+  }
+  if (!data?.user) return { success: false, error: 'Erro ao registrar usuário.' };
 
   let avatarUrl = userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
   if (avatarUrl.startsWith('data:') && avatarUrl.length > 3000) {
