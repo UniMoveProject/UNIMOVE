@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unimove-v1';
+const CACHE_NAME = 'unimove-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -16,13 +16,23 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Interceptando as requisições (Fetch)
+// Interceptando as requisições (Fetch) - Estratégia Network First para HTML
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Retorna do cache se encontrar, senão vai para a rede
-        return response || fetch(event.request);
+    fetch(event.request)
+      .then((networkResponse) => {
+        // Se a requisição deu certo, salva no cache e retorna
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // Se falhou (offline), tenta pegar do cache
+        return caches.match(event.request);
       })
   );
 });
