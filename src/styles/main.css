@@ -152,6 +152,100 @@ a {
   padding: 1.5rem 1rem 4rem;
 }
 
+/* --- App Shell Layout (Platform Logged In) --- */
+.app-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.app-topbar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--header-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid var(--border-color);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.app-body-wrapper {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 65px); /* Minus topbar height */
+}
+
+.app-sidebar {
+  background-color: var(--bg-card);
+  border-right: 1.5px solid var(--border-color);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: sticky;
+  top: 65px;
+  height: calc(100vh - 65px);
+  overflow-y: auto;
+}
+
+.app-main-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.app-bottom-bar {
+  display: none; /* Hidden on desktop */
+}
+
+/* Sidebar & Bottom Bar Nav Links */
+.app-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-subtitle);
+  font-size: 1.05rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.app-nav-link svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.app-nav-link:hover {
+  background-color: rgba(15, 93, 237, 0.08);
+  color: var(--text-primary);
+}
+
+.app-nav-link:hover svg {
+  transform: scale(1.15);
+}
+
+.app-nav-link.active {
+  background-color: var(--azul-unimove);
+  color: #FFF;
+}
+
+.app-nav-link.active svg {
+  stroke: #FFF;
+}
+
 /* --- Header / Topbar --- */
 .site-header {
   position: sticky;
@@ -707,6 +801,7 @@ a {
 
 /* --- Responsive Media Queries --- */
 @media (max-width: 768px) {
+  /* Landing Header Navigation */
   .header-nav {
     display: none;
   }
@@ -728,7 +823,79 @@ a {
   .chat-container {
     height: calc(100vh - 140px);
   }
+
+  /* App Shell Responsive */
+  .app-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .app-body-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 70px; /* Space for Bottom Bar */
+  }
+
+  .app-sidebar {
+    display: none; /* Hide desktop sidebar */
+  }
+
+  .app-main-content {
+    padding: 1rem;
+  }
+
+  /* Bottom Bar */
+  .app-bottom-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(10px);
+    border-top: 1.5px solid var(--border-color);
+    z-index: 100;
+  }
+
+  .app-bottom-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    flex: 1;
+    height: 100%;
+    transition: color 0.2s ease;
+  }
+
+  .app-bottom-link svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .app-bottom-link span {
+    font-family: var(--font-subtitle);
+    font-size: 0.75rem;
+  }
+
+  .app-bottom-link.active {
+    color: var(--azul-unimove);
+  }
+
+  .app-bottom-link.active svg {
+    transform: scale(1.15) translateY(-2px);
+    stroke-width: 2.5;
+  }
 }
+
 
 /* ==========================================================================
    MOTION SPLASH SCREEN (Animacao de Abertura / Restauracao)
