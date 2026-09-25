@@ -1,0 +1,22 @@
+{
+  "name": "UniMove",
+  "short_name": "UniMove",
+  "description": "Mobilidade Acadêmica & Carona Solidária",
+  "start_url": "/#/home",
+  "display": "standalone",
+  "background_color": "#FFF4CC",
+  "theme_color": "#F8D410",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

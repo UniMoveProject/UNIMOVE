@@ -5,6 +5,7 @@
 
 import { renderHeader, attachHeaderEvents } from './components/Header.js';
 import { renderFooter } from './components/Footer.js';
+import { renderSidebar, renderBottomBar } from './components/NavBars.js';
 
 import { renderLandingView, attachLandingEvents } from './views/LandingView.js';
 import { renderHomeView, attachHomeEvents } from './views/HomeView.js';
@@ -97,17 +98,36 @@ export async function handleRoute() {
     </div>
   `;
 
-  // Render Full App Frame
-  app.innerHTML = `
-    <div class="app-container">
-      ${watermarkSvg}
-      ${renderHeader(path)}
-      <main class="main-content">
-        ${viewHtml}
-      </main>
-      ${renderFooter()}
-    </div>
-  `;
+  // Render Full App Frame based on context
+  const isAppView = !['/', '/login', '/cadastro'].includes(path) && path !== '';
+
+  if (isAppView) {
+    app.innerHTML = `
+      <div class="app-layout">
+        ${watermarkSvg}
+        ${renderHeader(path)}
+        <div class="app-body-wrapper">
+          ${renderSidebar(path)}
+          <main class="app-main-content">
+            ${viewHtml}
+          </main>
+        </div>
+        ${renderBottomBar(path)}
+      </div>
+    `;
+  } else {
+    // Landing and Auth views keep the simpler container
+    app.innerHTML = `
+      <div class="app-container">
+        ${watermarkSvg}
+        ${renderHeader(path)}
+        <main class="main-content">
+          ${viewHtml}
+        </main>
+        ${renderFooter()}
+      </div>
+    `;
+  }
 
   // Attach interactive listeners
   attachHeaderEvents();
@@ -130,6 +150,17 @@ export function initRouter() {
   window.addEventListener('hashchange', handleRoute);
   window.addEventListener('authChanged', handleRoute);
   window.addEventListener('themeChanged', () => {});
+
+  // Efeito Parallax Mouse no Desktop
+  document.addEventListener('mousemove', (e) => {
+    // Apenas se a tela for maior que tablet
+    if (window.innerWidth > 768) {
+      const x = (window.innerWidth / 2 - e.pageX) / 45;
+      const y = (window.innerHeight / 2 - e.pageY) / 45;
+      document.documentElement.style.setProperty('--parallax-x', `${x}px`);
+      document.documentElement.style.setProperty('--parallax-y', `${y}px`);
+    }
+  });
 
   // Handle first load
   handleRoute();

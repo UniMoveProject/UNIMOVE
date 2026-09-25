@@ -17,7 +17,7 @@ export function renderSearchRidesView(queryString = '') {
     <div style="display:flex; flex-direction:column; gap:2rem;">
       
       <!-- Search Filters Card -->
-      <section class="card" style="padding:1.75rem;">
+      <section class="card parallax-fade-up" style="padding:1.75rem;">
         <h1 class="page-title" style="font-size:1.8rem; margin-bottom:1.25rem;">BUSCAR CARONA</h1>
         
         <form id="searchFilterForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">

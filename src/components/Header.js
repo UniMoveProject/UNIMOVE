@@ -80,21 +80,17 @@ export function renderHeader(currentPath = '/') {
     `;
   }
 
-  // 3. PLATAFORMA APP HEADER
+  // 3. PLATAFORMA APP HEADER (Topbar)
   return `
-    <header class="site-header">
+    <header class="app-topbar">
       <div class="header-inner">
         <a href="#/home" class="brand-logo-link" title="UniMove - Plataforma">
           <img src="/logo.png" alt="UniMove Logo" class="brand-shield-img">
           <span class="brand-title">UNIMOVE</span>
         </a>
 
-        <nav class="header-nav" id="headerNav">
-          <a href="#/home" class="nav-link ${currentPath === '/home' ? 'active' : ''}">Início</a>
-          <a href="#/busca" class="nav-link ${currentPath === '/busca' ? 'active' : ''}">Buscar carona</a>
-          <a href="#/oferecer" class="nav-link ${currentPath === '/oferecer' ? 'active' : ''}">Oferecer carona</a>
-          <a href="#/minhas-caronas" class="nav-link ${currentPath === '/minhas-caronas' ? 'active' : ''}">Minhas caronas</a>
-        </nav>
+        <!-- No middle nav for platform, handled by Sidebar/BottomBar -->
+        <div style="flex:1"></div>
 
         <div class="header-actions">
           <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Alternar modo claro / escuro" aria-label="Modo Claro/Escuro">
@@ -106,15 +102,11 @@ export function renderHeader(currentPath = '/') {
               <div class="user-avatar-circle" style="${(user.avatar || user.avatar_url) && user.avatar !== 'undefined' ? `background-image:url('${user.avatar || user.avatar_url}')` : ''}">
                 ${!(user.avatar || user.avatar_url) || user.avatar === 'undefined' ? (user.nome || 'U').slice(0, 2).toUpperCase() : ''}
               </div>
-              <span style="font-size:0.95rem;">${(user.nome || 'Usuario').split(' ')[0]}</span>
+              <span style="font-size:0.95rem; display:none; @media(min-width: 768px){display:inline;}">${(user.nome || 'Usuario').split(' ')[0]}</span>
             </a>
           ` : `
             <a href="#/login" class="btn btn-sm btn-azul">Entrar</a>
           `}
-
-          <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-            ${MENU_ICON}
-          </button>
         </div>
       </div>
     </header>
