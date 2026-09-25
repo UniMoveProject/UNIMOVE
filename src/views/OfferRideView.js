@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Offer Ride View
  * Form for registered students to publish a new ride route (No emojis).
  */
@@ -120,8 +120,14 @@ export function attachOfferRideEvents() {
   const form = document.getElementById('offerRideForm');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Publicando...';
+    }
 
     const rideData = {
       origem: document.getElementById('rideOrigem').value,
@@ -137,7 +143,13 @@ export function attachOfferRideEvents() {
       placa: document.getElementById('ridePlaca').value
     };
 
-    const res = offerRide(rideData);
+    const res = await offerRide(rideData);
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Publicar carona';
+    }
+
     if (res.success) {
       showModal({
         title: 'Carona publicada com sucesso',
@@ -149,7 +161,7 @@ export function attachOfferRideEvents() {
         }
       });
     } else {
-      alert(res.error);
+      alert(res.error || 'Erro ao publicar carona. Tente novamente.');
     }
   });
 }
