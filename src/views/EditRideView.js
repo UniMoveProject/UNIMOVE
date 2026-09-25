@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Edit Ride View
  * Allows the driver to modify details of an active ride (No emojis).
  */
@@ -119,9 +119,12 @@ export function attachEditRideEvents() {
   const form = document.getElementById('editRideForm');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const rideId = form.dataset.id;
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Salvando...'; }
 
     const updatedData = {
       origem: document.getElementById('editOrigem').value,
@@ -137,7 +140,10 @@ export function attachEditRideEvents() {
       placa: document.getElementById('editPlaca').value
     };
 
-    const res = updateRide(rideId, updatedData);
+    const res = await updateRide(rideId, updatedData);
+
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Salvar alterações'; }
+
     if (res.success) {
       showModal({
         title: 'Alterações salvas',
@@ -149,7 +155,7 @@ export function attachEditRideEvents() {
         }
       });
     } else {
-      alert(res.error);
+      alert(res.error || 'Erro ao salvar alterações.');
     }
   });
 }
