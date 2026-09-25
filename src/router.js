@@ -151,6 +151,17 @@ export function initRouter() {
   window.addEventListener('authChanged', handleRoute);
   window.addEventListener('themeChanged', () => {});
 
+  // Efeito Parallax Mouse no Desktop
+  document.addEventListener('mousemove', (e) => {
+    // Apenas se a tela for maior que tablet
+    if (window.innerWidth > 768) {
+      const x = (window.innerWidth / 2 - e.pageX) / 45;
+      const y = (window.innerHeight / 2 - e.pageY) / 45;
+      document.documentElement.style.setProperty('--parallax-x', `${x}px`);
+      document.documentElement.style.setProperty('--parallax-y', `${y}px`);
+    }
+  });
+
   // Handle first load
   handleRoute();
 }

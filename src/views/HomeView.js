@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Home View (Feed Principal da Plataforma)
  * Conforming strictly to the Brand Manual (pages 8 & 10) without emojis.
  */
@@ -12,7 +12,7 @@ export function renderHomeView() {
     <div style="display:flex; flex-direction:column; gap:2rem;">
       
       <!-- Hero Card -->
-      <section class="card" style="background:var(--bg-card); border-left:6px solid var(--amarelo-unimove); padding:1.75rem 2rem;">
+      <section class="card parallax-fade-up" style="background:var(--bg-card); border-left:6px solid var(--amarelo-unimove); padding:1.75rem 2rem;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem;">
           <div>
             <div style="font-family:var(--font-subtitle); font-size:1.05rem; color:var(--azul-unimove); letter-spacing:0.02em;">
@@ -34,7 +34,7 @@ export function renderHomeView() {
       </section>
 
       <!-- Quick Route Search Bar -->
-      <section class="card" style="padding:1.5rem;">
+      <section class="card parallax-fade-up" style="padding:1.5rem; animation-delay: 0.1s;">
         <h2 style="font-family:var(--font-subtitle); font-size:1.4rem; margin-bottom:1rem;">Para onde voce vai hoje?</h2>
         <form id="quickSearchForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)) 120px; gap:1rem; align-items:flex-end;">
           <div>

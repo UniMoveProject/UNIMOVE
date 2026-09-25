@@ -1,11 +1,11 @@
-﻿/**
+/**
  * RideCard Component
  * Displays ride information according to the Brand Manual specifications (No emojis).
  */
 
 export function renderRideCard(ride, isOwner = false) {
   return `
-    <article class="card ride-card" id="ride-${ride.id}" style="margin-bottom:1.25rem;">
+    <article class="card ride-card parallax-fade-up" id="ride-${ride.id}" style="margin-bottom:1.25rem; animation-delay: 0.15s;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
         
         <!-- Driver Info -->
