@@ -390,7 +390,7 @@ a {
   font-family: var(--font-subtitle);
 }
 
-/* Mobile menu toggle */
+/* Mobile menu toggle - always visible on landing on mobile */
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -398,9 +398,21 @@ a {
   color: var(--text-primary);
   font-size: 1.5rem;
   cursor: pointer;
+  padding: 0.4rem;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+.mobile-menu-btn:hover {
+  background: rgba(15, 93, 237, 0.08);
+}
+
+/* Desktop-only elements on landing header */
+.landing-desktop-only {
+  display: inline-flex;
 }
 
 /* --- Buttons --- */
+
 .btn {
   font-size: 1rem;
   padding: 0.65rem 1.35rem;
@@ -818,25 +830,22 @@ a {
 
 /* --- Responsive Media Queries --- */
 @media (max-width: 768px) {
-  /* Landing Header Navigation */
+  /* Landing: hide desktop nav and show hamburger */
   .header-nav {
     display: none;
-  }
-  .header-nav.mobile-open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: var(--bg-card);
-    border-bottom: 2px solid var(--border-color);
-    padding: 1rem;
-    box-shadow: var(--shadow-lg);
   }
   .mobile-menu-btn {
     display: block;
   }
+  /* Hide desktop-only auth buttons on mobile landing */
+  .landing-desktop-only {
+    display: none !important;
+  }
+  /* Landing sections stack full width */
+  .main-content {
+    padding: 1rem 0.75rem 5rem;
+  }
+
   .chat-container {
     height: calc(100vh - 140px);
   }
