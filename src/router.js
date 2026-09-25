@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SPA Router
  * Coordinates client-side routing, view rendering and lifecycle event attachments.
  */
@@ -38,7 +38,7 @@ export function navigateTo(path) {
   window.location.hash = path;
 }
 
-export function handleRoute() {
+export async function handleRoute() {
   const app = document.getElementById('app');
   if (!app) return;
 
@@ -111,7 +111,7 @@ export function handleRoute() {
 
   // Attach interactive listeners
   attachHeaderEvents();
-  attachEvents();
+  await attachEvents();
 
   // Scroll logic
   if (anchor && anchor !== '' && anchor !== '/') {
@@ -124,6 +124,7 @@ export function handleRoute() {
 
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
+
 
 export function initRouter() {
   window.addEventListener('hashchange', handleRoute);

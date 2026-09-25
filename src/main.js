@@ -6,6 +6,10 @@ import './styles/main.css';
 import { initStorage } from './services/storage.js';
 import { initTheme } from './services/theme.js';
 import { initRouter } from './router.js';
+import { showSplashScreen } from './components/SplashScreen.js';
+
+// Show motion splash screen on page restore / load
+showSplashScreen();
 
 // Initialize global stores and theme
 initStorage();
@@ -15,3 +19,4 @@ initTheme();
 document.addEventListener('DOMContentLoaded', () => {
   initRouter();
 });
+

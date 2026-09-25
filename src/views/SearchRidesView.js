@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Search Rides View
  * Search and list available rides with interactive booking (No emojis).
  */
@@ -12,9 +12,6 @@ export function renderSearchRidesView(queryString = '') {
   const params = new URLSearchParams(queryString);
   const initialOrigem = params.get('origem') || '';
   const initialDestino = params.get('destino') || '';
-  
-  const rides = searchRides({ origem: initialOrigem, destino: initialDestino });
-  const user = getCurrentUser();
 
   return `
     <div style="display:flex; flex-direction:column; gap:2rem;">
@@ -58,22 +55,11 @@ export function renderSearchRidesView(queryString = '') {
       <!-- Results Section -->
       <section>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-          <h2 style="font-family:var(--font-subtitle); font-size:1.4rem;" id="resultsTitle">Resultados encontrados (${rides.length})</h2>
+          <h2 style="font-family:var(--font-subtitle); font-size:1.4rem;" id="resultsTitle">Resultados encontrados (...)</h2>
         </div>
 
-        <div id="ridesContainer">
-          ${rides.length > 0 
-            ? rides.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('')
-            : `
-              <div class="card" style="text-align:center; padding:3rem 1.5rem;">
-                <h3 style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:0.5rem;">Nenhuma carona encontrada</h3>
-                <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem;">
-                  Nenhuma carona por aqui ainda. Que tal oferecer a sua rota até a faculdade para ajudar outros colegas?
-                </p>
-                <a href="#/oferecer" class="btn btn-amarelo">Oferecer carona agora</a>
-              </div>
-            `
-          }
+        <div id="ridesContainer" style="color:var(--text-secondary); padding:1rem 0;">
+          Buscando caronas disponíveis...
         </div>
       </section>
 
@@ -87,29 +73,37 @@ export function attachSearchRidesEvents() {
   const container = document.getElementById('ridesContainer');
   const title = document.getElementById('resultsTitle');
 
-  function updateResults() {
-    const origem = document.getElementById('searchOrigem').value.trim();
-    const destino = document.getElementById('searchDestino').value.trim();
-    const horario = document.getElementById('searchHorario').value;
-    const vagasMinimas = document.getElementById('searchVagas').value;
+  async function updateResults() {
+    if (!container) return;
 
-    const results = searchRides({ origem, destino, horario, vagasMinimas });
-    const user = getCurrentUser();
+    const origem = document.getElementById('searchOrigem')?.value.trim() || '';
+    const destino = document.getElementById('searchDestino')?.value.trim() || '';
+    const horario = document.getElementById('searchHorario')?.value || '';
+    const vagasMinimas = document.getElementById('searchVagas')?.value || '1';
 
-    title.textContent = `Resultados encontrados (${results.length})`;
-    if (results.length > 0) {
-      container.innerHTML = results.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('');
-      attachBookingEvents();
-    } else {
-      container.innerHTML = `
-        <div class="card" style="text-align:center; padding:3rem 1.5rem;">
-          <h3 style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:0.5rem;">Nenhuma carona por aqui ainda</h3>
-          <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem;">
-            Que tal oferecer a sua rota até a faculdade e economizar no trajeto?
-          </p>
-          <a href="#/oferecer" class="btn btn-amarelo">Oferecer carona</a>
-        </div>
-      `;
+    try {
+      const results = (await searchRides({ origem, destino, horario, vagasMinimas })) || [];
+      const user = getCurrentUser();
+
+      if (title) title.textContent = `Resultados encontrados (${results.length})`;
+
+      if (results.length > 0) {
+        container.innerHTML = results.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('');
+        attachBookingEvents();
+      } else {
+        container.innerHTML = `
+          <div class="card" style="text-align:center; padding:3rem 1.5rem;">
+            <h3 style="font-family:var(--font-subtitle); font-size:1.35rem; margin-bottom:0.5rem;">Nenhuma carona encontrada</h3>
+            <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem;">
+              Nenhuma carona por aqui ainda. Que tal oferecer a sua rota até a faculdade para ajudar outros colegas?
+            </p>
+            <a href="#/oferecer" class="btn btn-amarelo">Oferecer carona agora</a>
+          </div>
+        `;
+      }
+    } catch (err) {
+      console.error('Erro ao buscar caronas:', err);
+      container.innerHTML = '<p style="color:var(--text-secondary);">Erro ao carregar os resultados da busca.</p>';
     }
   }
 
@@ -141,12 +135,12 @@ export function attachSearchRidesEvents() {
           title: 'Confirmar solicitação de vaga',
           message: 'Você deseja confirmar seu embarque nesta carona? Seu nome e curso serão compartilhados no grupo da viagem.',
           confirmText: 'Confirmar embarque',
-          onConfirm: () => {
-            const res = bookRide(rideId);
+          onConfirm: async () => {
+            const res = await bookRide(rideId);
             if (res.success) {
               showModal({
                 title: 'Sua carona está confirmada',
-                message: `Você agora faz parte da rota com ${res.ride.motoristaNome}. Acesse o chat do grupo para combinar os detalhes.`,
+                message: `Você agora faz parte da rota com ${res.ride?.motoristaNome || 'o motorista'}. Acesse o chat do grupo para combinar os detalhes.`,
                 confirmText: 'Ir para o chat',
                 cancelText: 'Fechar',
                 onConfirm: () => {
@@ -163,5 +157,6 @@ export function attachSearchRidesEvents() {
     });
   }
 
-  attachBookingEvents();
+  // Load initial results
+  updateResults();
 }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Header Component
  * Adapts dynamically without any emojis (uses clean SVG icons and professional typography).
  */
@@ -103,10 +103,10 @@ export function renderHeader(currentPath = '/') {
 
           ${user ? `
             <a href="#/perfil" class="user-profile-badge" title="Meu Perfil">
-              <div class="user-avatar-circle" style="${user.avatar ? `background-image:url('${user.avatar}')` : ''}">
-                ${!user.avatar ? user.nome.slice(0, 2).toUpperCase() : ''}
+              <div class="user-avatar-circle" style="${(user.avatar || user.avatar_url) && user.avatar !== 'undefined' ? `background-image:url('${user.avatar || user.avatar_url}')` : ''}">
+                ${!(user.avatar || user.avatar_url) || user.avatar === 'undefined' ? (user.nome || 'U').slice(0, 2).toUpperCase() : ''}
               </div>
-              <span style="font-size:0.95rem;">${user.nome.split(' ')[0]}</span>
+              <span style="font-size:0.95rem;">${(user.nome || 'Usuario').split(' ')[0]}</span>
             </a>
           ` : `
             <a href="#/login" class="btn btn-sm btn-azul">Entrar</a>
