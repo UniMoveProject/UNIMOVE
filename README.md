@@ -50,9 +50,9 @@ O **UniMove** é uma plataforma de mobilidade colaborativa idealizada e desenvol
 | **Breno de Queiroz Chaves** | Front-End / Backlog | Procurar Carona, Oferecer Carona, Meu Perfil e Branding |
 | **Gustavo Braga Costa** | Documentação | Redação e Gestão de Documentos Acadêmicos/Atas |
 | **João Gabriel de S. Rodrigues** | Front-End / Documentação | Desenvolvimento Front-End e Documentação Técnica |
-| **Marco Antônio O. S. Júnior** | Backlog / Branding | Gerenciamento de Backlog e Branding da Plataforma |
+| **Marco Antônio O. S. Júnior** | Scrum Master | Gerenciamento de Backlog e Branding da Plataforma |
 | **Nicoly Vaz Moreira** | Front-End | Desenvolvimento da Landing Page do Projeto |
-| ** Hudson Neves e Silva** |Professor Coordenador|
+| ** Hudson Neves e Silva** |Professor Orientador| |Orientar e Gerenciar |
 
 ---
 
