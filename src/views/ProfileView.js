@@ -5,6 +5,8 @@
 
 import { getCurrentUser, updateProfile, logout } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
+import { compressImage } from '../utils/image.js';
+import { calculateDriverAveragePrice } from '../services/rides.js';
 
 export function renderProfileView() {
   const user = getCurrentUser();
@@ -24,6 +26,17 @@ export function renderProfileView() {
   const isMotorista = user.roles && user.roles.includes('motorista');
   const avatarSrc = user.avatar_url || user.avatar || '';
   const avatarInitials = user.nome ? user.nome.slice(0, 2).toUpperCase() : 'UN';
+  const driverAvgPrice = calculateDriverAveragePrice(user.id);
+  const savedVeiculos = Array.isArray(user.veiculos) && user.veiculos.length > 0
+    ? user.veiculos
+    : (user.veiculo_modelo ? [{
+        id: 'veh_primary',
+        modelo: user.veiculo_modelo,
+        cor: user.veiculo_cor || '',
+        placa: user.veiculo_placa || '',
+        foto_url: user.veiculo_foto_url || null,
+        vagas: user.vagas_padrao || 3
+      }] : []);
 
   // Mapa de labels amigáveis
   const sexoLabel = { masculino: 'Masculino', feminino: 'Feminino', outro: 'Outro', prefiro_nao_dizer: 'Prefiro não dizer' };
@@ -69,7 +82,7 @@ export function renderProfileView() {
               ${!avatarSrc ? avatarInitials : ''}
             </div>
             <label for="profileAvatarInput" style="font-family:var(--font-subtitle); font-size:0.85rem; color:var(--azul-unimove); cursor:pointer;">
-              Alterar foto de rosto
+              Alterar foto de rosto (obrigatória)
             </label>
             <input type="file" id="profileAvatarInput" accept="image/*" style="display:none;">
           </div>
@@ -168,7 +181,7 @@ export function renderProfileView() {
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
             <div class="form-group" style="margin:0;">
-              <label class="form-label" for="profileVeiculoModelo">Modelo do carro</label>
+              <label class="form-label" for="profileVeiculoModelo">Modelo do carro principal</label>
               <input type="text" id="profileVeiculoModelo" class="form-input" value="${user.veiculo_modelo || ''}" maxlength="50" placeholder="Ex: Onix 1.0">
             </div>
             <div class="form-group" style="margin:0;">
@@ -191,8 +204,15 @@ export function renderProfileView() {
               <input type="number" id="profileVagas" class="form-input" min="1" max="10" value="${user.vagas_padrao || 3}">
             </div>
             <div class="form-group" style="margin:0;">
-              <label class="form-label" for="profilePrecoMedio">Preço médio por carona (R\$)</label>
-              <input type="number" id="profilePrecoMedio" class="form-input" min="0" max="999" step="0.50" value="${user.preco_medio || 0}">
+              <label class="form-label">Preço médio por carona (automático)</label>
+              <div style="padding:0.7rem 0.9rem; background:rgba(0,196,140,0.1); border:1px solid rgba(0,196,140,0.3); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:space-between; height:46px; box-sizing:border-box;">
+                <div>
+                  <span style="font-family:var(--font-title); font-size:1.15rem; font-weight:800; color:var(--verde-unimove);">
+                    R$ ${driverAvgPrice > 0 ? driverAvgPrice.toFixed(2).replace('.', ',') : '0,00'}
+                  </span>
+                </div>
+                <span class="badge badge-verde" style="font-size:0.75rem;">Média do sistema</span>
+              </div>
             </div>
           </div>
 
@@ -221,6 +241,72 @@ export function renderProfileView() {
               <label for="profileAcessivel" style="font-family:var(--font-subtitle); font-size:0.9rem; cursor:pointer;">Carro acessível para cadeirante</label>
             </div>
           </div>
+
+          <!-- ── Meus Veículos Reutilizáveis (Item 11) ────────── -->
+          <div style="margin-top:1.5rem; border-top:1px solid var(--border-color); padding-top:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <h3 style="font-family:var(--font-subtitle); font-size:1.05rem; margin:0; color:var(--azul-unimove);">MEUS VEÍCULOS</h3>
+                <p style="font-size:0.8rem; color:var(--text-secondary); margin:0.15rem 0 0 0;">
+                  Cadastre seus carros uma vez para reutilizá-los diretamente em qualquer carona.
+                </p>
+              </div>
+              <button type="button" id="btnToggleNovoVeiculo" class="btn btn-sm btn-outline" style="font-size:0.8rem;">
+                + Adicionar outro veículo
+              </button>
+            </div>
+
+            <!-- Formulário Inline para Adicionar Outro Veículo -->
+            <div id="novoVeiculoFormWrapper" style="display:none; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1rem; margin-bottom:1rem;">
+              <h4 style="font-family:var(--font-subtitle); font-size:0.9rem; margin-bottom:0.75rem; color:var(--azul-unimove);">ADICIONAR NOVO VEÍCULO</h4>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.75rem;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" style="font-size:0.75rem;" for="novoVehModelo">Modelo *</label>
+                  <input type="text" id="novoVehModelo" class="form-input" placeholder="Ex: Ka 1.0" maxlength="50">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" style="font-size:0.75rem;" for="novoVehCor">Cor *</label>
+                  <input type="text" id="novoVehCor" class="form-input" placeholder="Ex: Prata" maxlength="30">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" style="font-size:0.75rem;" for="novoVehPlaca">Placa *</label>
+                  <input type="text" id="novoVehPlaca" class="form-input" placeholder="Ex: BRA2E19" maxlength="8">
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" style="font-size:0.75rem;" for="novoVehVagas">Vagas</label>
+                  <input type="number" id="novoVehVagas" class="form-input" min="1" max="10" value="3">
+                </div>
+              </div>
+              <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.75rem;">
+                <button type="button" id="btnCancelarNovoVeiculo" class="btn btn-sm btn-outline">Cancelar</button>
+                <button type="button" id="btnSalvarNovoVeiculo" class="btn btn-sm btn-azul">Salvar veículo</button>
+              </div>
+            </div>
+
+            <!-- Lista de Veículos Salvos -->
+            <div id="veiculosListaContainer" style="display:flex; flex-direction:column; gap:0.75rem;">
+              ${savedVeiculos.length === 0 ? `
+                <p style="font-size:0.85rem; color:var(--text-secondary); text-align:center; padding:1rem; border:1px dashed var(--border-color); border-radius:var(--radius-md);">
+                  Preencha o veículo principal acima ou adicione outro para salvar em seu perfil.
+                </p>
+              ` : savedVeiculos.map((v, idx) => `
+                <div class="saved-veh-item" style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+                  <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <div style="width:36px; height:36px; border-radius:var(--radius-sm); background:rgba(0,44,142,0.1); color:var(--azul-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:0.8rem; font-weight:700;">
+                      ${(v.modelo || 'CAR').slice(0, 3).toUpperCase()}
+                    </div>
+                    <div>
+                      <div style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">${v.modelo} (${v.cor || 'Cor não informada'})</div>
+                      <div style="font-size:0.8rem; color:var(--text-secondary);">Placa: ${v.placa || 'Sem placa'} &bull; ${v.vagas || 3} vagas</div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline btn-remover-veiculo" data-index="${idx}" style="color:#d32f2f; border-color:rgba(211,47,47,0.3); font-size:0.75rem; padding:0.25rem 0.5rem;">
+                    Remover
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
         </div>
 
         <!-- ── Botão Salvar ──────────────────────────── -->
@@ -245,8 +331,122 @@ export function attachProfileEvents() {
   const cpfInput = document.getElementById('profileCpf');
   const telInput = document.getElementById('profileTelefone');
 
+  const user = getCurrentUser() || {};
   let newAvatarDataUrl = '';
   let newCarroDataUrl = '';
+
+  // Gestão de veículos reutilizáveis (Item 11)
+  let veiculosList = Array.isArray(user.veiculos) && user.veiculos.length > 0
+    ? [...user.veiculos]
+    : (user.veiculo_modelo ? [{
+        id: 'veh_primary',
+        modelo: user.veiculo_modelo,
+        cor: user.veiculo_cor || '',
+        placa: user.veiculo_placa || '',
+        foto_url: user.veiculo_foto_url || null,
+        vagas: user.vagas_padrao || 3
+      }] : []);
+
+  const btnToggleNovoVeiculo = document.getElementById('btnToggleNovoVeiculo');
+  const novoVeiculoFormWrapper = document.getElementById('novoVeiculoFormWrapper');
+  const btnCancelarNovoVeiculo = document.getElementById('btnCancelarNovoVeiculo');
+  const btnSalvarNovoVeiculo = document.getElementById('btnSalvarNovoVeiculo');
+  const veiculosListaContainer = document.getElementById('veiculosListaContainer');
+
+  function renderVeiculosLista() {
+    if (!veiculosListaContainer) return;
+    if (veiculosList.length === 0) {
+      veiculosListaContainer.innerHTML = `
+        <p style="font-size:0.85rem; color:var(--text-secondary); text-align:center; padding:1rem; border:1px dashed var(--border-color); border-radius:var(--radius-md);">
+          Preencha o veículo principal acima ou adicione outro para salvar em seu perfil.
+        </p>
+      `;
+      return;
+    }
+
+    veiculosListaContainer.innerHTML = veiculosList.map((v, idx) => `
+      <div class="saved-veh-item" style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-primary); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:0.75rem 1rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div style="width:36px; height:36px; border-radius:var(--radius-sm); background:rgba(0,44,142,0.1); color:var(--azul-unimove); display:flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:0.8rem; font-weight:700;">
+            ${(v.modelo || 'CAR').slice(0, 3).toUpperCase()}
+          </div>
+          <div>
+            <div style="font-weight:700; font-size:0.95rem; color:var(--text-primary);">${v.modelo} (${v.cor || 'Cor não informada'})</div>
+            <div style="font-size:0.8rem; color:var(--text-secondary);">Placa: ${v.placa || 'Sem placa'} &bull; ${v.vagas || 3} vagas</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline btn-remover-veiculo" data-index="${idx}" style="color:#d32f2f; border-color:rgba(211,47,47,0.3); font-size:0.75rem; padding:0.25rem 0.5rem;">
+          Remover
+        </button>
+      </div>
+    `).join('');
+
+    attachRemoverEvents();
+  }
+
+  function attachRemoverEvents() {
+    if (!veiculosListaContainer) return;
+    veiculosListaContainer.querySelectorAll('.btn-remover-veiculo').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const idx = parseInt(btn.dataset.index, 10);
+        veiculosList.splice(idx, 1);
+        renderVeiculosLista();
+      });
+    });
+  }
+
+  if (btnToggleNovoVeiculo && novoVeiculoFormWrapper) {
+    btnToggleNovoVeiculo.addEventListener('click', () => {
+      novoVeiculoFormWrapper.style.display = novoVeiculoFormWrapper.style.display === 'none' ? 'block' : 'none';
+    });
+  }
+
+  if (btnCancelarNovoVeiculo && novoVeiculoFormWrapper) {
+    btnCancelarNovoVeiculo.addEventListener('click', () => {
+      novoVeiculoFormWrapper.style.display = 'none';
+      document.getElementById('novoVehModelo').value = '';
+      document.getElementById('novoVehCor').value = '';
+      document.getElementById('novoVehPlaca').value = '';
+    });
+  }
+
+  if (btnSalvarNovoVeiculo && novoVeiculoFormWrapper) {
+    btnSalvarNovoVeiculo.addEventListener('click', () => {
+      const modelo = document.getElementById('novoVehModelo')?.value.trim();
+      const cor = document.getElementById('novoVehCor')?.value.trim();
+      const placa = document.getElementById('novoVehPlaca')?.value.trim().toUpperCase();
+      const vagas = parseInt(document.getElementById('novoVehVagas')?.value || '3', 10);
+
+      if (!modelo || !placa) {
+        showModal({
+          title: 'Dados incompletos',
+          message: 'Por favor, informe pelo menos o modelo e a placa do veículo.',
+          confirmText: 'Ok'
+        });
+        return;
+      }
+
+      veiculosList.push({
+        id: 'veh_' + Date.now(),
+        modelo,
+        cor: cor || 'Não informada',
+        placa,
+        vagas: vagas || 3,
+        criado_em: new Date().toISOString()
+      });
+
+      // Limpar formulário e ocultar
+      document.getElementById('novoVehModelo').value = '';
+      document.getElementById('novoVehCor').value = '';
+      document.getElementById('novoVehPlaca').value = '';
+      novoVeiculoFormWrapper.style.display = 'none';
+
+      renderVeiculosLista();
+    });
+  }
+
+  attachRemoverEvents();
 
   // ── Logout ──────────────────────────────────────────
   if (logoutBtn) {
@@ -265,36 +465,36 @@ export function attachProfileEvents() {
     });
   }
 
-  // ── Foto de perfil ──────────────────────────────────
+  // ── Foto de perfil (Comprimida e Obrigatória) ─────────
   if (avatarPreview && avatarInput) {
     avatarPreview.addEventListener('click', () => avatarInput.click());
-    avatarInput.addEventListener('change', () => {
+    avatarInput.addEventListener('change', async () => {
       const file = avatarInput.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          newAvatarDataUrl = e.target.result;
+        try {
+          newAvatarDataUrl = await compressImage(file, 400, 400, 0.82);
           avatarPreview.style.backgroundImage = `url('${newAvatarDataUrl}')`;
           avatarPreview.textContent = '';
-        };
-        reader.readAsDataURL(file);
+        } catch (err) {
+          console.error('Erro ao processar foto:', err);
+        }
       }
     });
   }
 
-  // ── Foto do carro ───────────────────────────────────
+  // ── Foto do carro (Comprimida) ───────────────────────
   if (carroPreview && carroInput) {
     carroPreview.addEventListener('click', () => carroInput.click());
-    carroInput.addEventListener('change', () => {
+    carroInput.addEventListener('change', async () => {
       const file = carroInput.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          newCarroDataUrl = e.target.result;
+        try {
+          newCarroDataUrl = await compressImage(file, 600, 400, 0.82);
           carroPreview.style.backgroundImage = `url('${newCarroDataUrl}')`;
           carroPreview.textContent = '';
-        };
-        reader.readAsDataURL(file);
+        } catch (err) {
+          console.error('Erro ao processar foto do carro:', err);
+        }
       }
     });
   }
@@ -377,6 +577,18 @@ export function attachProfileEvents() {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Foto de perfil obrigatória (Item 9)
+      const hasExistingAvatar = Boolean(user.avatar_url || user.avatar);
+      if (!hasExistingAvatar && !newAvatarDataUrl) {
+        showModal({
+          title: 'Foto de Perfil Obrigatória',
+          message: 'Por favor, adicione uma foto de perfil nítida. É uma exigência de segurança para todos os usuários do UniMove.',
+          confirmText: 'Escolher foto'
+        });
+        avatarPreview?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       const roles = Array.from(document.querySelectorAll('input[name="profileRole"]:checked')).map(el => el.value);
       const idadeNum = parseInt(document.getElementById('profileIdade').value || '0', 10);
 
@@ -427,17 +639,36 @@ export function attachProfileEvents() {
 
       // Campos do motorista
       if (roles.includes('motorista')) {
-        updated.veiculo_modelo = document.getElementById('profileVeiculoModelo').value.trim();
-        updated.veiculo_cor = document.getElementById('profileVeiculoCor').value.trim();
-        updated.veiculo_placa = document.getElementById('profileVeiculoPlaca').value.trim();
+        const primaryModelo = document.getElementById('profileVeiculoModelo')?.value.trim() || '';
+        const primaryCor = document.getElementById('profileVeiculoCor')?.value.trim() || '';
+        const primaryPlaca = document.getElementById('profileVeiculoPlaca')?.value.trim().toUpperCase() || '';
+
+        updated.veiculo_modelo = primaryModelo;
+        updated.veiculo_cor = primaryCor;
+        updated.veiculo_placa = primaryPlaca;
         updated.cnh = document.getElementById('profileCnh').value.trim();
         updated.vagas_padrao = document.getElementById('profileVagas').value;
-        updated.preco_medio = document.getElementById('profilePrecoMedio').value;
         updated.tempo_espera_min = document.getElementById('profileTempoEspera').value;
         updated.porta_malas_litros = document.getElementById('profilePortaMalas').value || null;
         updated.preferencia_passageiros = document.getElementById('profilePreferenciaPassageiros').value;
         updated.acessivel_cadeirante = document.getElementById('profileAcessivel').checked;
         if (newCarroDataUrl) updated.veiculo_foto_url = newCarroDataUrl;
+
+        // Se tem veículo primário e a lista de veículos está vazia, sincroniza
+        if (primaryModelo && primaryPlaca) {
+          const exists = veiculosList.some(v => v.placa === primaryPlaca);
+          if (!exists) {
+            veiculosList.unshift({
+              id: 'veh_primary',
+              modelo: primaryModelo,
+              cor: primaryCor,
+              placa: primaryPlaca,
+              foto_url: newCarroDataUrl || user.veiculo_foto_url || null,
+              vagas: parseInt(updated.vagas_padrao, 10) || 3
+            });
+          }
+        }
+        updated.veiculos = veiculosList;
       }
 
       const submitBtn = form.querySelector('button[type="submit"]');

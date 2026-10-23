@@ -4,9 +4,10 @@
  */
 
 import { searchRides, bookRide } from '../services/rides.js';
-import { renderRideCard } from '../components/RideCard.js';
+import { renderRideCard, attachRideCardEvents } from '../components/RideCard.js';
 import { getCurrentUser } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
+import { renderEconomyCard } from '../components/EconomyCard.js';
 
 export function renderSearchRidesView(queryString = '') {
   const params = new URLSearchParams(queryString);
@@ -16,6 +17,9 @@ export function renderSearchRidesView(queryString = '') {
   return `
     <div style="display:flex; flex-direction:column; gap:2rem;">
       
+      <!-- Painel de Economia Universitária (Item 13) -->
+      ${renderEconomyCard()}
+
       <!-- Search Filters Card -->
       <section class="card parallax-fade-up" style="padding:1.75rem;">
         <h1 class="page-title" style="font-size:1.8rem; margin-bottom:1.25rem;">BUSCAR CARONA</h1>
@@ -90,6 +94,7 @@ export function attachSearchRidesEvents() {
       if (results.length > 0) {
         container.innerHTML = results.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('');
         attachBookingEvents();
+        attachRideCardEvents(container);
       } else {
         container.innerHTML = `
           <div class="card" style="text-align:center; padding:3rem 1.5rem;">

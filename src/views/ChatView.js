@@ -7,6 +7,7 @@ import { getRideWithPassengers } from '../services/rides.js';
 import { getChatMessages, sendMessage } from '../services/chat.js';
 import { getCurrentUser } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
+import { showUserProfileModal } from '../components/UserProfileModal.js';
 
 export function renderChatView(rideId) {
   // Render a loading skeleton — data is loaded async in attachChatEvents
@@ -35,15 +36,16 @@ function buildChatHTML(ride, messages, user) {
   const vagasOcupadas = ride.vagasOcupadas ?? (ride.vagasTotais - ride.vagasDisponiveis);
   const vagasPct = ride.vagasTotais > 0 ? Math.round((vagasOcupadas / ride.vagasTotais) * 100) : 0;
 
-  // Build passenger avatars
+  // Build passenger avatars with real photos and click to profile (Item 9 & 10)
   const passageirosHTML = (ride.passageiros || []).map(p => {
     const initials = (p.nome || 'U').slice(0, 2).toUpperCase();
-    const avatarStyle = p.avatar_url
-      ? `background-image:url('${p.avatar_url}'); background-size:cover; background-position:center;`
+    const avatar = p.avatar_url || p.avatar;
+    const avatarStyle = avatar
+      ? `background-image:url('${avatar}'); background-size:cover; background-position:center;`
       : `background-color:var(--azul-unimove);`;
     return `
-      <div title="${p.nome}" style="width:36px; height:36px; border-radius:50%; ${avatarStyle} display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:0.75rem; color:#fff; border:2px solid var(--bg-card); flex-shrink:0;">
-        ${!p.avatar_url ? initials : ''}
+      <div class="user-profile-trigger" data-user-id="${p.id}" title="${p.nome || 'Passageiro'} (Clique para ver perfil)" style="width:40px; height:40px; border-radius:50%; ${avatarStyle} display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-subtitle); font-size:0.8rem; color:#fff; border:2px solid var(--azul-unimove); flex-shrink:0; cursor:pointer;">
+        ${!avatar ? initials : ''}
       </div>
     `;
   }).join('');
@@ -63,8 +65,12 @@ function buildChatHTML(ride, messages, user) {
             <div style="font-family:var(--font-subtitle); font-size:1.2rem; color:var(--text-primary); margin-bottom:0.2rem;">
               ${ride.origem} → ${ride.destino}
             </div>
-            <div style="font-size:0.9rem; color:var(--text-muted);">
-              Motorista: <strong>${ride.motoristaNome}</strong>
+            <div style="font-size:0.9rem; color:var(--text-muted); display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; margin-top:0.25rem;">
+              <span>Motorista:</span>
+              <div class="user-profile-trigger" data-user-id="${ride.motoristaId}" style="display:inline-flex; align-items:center; gap:0.4rem; cursor:pointer; color:var(--azul-unimove); font-weight:bold;" title="Clique para ver o perfil do motorista">
+                <span style="text-decoration:underline;">${ride.motoristaNome}</span>
+                <span class="badge badge-soft" style="font-size:0.75rem;">Ver perfil</span>
+              </div>
               ${ride.veiculo ? ` · ${ride.veiculo}` : ''}
               ${ride.placa ? ` (${ride.placa})` : ''}
             </div>
@@ -135,16 +141,14 @@ function buildMessageHTML(msg, user) {
 
   return `
     <div class="chat-msg-row ${isSelf ? 'self' : ''}">
-      <div class="user-avatar-circle chat-avatar"
-           data-name="${msg.senderNome}"
-           data-role="${msg.senderRole}"
-           data-course="${msg.senderCourse || 'Estudante'}"
-           data-rating="${msg.senderRating || '5.0'}"
+      <div class="user-avatar-circle chat-avatar user-profile-trigger"
+           data-user-id="${msg.senderId}"
+           title="Clique para ver o perfil completo de ${msg.senderNome}"
            style="cursor:pointer; flex-shrink:0; ${avatarStyle}">
         ${!msg.senderAvatar ? initials : ''}
       </div>
       <div class="chat-bubble">
-        <div style="font-family:var(--font-subtitle); font-size:0.85rem; opacity:0.85; margin-bottom:0.2rem;">
+        <div class="user-profile-trigger" data-user-id="${msg.senderId}" style="font-family:var(--font-subtitle); font-size:0.85rem; opacity:0.9; margin-bottom:0.2rem; cursor:pointer;" title="Clique para ver perfil">
           ${isSelf ? 'Você' : msg.senderNome} (${msg.senderRole})
         </div>
         <div class="chat-msg-text">${msg.text}</div>
@@ -214,27 +218,15 @@ export async function attachChatEvents() {
 }
 
 function attachAvatarEvents() {
-  document.querySelectorAll('.chat-avatar').forEach(av => {
-    // Remove previous listener by cloning
-    const clone = av.cloneNode(true);
-    av.parentNode.replaceChild(clone, av);
-    clone.addEventListener('click', () => {
-      showModal({
-        title: `Perfil de ${clone.dataset.name}`,
-        message: `
-          <div style="display:flex; flex-direction:column; gap:0.4rem;">
-            <div><strong>Função:</strong> ${clone.dataset.role}</div>
-            <div><strong>Curso:</strong> ${clone.dataset.course}</div>
-            <div><strong>Avaliação:</strong> Nota ${clone.dataset.rating}</div>
-            <div style="margin-top:0.5rem; font-size:0.95rem; color:var(--verde-unimove); font-weight:bold;">
-              Aluno verificado na instituição
-            </div>
-          </div>
-        `,
-        confirmText: 'Fechar',
-        cancelText: '',
-        onConfirm: () => {}
-      });
+  document.querySelectorAll('.user-profile-trigger').forEach(el => {
+    const clone = el.cloneNode(true);
+    el.parentNode.replaceChild(clone, el);
+    clone.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const userId = clone.dataset.userId;
+      if (userId) {
+        showUserProfileModal(userId);
+      }
     });
   });
 }

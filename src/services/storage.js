@@ -4,16 +4,20 @@
  * Prepared to seamlessly swap to Supabase client queries.
  */
 
+import { generateInitialsAvatar } from '../utils/image.js';
+
 const USERS_KEY = 'unimove_users';
 const RIDES_KEY = 'unimove_rides';
 const CHAT_KEY = 'unimove_chats';
 const CURRENT_USER_KEY = 'unimove_current_user';
 
+const DEMO_AVATAR = generateInitialsAvatar('Aluno Teste', '#0056b3');
+
 // Seed Initial Mock Data if empty
 const INITIAL_USERS = [
   {
     id: 'usr_teste',
-    nome: 'Teste',
+    nome: 'Aluno Teste',
     email: 'teste@uniceplac.edu.br',
     senha: '123456',
     curso: 'Engenharia de Software',
@@ -28,9 +32,18 @@ const INITIAL_USERS = [
       cor: 'Preto',
       placa: 'TST-0001'
     },
+    veiculos: [
+      {
+        id: 'veh_default',
+        modelo: 'Chevrolet Onix',
+        cor: 'Preto',
+        placa: 'TST-0001',
+        foto_url: null
+      }
+    ],
     avaliacoes: 5.0,
     totalCaronas: 0,
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80'
+    avatar: DEMO_AVATAR
   }
 ];
 
@@ -38,8 +51,8 @@ const INITIAL_RIDES = [
   {
     id: 'ride_1',
     motoristaId: 'usr_teste',
-    motoristaNome: 'Teste',
-    motoristaFoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
+    motoristaNome: 'Aluno Teste',
+    motoristaFoto: DEMO_AVATAR,
     motoristaCurso: 'Engenharia de Software · 1º período',
     motoristaAvaliacao: 5.0,
     totalCaronas: 0,
@@ -65,9 +78,9 @@ const INITIAL_CHATS = {
     {
       id: 'msg_1',
       senderId: 'usr_teste',
-      senderNome: 'Teste',
+      senderNome: 'Aluno Teste',
       senderRole: 'Motorista',
-      senderAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
+      senderAvatar: DEMO_AVATAR,
       text: 'Oi! Saio pontualmente às 07:30 da Estação Metrô Asa Norte.',
       time: '19:00',
       timestamp: Date.now() - 3600000

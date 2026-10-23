@@ -1,6 +1,7 @@
 /**
  * Edit Ride View
- * Allows the driver to modify details of an active ride (No emojis).
+ * Allows the driver to modify details of an active ride.
+ * Includes reusable vehicle selector and R$ 6.00 price limit.
  */
 
 import { getRideById, updateRide } from '../services/rides.js';
@@ -22,6 +23,16 @@ export function renderEditRideView(rideId) {
       </div>
     `;
   }
+
+  const veiculos = Array.isArray(user.veiculos) && user.veiculos.length > 0
+    ? user.veiculos
+    : (user.veiculo_modelo ? [{
+        id: 'veh_default',
+        modelo: user.veiculo_modelo,
+        cor: user.veiculo_cor || '',
+        placa: user.veiculo_placa || '',
+        vagas: user.vagas_padrao || 3
+      }] : []);
 
   return `
     <div style="max-width:760px; margin:0 auto;">
@@ -78,28 +89,44 @@ export function renderEditRideView(rideId) {
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="editPreco">Ajuda de custo por vaga (R$)</label>
-              <input type="number" id="editPreco" class="form-input" min="0" max="999" step="0.50" value="${ride.preco}">
+              <label class="form-label" for="editPreco">Ajuda de custo por vaga (R$ máx 6,00) *</label>
+              <input type="number" id="editPreco" class="form-input" min="0" max="6.00" step="0.50" value="${Math.min(6, parseFloat(ride.preco) || 5.00).toFixed(2)}" required>
             </div>
           </div>
 
+          <!-- ── Dados do Veículo ───────────────────────── -->
           <div style="background-color:var(--bg-primary); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
-            <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin-bottom:0.75rem;">Dados do Veículo</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+              <h3 style="font-family:var(--font-subtitle); font-size:1.1rem; margin:0;">Dados do Veículo</h3>
+              ${veiculos.length > 0 ? `
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <label for="editVeiculoSelect" style="font-size:0.8rem; color:var(--text-secondary); font-weight:600;">Veículo salvo:</label>
+                  <select id="editVeiculoSelect" class="form-input" style="padding:0.35rem 0.6rem; font-size:0.85rem; width:auto;">
+                    <option value="">-- Selecionar veículo salvo --</option>
+                    ${veiculos.map((v, i) => `
+                      <option value="${i}">
+                        ${v.modelo} (${v.cor || 'Cor N/I'}) - ${v.placa || 'Sem placa'}
+                      </option>
+                    `).join('')}
+                  </select>
+                </div>
+              ` : ''}
+            </div>
             
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
               <div>
-                <label class="form-label" for="editVeiculo">Modelo</label>
-                <input type="text" id="editVeiculo" class="form-input" value="${ride.veiculo || ''}" maxlength="50">
+                <label class="form-label" for="editVeiculo">Modelo *</label>
+                <input type="text" id="editVeiculo" class="form-input" value="${ride.veiculo || ''}" maxlength="50" required>
               </div>
 
               <div>
-                <label class="form-label" for="editCor">Cor</label>
-                <input type="text" id="editCor" class="form-input" value="${ride.cor || ''}" maxlength="30">
+                <label class="form-label" for="editCor">Cor *</label>
+                <input type="text" id="editCor" class="form-input" value="${ride.cor || ''}" maxlength="30" required>
               </div>
 
               <div>
-                <label class="form-label" for="editPlaca">Placa</label>
-                <input type="text" id="editPlaca" class="form-input" value="${ride.placa || ''}" maxlength="8">
+                <label class="form-label" for="editPlaca">Placa *</label>
+                <input type="text" id="editPlaca" class="form-input" value="${ride.placa || ''}" maxlength="8" required>
               </div>
             </div>
           </div>
@@ -119,9 +146,50 @@ export function attachEditRideEvents() {
   const form = document.getElementById('editRideForm');
   if (!form) return;
 
+  const user = getCurrentUser() || {};
+  const veiculos = Array.isArray(user.veiculos) && user.veiculos.length > 0
+    ? user.veiculos
+    : (user.veiculo_modelo ? [{
+        id: 'veh_default',
+        modelo: user.veiculo_modelo,
+        cor: user.veiculo_cor || '',
+        placa: user.veiculo_placa || '',
+        vagas: user.vagas_padrao || 3
+      }] : []);
+
+  const selectVeiculo = document.getElementById('editVeiculoSelect');
+  const inputModelo = document.getElementById('editVeiculo');
+  const inputCor = document.getElementById('editCor');
+  const inputPlaca = document.getElementById('editPlaca');
+
+  if (selectVeiculo) {
+    selectVeiculo.addEventListener('change', () => {
+      const idx = parseInt(selectVeiculo.value, 10);
+      if (!isNaN(idx) && veiculos[idx]) {
+        const v = veiculos[idx];
+        inputModelo.value = v.modelo || '';
+        inputCor.value = v.cor || '';
+        inputPlaca.value = v.placa || '';
+      }
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const rideId = form.dataset.id;
+
+    const preco = parseFloat(document.getElementById('editPreco').value) || 0;
+    if (preco > 6.00) {
+      showModal({
+        title: 'Ajuda de Custo Excedida',
+        message: 'No UniMove, a ajuda de custo por vaga é limitada a R$ 6,00.',
+        confirmText: 'Ajustar para R$ 6,00',
+        onConfirm: () => {
+          document.getElementById('editPreco').value = '6.00';
+        }
+      });
+      return;
+    }
 
     const submitBtn = form.querySelector('button[type="submit"]');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Salvando...'; }
@@ -134,10 +202,10 @@ export function attachEditRideEvents() {
       horarioSaida: document.getElementById('editHorarioSaida').value,
       horarioChegada: document.getElementById('editHorarioChegada').value,
       vagasDisponiveis: parseInt(document.getElementById('editVagas').value, 10),
-      preco: parseFloat(document.getElementById('editPreco').value) || 0,
-      veiculo: document.getElementById('editVeiculo').value,
-      cor: document.getElementById('editCor').value,
-      placa: document.getElementById('editPlaca').value
+      preco: preco,
+      veiculo: document.getElementById('editVeiculo').value.trim(),
+      cor: document.getElementById('editCor').value.trim(),
+      placa: document.getElementById('editPlaca').value.trim().toUpperCase()
     };
 
     const res = await updateRide(rideId, updatedData);
@@ -155,7 +223,11 @@ export function attachEditRideEvents() {
         }
       });
     } else {
-      alert(res.error || 'Erro ao salvar alterações.');
+      showModal({
+        title: 'Erro ao salvar',
+        message: res.error || 'Não foi possível salvar as alterações.',
+        confirmText: 'Ok'
+      });
     }
   });
 }

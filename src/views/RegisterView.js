@@ -6,6 +6,7 @@
 
 import { registerUser, isStrongPassword } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
+import { compressImage } from '../utils/image.js';
 
 // SVG Icons para mostrar/ocultar senha
 const EYE_OPEN_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
@@ -218,12 +219,8 @@ export function renderRegisterView() {
                 <input type="text" inputmode="numeric" id="regCnh" class="form-input" placeholder="Somente números (máx. 15 dígitos)" maxlength="15">
               </div>
               <div class="form-group" style="margin:0;">
-                <label class="form-label" for="regVagas">Quantas pessoas comporta? *</label>
+                <label class="form-label" for="regVagas">Capacidade de passageiros *</label>
                 <input type="number" id="regVagas" class="form-input" min="1" max="10" value="3">
-              </div>
-              <div class="form-group" style="margin:0;">
-                <label class="form-label" for="regPrecoMedio">Preço médio por carona (R$)</label>
-                <input type="number" id="regPrecoMedio" class="form-input" min="0" max="999" step="0.50" value="0" placeholder="0.00">
               </div>
             </div>
 
@@ -438,33 +435,35 @@ export function attachRegisterEvents() {
     });
   }
 
-  // ── Avatar de perfil ──────────────────────────────────────────
+  // ── Avatar de perfil (Comprimido com Canvas e Obrigatório) ────
   avatarPreview.addEventListener('click', () => avatarInput.click());
-  avatarInput.addEventListener('change', () => {
+  avatarInput.addEventListener('change', async () => {
     const file = avatarInput.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        avatarDataUrl = e.target.result;
+      try {
+        avatarDataUrl = await compressImage(file, 400, 400, 0.82);
         avatarPreview.style.backgroundImage = `url('${avatarDataUrl}')`;
         avatarPreview.textContent = '';
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Erro ao comprimir avatar:', err);
+        alert('Não foi possível processar a imagem selecionada.');
+      }
     }
   });
 
-  // ── Foto do carro ─────────────────────────────────────────────
+  // ── Foto do carro (Comprimida com Canvas) ─────────────────────
   carroPreview.addEventListener('click', () => carroInput.click());
-  carroInput.addEventListener('change', () => {
+  carroInput.addEventListener('change', async () => {
     const file = carroInput.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        carroDataUrl = e.target.result;
+      try {
+        carroDataUrl = await compressImage(file, 600, 400, 0.82);
         carroPreview.style.backgroundImage = `url('${carroDataUrl}')`;
         carroPreview.textContent = '';
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Erro ao comprimir foto do veículo:', err);
+        alert('Não foi possível processar a imagem do veículo.');
+      }
     }
   });
 
@@ -539,6 +538,20 @@ export function attachRegisterEvents() {
         }
       }
 
+      // Validação de Foto de Perfil Obrigatória
+      if (!avatarDataUrl) {
+        errorMsg.textContent = 'A foto de perfil é obrigatória para todos os usuários.';
+        errorMsg.classList.add('show');
+        showModal({
+          title: 'Foto de Perfil Obrigatória',
+          message: 'Por favor, envie uma foto de perfil nítida. A identificação visual é obrigatória para a segurança de todos os membros da comunidade universitária.',
+          confirmText: 'Adicionar foto'
+        });
+        const avatarWrapper = document.getElementById('regAvatar')?.closest('.avatar-upload-wrapper');
+        if (avatarWrapper) avatarWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       // Validação Estrita dos Requisitos de Senha Forte
       const hasLength = senha.length >= 8;
       const hasUpper = /[A-Z]/.test(senha);
@@ -600,17 +613,35 @@ export function attachRegisterEvents() {
 
       // Campos do motorista
       if (roles.includes('motorista')) {
-        userData.veiculo_modelo = document.getElementById('regVeiculoModelo').value.trim();
-        userData.veiculo_cor = document.getElementById('regVeiculoCor').value.trim();
-        userData.veiculo_placa = document.getElementById('regVeiculoPlaca').value.trim();
+        const modelo = document.getElementById('regVeiculoModelo')?.value.trim() || '';
+        const cor = document.getElementById('regVeiculoCor')?.value.trim() || '';
+        const placa = document.getElementById('regVeiculoPlaca')?.value.trim().toUpperCase() || '';
+
+        userData.veiculo_modelo = modelo;
+        userData.veiculo_cor = cor;
+        userData.veiculo_placa = placa;
         userData.veiculo_foto_url = carroDataUrl || null;
         userData.cnh = cnhInput.value.trim();
-        userData.vagas_padrao = document.getElementById('regVagas').value;
-        userData.preco_medio = document.getElementById('regPrecoMedio').value;
-        userData.tempo_espera_min = document.getElementById('regTempoEspera').value;
+        userData.vagas_padrao = document.getElementById('regVagas')?.value || '3';
+        userData.tempo_espera_min = document.getElementById('regTempoEspera')?.value || '5';
         userData.porta_malas_litros = document.getElementById('regPortaMalas')?.value || null;
-        userData.preferencia_passageiros = document.getElementById('regPreferenciaPassageiros').value;
-        userData.acessivel_cadeirante = document.getElementById('regAcessivel').checked;
+        userData.preferencia_passageiros = document.getElementById('regPreferenciaPassageiros')?.value || 'todos';
+        userData.acessivel_cadeirante = document.getElementById('regAcessivel')?.checked || false;
+
+        // Se cadastrou um veículo, salva na lista de veículos reutilizáveis
+        if (modelo && placa) {
+          userData.veiculos = [
+            {
+              id: 'veh_' + Date.now(),
+              modelo,
+              cor,
+              placa,
+              foto_url: carroDataUrl || null,
+              vagas: parseInt(userData.vagas_padrao) || 3,
+              criado_em: new Date().toISOString()
+            }
+          ];
+        }
       }
 
       const submitBtn = form.querySelector('button[type="submit"]');

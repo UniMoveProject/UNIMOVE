@@ -85,6 +85,14 @@ export async function registerWithSupabase(userData) {
     }
   }
 
+  // Foto de perfil obrigatória
+  if (!userData.avatar && !userData.avatar_url) {
+    return {
+      success: false,
+      error: 'A foto de perfil é obrigatória para identificação e segurança de todos os usuários.'
+    };
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -96,10 +104,18 @@ export async function registerWithSupabase(userData) {
   }
   if (!data?.user) return { success: false, error: 'Erro ao registrar usuário.' };
 
-  let avatarUrl = userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
-  if (avatarUrl.startsWith('data:') && avatarUrl.length > 3000) {
-    avatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
-  }
+  const avatarUrl = userData.avatar || userData.avatar_url;
+
+  // Montar lista de veículos do motorista
+  const veiculosCadastrados = Array.isArray(userData.veiculos) && userData.veiculos.length > 0
+    ? userData.veiculos
+    : (userData.veiculo_modelo ? [{
+        id: 'veh_' + Date.now(),
+        modelo: userData.veiculo_modelo,
+        cor: userData.veiculo_cor || '',
+        placa: userData.veiculo_placa || '',
+        foto_url: userData.veiculo_foto_url || null
+      }] : []);
 
   // Build profile payload with all Standard fields
   const profilePayload = {
@@ -116,30 +132,23 @@ export async function registerWithSupabase(userData) {
     campus: userData.campus || 'Campus UNICEPLAC',
     roles: userData.roles || ['passageiro'],
     avatar_url: avatarUrl,
+    veiculos: veiculosCadastrados,
     avaliacoes: 5.0,
     total_caronas: 0,
   };
 
   // Motorista-specific fields
   if (userData.roles && userData.roles.includes('motorista')) {
-    profilePayload.veiculo_modelo = userData.veiculo_modelo || null;
-    profilePayload.veiculo_cor = userData.veiculo_cor || null;
-    profilePayload.veiculo_placa = userData.veiculo_placa || null;
-    profilePayload.veiculo_foto_url = userData.veiculo_foto_url || null;
+    profilePayload.veiculo_modelo = userData.veiculo_modelo || (veiculosCadastrados[0]?.modelo) || null;
+    profilePayload.veiculo_cor = userData.veiculo_cor || (veiculosCadastrados[0]?.cor) || null;
+    profilePayload.veiculo_placa = userData.veiculo_placa || (veiculosCadastrados[0]?.placa) || null;
+    profilePayload.veiculo_foto_url = userData.veiculo_foto_url || (veiculosCadastrados[0]?.foto_url) || null;
     profilePayload.cnh = userData.cnh || null;
     profilePayload.vagas_padrao = parseInt(userData.vagas_padrao, 10) || 3;
     profilePayload.preferencia_passageiros = userData.preferencia_passageiros || 'mista';
     profilePayload.tempo_espera_min = parseInt(userData.tempo_espera_min, 10) || 5;
     profilePayload.porta_malas_litros = parseInt(userData.porta_malas_litros, 10) || null;
     profilePayload.acessivel_cadeirante = Boolean(userData.acessivel_cadeirante) || false;
-    profilePayload.preco_medio = parseFloat(userData.preco_medio) || 0.00;
-  }
-
-  // Legacy veiculo object support
-  if (userData.veiculo && typeof userData.veiculo === 'object') {
-    profilePayload.veiculo_modelo = profilePayload.veiculo_modelo || userData.veiculo.modelo || null;
-    profilePayload.veiculo_cor = profilePayload.veiculo_cor || userData.veiculo.cor || null;
-    profilePayload.veiculo_placa = profilePayload.veiculo_placa || userData.veiculo.placa || null;
   }
 
   // Criptografar dados sensíveis antes de enviar ao banco Supabase (LGPD)
@@ -276,6 +285,14 @@ export async function registerUser(userData) {
     }
   }
 
+  // Foto de perfil obrigatória
+  if (!userData.avatar && !userData.avatar_url) {
+    return {
+      success: false,
+      error: 'A foto de perfil é obrigatória para identificação e segurança de todos os usuários.'
+    };
+  }
+
   const users = getAllUsers();
   const normalizedEmail = userData.email.trim().toLowerCase();
   const exists = users.some(u => u.email.toLowerCase() === normalizedEmail);
@@ -283,6 +300,17 @@ export async function registerUser(userData) {
 
   // Criptografar senha e campos sensíveis
   const securePasswordHash = await hashPassword(userData.senha);
+
+  // Montar lista de veículos reutilizáveis do motorista
+  const veiculosCadastrados = Array.isArray(userData.veiculos) && userData.veiculos.length > 0
+    ? userData.veiculos
+    : (userData.veiculo_modelo ? [{
+        id: 'veh_' + Date.now(),
+        modelo: userData.veiculo_modelo,
+        cor: userData.veiculo_cor || '',
+        placa: userData.veiculo_placa || '',
+        foto_url: userData.veiculo_foto_url || null
+      }] : []);
 
   const newUser = {
     id: 'usr_' + Date.now(),
@@ -298,27 +326,27 @@ export async function registerUser(userData) {
     periodo: userData.periodo || '1º período',
     campus: userData.campus || 'Campus UNICEPLAC',
     roles: userData.roles || ['passageiro'],
-    avatar_url: userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+    avatar_url: userData.avatar || userData.avatar_url,
+    veiculos: veiculosCadastrados,
     avaliacoes: 5.0,
     total_caronas: 0
   };
 
   if (userData.roles && userData.roles.includes('motorista')) {
-    newUser.veiculo_modelo = userData.veiculo_modelo || null;
-    newUser.veiculo_cor = userData.veiculo_cor || null;
-    newUser.veiculo_placa = userData.veiculo_placa || null;
-    newUser.veiculo_foto_url = userData.veiculo_foto_url || null;
+    newUser.veiculo_modelo = userData.veiculo_modelo || (veiculosCadastrados[0]?.modelo) || null;
+    newUser.veiculo_cor = userData.veiculo_cor || (veiculosCadastrados[0]?.cor) || null;
+    newUser.veiculo_placa = userData.veiculo_placa || (veiculosCadastrados[0]?.placa) || null;
+    newUser.veiculo_foto_url = userData.veiculo_foto_url || (veiculosCadastrados[0]?.foto_url) || null;
     newUser.cnh = userData.cnh || null;
     newUser.vagas_padrao = parseInt(userData.vagas_padrao, 10) || 3;
-    newUser.preco_medio = parseFloat(userData.preco_medio) || 0.00;
     newUser.tempo_espera_min = parseInt(userData.tempo_espera_min, 10) || 5;
     newUser.porta_malas_litros = parseInt(userData.porta_malas_litros, 10) || null;
     newUser.preferencia_passageiros = userData.preferencia_passageiros || 'mista';
     newUser.acessivel_cadeirante = Boolean(userData.acessivel_cadeirante);
     newUser.veiculo = {
-      modelo: userData.veiculo_modelo || '',
-      cor: userData.veiculo_cor || '',
-      placa: userData.veiculo_placa || ''
+      modelo: newUser.veiculo_modelo || '',
+      cor: newUser.veiculo_cor || '',
+      placa: newUser.veiculo_placa || ''
     };
   }
 
@@ -358,4 +386,33 @@ export async function updateProfile(updatedData) {
 
   setCurrentUser(merged);
   return { success: true, user: merged };
+}
+
+export async function getUserById(userId) {
+  if (!userId) return null;
+
+  if (isSupabaseConfigured) {
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (!error && data) {
+        return await decryptSensitiveProfile(data);
+      }
+    } catch (e) {
+      console.warn('Erro ao buscar perfil por ID no Supabase:', e);
+    }
+  }
+
+  const users = getAllUsers();
+  const user = users.find(u => u.id === userId);
+  if (user) {
+    return await decryptSensitiveProfile(user);
+  }
+
+  // Se o usuário atual for o mesmo solicitado
+  const currentUser = getCurrentUser();
+  if (currentUser && currentUser.id === userId) {
+    return currentUser;
+  }
+
+  return null;
 }

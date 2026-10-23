@@ -1,33 +1,44 @@
-/**
- * RideCard Component
- * Displays ride information according to the Brand Manual specifications (No emojis).
- */
+import { showUserProfileModal } from './UserProfileModal.js';
+import { TARIFA_ONIBUS_DF } from '../services/rides.js';
 
 export function renderRideCard(ride, isOwner = false) {
+  const precoNum = parseFloat(ride.preco) || 0;
+  const economia = Math.max(0, TARIFA_ONIBUS_DF - precoNum);
+
   return `
     <article class="card ride-card parallax-fade-up" id="ride-${ride.id}" style="margin-bottom:1.25rem; animation-delay: 0.15s;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
         
-        <!-- Driver Info -->
-        <div style="display:flex; align-items:center; gap:0.85rem;">
-          <div style="width:48px; height:48px; border-radius:50%; background-image:url('${ride.motoristaFoto}'); background-size:cover; background-position:center; border:2px solid var(--azul-unimove);"></div>
+        <!-- Driver Info (Item 10: Perfil Clicável) -->
+        <div class="driver-profile-trigger" data-driver-id="${ride.motoristaId}" style="display:flex; align-items:center; gap:0.85rem; cursor:pointer;" title="Clique para visualizar o perfil completo do motorista">
+          <div style="width:48px; height:48px; border-radius:50%; background-image:url('${ride.motoristaFoto}'); background-size:cover; background-position:center; border:2px solid var(--azul-unimove); background-color:var(--azul-unimove); flex-shrink:0;"></div>
           <div>
-            <div style="display:flex; align-items:center; gap:0.5rem;">
-              <h3 style="font-family:var(--font-subtitle); font-size:1.15rem; text-transform:none; margin:0;">${ride.motoristaNome}</h3>
-              <span class="badge badge-amarelo" style="font-size:0.8rem;">Nota ${ride.motoristaAvaliacao.toFixed(1)}</span>
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <h3 style="font-family:var(--font-subtitle); font-size:1.15rem; text-transform:none; margin:0; color:var(--text-primary);">
+                ${ride.motoristaNome}
+              </h3>
+              <span class="badge badge-amarelo" style="font-size:0.8rem;">Nota ${(ride.motoristaAvaliacao || 5.0).toFixed(1)} ★</span>
+              <span style="font-size:0.75rem; color:var(--azul-unimove); font-weight:600;">Ver perfil</span>
             </div>
             <p style="font-size:0.92rem; color:var(--text-muted); margin:0;">${ride.motoristaCurso} · ${ride.veiculo} (${ride.cor})</p>
           </div>
         </div>
 
-        <!-- Price & Seats Badge -->
-        <div style="display:flex; align-items:center; gap:0.65rem; text-align:right;">
-          <span class="badge badge-verde" style="font-size:0.9rem; padding:0.35rem 0.85rem;">
-            ${ride.vagasDisponiveis > 0 ? `${ride.vagasDisponiveis} vagas` : 'Lotado'}
-          </span>
-          <div class="price-tag" style="font-family:var(--font-subtitle); font-size:1.25rem; color:var(--text-primary);">
-            ${ride.preco > 0 ? `R$ ${ride.preco.toFixed(2).replace('.', ',')}` : 'Grátis'}
+        <!-- Price & Seats Badge & Economia (Item 13) -->
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.35rem;">
+          <div style="display:flex; align-items:center; gap:0.65rem;">
+            <span class="badge badge-verde" style="font-size:0.9rem; padding:0.35rem 0.85rem;">
+              ${ride.vagasDisponiveis > 0 ? `${ride.vagasDisponiveis} vagas` : 'Lotado'}
+            </span>
+            <div class="price-tag" style="font-family:var(--font-subtitle); font-size:1.25rem; color:var(--text-primary);">
+              ${ride.preco > 0 ? `R$ ${ride.preco.toFixed(2).replace('.', ',')}` : 'Grátis'}
+            </div>
           </div>
+          ${economia > 0 ? `
+            <span style="font-size:0.78rem; font-weight:600; color:#15803d; background:#ecfdf5; border:1px solid #bbf7d0; padding:0.15rem 0.5rem; border-radius:var(--radius-sm);">
+              Economiza R$ ${economia.toFixed(2)} vs ônibus
+            </span>
+          ` : ''}
         </div>
       </div>
 
@@ -65,4 +76,17 @@ export function renderRideCard(ride, isOwner = false) {
       </div>
     </article>
   `;
+}
+
+export function attachRideCardEvents(container = document) {
+  const triggers = container.querySelectorAll('.driver-profile-trigger');
+  triggers.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const driverId = btn.getAttribute('data-driver-id');
+      if (driverId) {
+        showUserProfileModal(driverId);
+      }
+    });
+  });
 }
