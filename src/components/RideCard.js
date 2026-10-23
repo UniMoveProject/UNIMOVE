@@ -11,6 +11,7 @@ export function renderRideCard(ride, isOwner = false) {
         
         <!-- Driver Info (Item 10: Perfil Clicável) -->
         <div class="driver-profile-trigger" data-driver-id="${ride.motoristaId}" style="display:flex; align-items:center; gap:0.85rem; cursor:pointer;" title="Clique para visualizar o perfil completo do motorista">
+          ${ride.fotoVeiculo ? `<img src="${ride.fotoVeiculo}" alt="Foto do carro" style="width:80px; height:56px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color); flex-shrink:0;">` : ''}
           <div style="width:48px; height:48px; border-radius:50%; background-image:url('${ride.motoristaFoto}'); background-size:cover; background-position:center; border:2px solid var(--azul-unimove); background-color:var(--azul-unimove); flex-shrink:0;"></div>
           <div>
             <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">

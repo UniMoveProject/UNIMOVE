@@ -234,6 +234,7 @@ function mapRide(r, passengers = []) {
     veiculo: r.veiculo,
     cor: r.cor,
     placa: r.placa,
+    fotoVeiculo: r.foto_veiculo || r.fotoVeiculo || '',
     status: r.status,
     passageiros: passengers,
   };
