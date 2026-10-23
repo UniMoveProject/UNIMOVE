@@ -202,6 +202,9 @@ export function attachEditRideEvents() {
       return;
     }
 
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Salvando...'; }
+
     const fileInput = document.getElementById('editFotoVeiculo');
     let fotoVeiculoUrl = form.dataset.foto || '';
     if (fileInput && fileInput.files && fileInput.files[0] && isSupabaseConfigured) {
@@ -213,7 +216,6 @@ export function attachEditRideEvents() {
         fotoVeiculoUrl = pub.publicUrl;
       }
     }
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Salvando...'; }
 
     const updatedData = {
       origem: document.getElementById('editOrigem').value,
