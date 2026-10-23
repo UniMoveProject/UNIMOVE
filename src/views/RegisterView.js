@@ -4,7 +4,7 @@
  * password strength evaluation, visibility toggles, character limits, and under-18 driver block.
  */
 
-import { registerUser } from '../services/auth.js';
+import { registerUser, isStrongPassword } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
 
 // SVG Icons para mostrar/ocultar senha
@@ -254,7 +254,11 @@ export function renderRegisterView() {
             </div>
           </fieldset>
 
-          <button type="submit" class="btn btn-azul btn-block" style="margin-top:0.5rem;">
+          <div id="regPassAlertNotice" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:0.65rem 1rem; border-radius:var(--radius-md); font-size:0.9rem; text-align:center; margin-top:1rem;">
+            O cadastro só é permitido após criar uma senha forte atendendo a todos os requisitos.
+          </div>
+
+          <button type="submit" id="regSubmitBtn" class="btn btn-azul btn-block" style="margin-top:0.75rem;">
             Finalizar cadastro
           </button>
         </form>
@@ -322,7 +326,7 @@ export function attachRegisterEvents() {
     const hasUpper = /[A-Z]/.test(val);
     const hasLower = /[a-z]/.test(val);
     const hasNumber = /[0-9]/.test(val);
-    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(val);
+    const hasSpecial = /[^A-Za-z0-9]/.test(val);
 
     // Atualiza checklist visual
     updateReqItem(reqLength, hasLength);
@@ -333,27 +337,38 @@ export function attachRegisterEvents() {
 
     // Contagem de critérios atendidos
     const score = [hasLength, hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
+    const passAlert = document.getElementById('regPassAlertNotice');
 
     if (val.length === 0) {
       passStrengthBar.style.width = '0%';
       passStrengthBar.style.backgroundColor = '#d32f2f';
       passStrengthLabel.textContent = 'Muito fraca';
       passStrengthLabel.style.color = '#d32f2f';
+      if (passAlert) passAlert.style.display = 'none';
     } else if (score <= 2) {
       passStrengthBar.style.width = '30%';
       passStrengthBar.style.backgroundColor = '#d32f2f';
-      passStrengthLabel.textContent = 'Fraca';
+      passStrengthLabel.textContent = 'Fraca (insegura)';
       passStrengthLabel.style.color = '#d32f2f';
+      if (passAlert) {
+        passAlert.style.display = 'block';
+        passAlert.textContent = 'Senha fraca: atenda a todos os 5 requisitos para liberar o cadastro.';
+      }
     } else if (score === 3 || score === 4) {
       passStrengthBar.style.width = '65%';
       passStrengthBar.style.backgroundColor = '#f59e0b';
       passStrengthLabel.textContent = 'Média / Quase lá';
       passStrengthLabel.style.color = '#f59e0b';
+      if (passAlert) {
+        passAlert.style.display = 'block';
+        passAlert.textContent = 'Quase lá: faltam requisitos obrigatórios para tornar sua senha segura.';
+      }
     } else {
       passStrengthBar.style.width = '100%';
       passStrengthBar.style.backgroundColor = '#16a34a';
-      passStrengthLabel.textContent = 'Forte e segura';
+      passStrengthLabel.textContent = 'Forte e segura (Aprovada)';
       passStrengthLabel.style.color = '#16a34a';
+      if (passAlert) passAlert.style.display = 'none';
     }
   }
 
@@ -524,35 +539,49 @@ export function attachRegisterEvents() {
         }
       }
 
-      // Validação Estrita dos Requisitos de Senha
-      if (senha.length < 8) {
-        errorMsg.textContent = 'A senha deve conter no mínimo 8 caracteres.';
+      // Validação Estrita dos Requisitos de Senha Forte
+      const hasLength = senha.length >= 8;
+      const hasUpper = /[A-Z]/.test(senha);
+      const hasLower = /[a-z]/.test(senha);
+      const hasNumber = /[0-9]/.test(senha);
+      const hasSpecial = /[^A-Za-z0-9]/.test(senha);
+      const isStrong = hasLength && hasUpper && hasLower && hasNumber && hasSpecial;
+
+      if (!isStrong) {
+        let missing = [];
+        if (!hasLength) missing.push('no mínimo 8 caracteres');
+        if (!hasUpper) missing.push('pelo menos uma letra maiúscula (A-Z)');
+        if (!hasLower) missing.push('pelo menos uma letra minúscula (a-z)');
+        if (!hasNumber) missing.push('pelo menos um número (0-9)');
+        if (!hasSpecial) missing.push('pelo menos um caractere especial (!@#$...)');
+
+        const msg = `Sua senha não é segura. Requisitos pendentes: ${missing.join(', ')}.`;
+        errorMsg.textContent = msg;
         errorMsg.classList.add('show');
+
+        showModal({
+          title: 'Senha Não Segura',
+          message: `O cadastro só é permitido após criar uma senha forte. Sua senha precisa conter:\n• ${missing.join('\n• ')}`,
+          confirmText: 'Criar senha forte'
+        });
+
+        const pwdBox = document.getElementById('passwordSecurityBox');
+        if (pwdBox) pwdBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        senhaInput.focus();
         return;
       }
-      if (!/[A-Z]/.test(senha)) {
-        errorMsg.textContent = 'A senha deve conter pelo menos uma letra maiúscula (A-Z).';
-        errorMsg.classList.add('show');
-        return;
-      }
-      if (!/[a-z]/.test(senha)) {
-        errorMsg.textContent = 'A senha deve conter pelo menos uma letra minúscula (a-z).';
-        errorMsg.classList.add('show');
-        return;
-      }
-      if (!/[0-9]/.test(senha)) {
-        errorMsg.textContent = 'A senha deve conter pelo menos um número (0-9).';
-        errorMsg.classList.add('show');
-        return;
-      }
-      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(senha)) {
-        errorMsg.textContent = 'A senha deve conter pelo menos um caractere especial (!@#$%...).';
-        errorMsg.classList.add('show');
-        return;
-      }
+
       if (senha !== confirmaSenha) {
         errorMsg.textContent = 'As senhas não conferem. Verifique a confirmação digitada.';
         errorMsg.classList.add('show');
+
+        showModal({
+          title: 'Senhas Diferentes',
+          message: 'A confirmação de senha digitada é diferente da senha escolhida. Por favor, digite a mesma senha nos dois campos.',
+          confirmText: 'Corrigir'
+        });
+
+        confirmaSenhaInput.focus();
         return;
       }
 
@@ -605,8 +634,13 @@ export function attachRegisterEvents() {
           }
         });
       } else {
-        errorMsg.textContent = res.error;
+        errorMsg.textContent = res.error || 'Erro ao registrar usuário.';
         errorMsg.classList.add('show');
+        showModal({
+          title: 'Não foi possível cadastrar',
+          message: res.error || 'Verifique os dados informados e tente novamente.',
+          confirmText: 'Ok'
+        });
       }
     });
   }

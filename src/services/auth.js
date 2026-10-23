@@ -52,9 +52,27 @@ export async function loginWithSupabase(email, password) {
   return { success: true, user };
 }
 
+export function isStrongPassword(password) {
+  if (!password || typeof password !== 'string') return false;
+  const hasLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(password);
+  return hasLength && hasUpper && hasLower && hasNumber && hasSpecial;
+}
+
 export async function registerWithSupabase(userData) {
   const email = userData.email.trim().toLowerCase();
   const password = userData.senha;
+
+  // Validação Estrita de Senha Forte
+  if (!isStrongPassword(password)) {
+    return {
+      success: false,
+      error: 'A senha informada não é segura. Crie uma senha forte com no mínimo 8 caracteres, contendo maiúsculas, minúsculas, números e caracteres especiais.'
+    };
+  }
 
   // Validação de maioridade para motorista (Bloquear menores de 18 anos)
   if (userData.roles && userData.roles.includes('motorista')) {
@@ -238,6 +256,14 @@ export function logout() {
 
 export async function registerUser(userData) {
   if (isSupabaseConfigured) return await registerWithSupabase(userData);
+
+  // Validação Estrita de Senha Forte
+  if (!isStrongPassword(userData.senha)) {
+    return {
+      success: false,
+      error: 'A senha informada não é segura. Crie uma senha forte com no mínimo 8 caracteres, contendo maiúsculas, minúsculas, números e caracteres especiais.'
+    };
+  }
 
   // Validação de maioridade para motorista
   if (userData.roles && userData.roles.includes('motorista')) {
