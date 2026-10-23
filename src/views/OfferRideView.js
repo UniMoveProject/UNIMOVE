@@ -6,7 +6,7 @@
 
 import { getCurrentUser } from '../services/auth.js';
 import { offerRide } from '../services/rides.js';
-import { showModal } from '../components/Modal.js';
+import { supabase, isSupabaseConfigured } from '../services/supabaseClient.js';
 
 export function renderOfferRideView() {
   const user = getCurrentUser();
@@ -129,8 +129,11 @@ export function renderOfferRideView() {
               <div>
                 <label class="form-label" for="ridePlaca">Placa *</label>
                 <input type="text" id="ridePlaca" class="form-input" placeholder="Ex: ABC-1234" value="${defaultVehicle.placa}" maxlength="8" required>
-              </div>
-            </div>
+             <div>
+               <label class="form-label" for="rideFotoVeiculo">Foto do carro *</label>
+               <input type="file" id="rideFotoVeiculo" class="form-input" accept="image/*" required>
+             </div>
+           </div>
 
             <div id="salvarVeiculoBox" style="${veiculos.length > 0 ? 'display:none;' : 'display:block;'} margin-top:0.75rem;">
               <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-secondary); cursor:pointer;">
@@ -215,7 +218,17 @@ export function attachOfferRideEvents() {
       return;
     }
 
-    const submitBtn = form.querySelector('button[type="submit"]');
+    const fileInput = document.getElementById('rideFotoVeiculo');
+    let fotoVeiculoUrl = '';
+    if (fileInput && fileInput.files && fileInput.files[0] && isSupabaseConfigured) {
+      const file = fileInput.files[0];
+      const path = `car-${Date.now()}`;
+      const { error: upErr } = await supabase.storage.from('car-photos').upload(path, file, { upsert: true });
+      if (!upErr) {
+        const { data: pub } = supabase.storage.from('car-photos').getPublicUrl(path);
+        fotoVeiculoUrl = pub.publicUrl;
+      }
+    }
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Publicando...';
@@ -233,6 +246,7 @@ export function attachOfferRideEvents() {
       veiculo: document.getElementById('rideVeiculo').value.trim(),
       cor: document.getElementById('rideCor').value.trim(),
       placa: document.getElementById('ridePlaca').value.trim().toUpperCase(),
+      fotoVeiculo: fotoVeiculoUrl,
       salvarNoPerfil: salvarCheck ? salvarCheck.checked : false
     };
 

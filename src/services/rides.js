@@ -94,6 +94,7 @@ export async function offerRideSupabase(rideData) {
     veiculo: rideData.veiculo || 'Carro',
     cor: rideData.cor || 'Branco',
     placa: rideData.placa || '',
+    foto_veiculo: rideData.fotoVeiculo || null,
     status: 'ativa',
   }).select().single();
 
