@@ -20,7 +20,7 @@ export function renderRideCard(ride, isOwner = false) {
               <span class="badge badge-amarelo" style="font-size:0.8rem;">Nota ${(ride.motoristaAvaliacao || 5.0).toFixed(1)} ★</span>
               <span style="font-size:0.75rem; color:var(--azul-unimove); font-weight:600;">Ver perfil</span>
             </div>
-            <p style="font-size:0.92rem; color:var(--text-muted); margin:0;">${ride.motoristaCurso} · ${ride.veiculo} (${ride.cor})</p>
+            <p style="font-size:0.92rem; color:var(--text-muted); margin:0;">${ride.motoristaCurso} · ${ride.veiculo || 'Veículo'} (${ride.cor || '-'})${ride.placa ? ' · Placa ' + ride.placa : ''}</p>
           </div>
         </div>
 

@@ -72,7 +72,7 @@ function buildChatHTML(ride, messages, user) {
                 <span class="badge badge-soft" style="font-size:0.75rem;">Ver perfil</span>
               </div>
               ${ride.veiculo ? ` · ${ride.veiculo}` : ''}
-              ${ride.placa ? ` (${ride.placa})` : ''}
+               ${ride.cor ? `(${ride.cor})` : ''}${ride.placa ? ` · Placa ${ride.placa}` : ''}
             </div>
           </div>
           <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
