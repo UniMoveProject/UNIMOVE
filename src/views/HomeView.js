@@ -3,9 +3,11 @@
  * Conforming strictly to the Brand Manual (pages 8 & 10) without emojis.
  */
 
-import { getAllRides } from '../services/rides.js';
+import { getAllRides, bookRide } from '../services/rides.js';
 import { renderRideCard, attachRideCardEvents } from '../components/RideCard.js';
 import { getCurrentUser } from '../services/auth.js';
+
+import { showModal } from '../components/Modal.js';
 
 export function renderHomeView() {
   return `
@@ -73,8 +75,8 @@ export async function loadHomeRides() {
   if (!container) return;
 
   try {
-    const rides = await getAllRides();
-    const recent = rides.slice(0, 6);
+const rides = await getAllRides();
+const recent = rides.filter(r => (r.vagasDisponiveis || 0) > 0).slice(0, 6);
     if (recent.length === 0) {
       container.innerHTML = '<p style="color:var(--text-secondary);">Nenhuma carona disponivel no momento.</p>';
     } else {
@@ -88,6 +90,28 @@ export async function loadHomeRides() {
 
 export function attachHomeEvents() {
   loadHomeRides();
+
+  function attachBookingEvents() {
+    document.querySelectorAll('.btn-pedir-carona').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rideId = btn.dataset.id;
+        const user = getCurrentUser();
+        if (!user) { window.location.hash = '#/login'; return; }
+        showModal({
+          title: 'Confirmar solicitação de vaga',
+          message: 'Você deseja confirmar seu embarque nesta carona?',
+          confirmText: 'Confirmar embarque',
+          onConfirm: async () => {
+            const res = await bookRide(rideId);
+            if (res.success) { loadHomeRides(); }
+            else { alert(res.error); }
+          }
+        });
+      });
+    });
+  }
+  setTimeout(attachBookingEvents, 300);
+
 
   const form = document.getElementById('quickSearchForm');
   if (form) {
