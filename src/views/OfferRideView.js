@@ -6,7 +6,7 @@
 
 import { getCurrentUser } from '../services/auth.js';
 import { offerRide } from '../services/rides.js';
-import { supabase, isSupabaseConfigured } from '../services/supabaseClient.js';
+import { showModal } from '../components/Modal.js';
 
 export function renderOfferRideView() {
   const user = getCurrentUser();
