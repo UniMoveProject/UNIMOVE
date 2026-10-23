@@ -81,9 +81,9 @@ export function attachSearchRidesEvents() {
     const horario = document.getElementById('searchHorario')?.value || '';
     const vagasMinimas = document.getElementById('searchVagas')?.value || '1';
 
-    try {
-      const results = (await searchRides({ origem, destino, horario, vagasMinimas })) || [];
-      const user = getCurrentUser();
+     try {
+       const user = getCurrentUser();
+       const results = ((await searchRides({ origem, destino, horario, vagasMinimas })) || []).filter(r => r.motoristaId !== (user && user.id) && !(r.passageiros || []).some(p => (p.id || p) === (user && user.id)));
 
       if (title) title.textContent = `Resultados encontrados (${results.length})`;
 

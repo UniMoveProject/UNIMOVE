@@ -75,8 +75,9 @@ export async function loadHomeRides() {
   if (!container) return;
 
   try {
-const rides = await getAllRides();
-const recent = rides.filter(r => (r.vagasDisponiveis || 0) > 0).slice(0, 6);
+   const user = getCurrentUser();
+   const rides = await getAllRides();
+   const recent = rides.filter(r => (r.vagasDisponiveis || 0) > 0 && r.motoristaId !== (user && user.id) && !(r.passageiros || []).some(p => (p.id || p) === (user && user.id))).slice(0, 6);
     if (recent.length === 0) {
       container.innerHTML = '<p style="color:var(--text-secondary);">Nenhuma carona disponivel no momento.</p>';
     } else {
