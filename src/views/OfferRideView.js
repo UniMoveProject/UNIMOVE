@@ -218,6 +218,12 @@ export function attachOfferRideEvents() {
       return;
     }
 
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Publicando...';
+    }
+
     const fileInput = document.getElementById('rideFotoVeiculo');
     let fotoVeiculoUrl = '';
     if (fileInput && fileInput.files && fileInput.files[0] && isSupabaseConfigured) {
@@ -227,11 +233,8 @@ export function attachOfferRideEvents() {
       if (!upErr) {
         const { data: pub } = supabase.storage.from('car-photos').getPublicUrl(path);
         fotoVeiculoUrl = pub.publicUrl;
+        showModal({ title: 'Imagem enviada', message: 'Foto do carro enviada com sucesso.', confirmText: 'Ok' });
       }
-    }
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Publicando...';
     }
 
     const rideData = {
