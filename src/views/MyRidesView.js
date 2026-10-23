@@ -93,7 +93,7 @@ export async function loadMyRidesData() {
     }
 
     if (booked.length > 0) {
-      bookedContainer.innerHTML = booked.map(r => renderRideCard(r, false)).join('');
+      bookedContainer.innerHTML = booked.map(r => renderRideCard(r, false, true)).join('');
     } else {
       bookedContainer.innerHTML = `
         <div class="card" style="text-align:center; padding:2rem 1rem;">

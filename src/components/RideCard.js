@@ -1,7 +1,7 @@
 import { showUserProfileModal } from './UserProfileModal.js';
 import { TARIFA_ONIBUS_DF } from '../services/rides.js';
 
-export function renderRideCard(ride, isOwner = false) {
+export function renderRideCard(ride, isOwner = false, isBooked = false) {
   const precoNum = parseFloat(ride.preco) || 0;
   const economia = Math.max(0, TARIFA_ONIBUS_DF - precoNum);
 
@@ -65,14 +65,14 @@ export function renderRideCard(ride, isOwner = false) {
         </div>
 
         <div style="display:flex; gap:0.5rem;">
-          ${isOwner ? `
-            <a href="#/editar-carona/${ride.id}" class="btn btn-sm btn-outline">Editar</a>
-            <button type="button" class="btn btn-sm btn-outline btn-delete-ride" data-id="${ride.id}" style="color:#d32f2f; border-color:rgba(211,47,47,0.3);">Excluir</button>
-          ` : `
-            <button type="button" class="btn btn-sm btn-azul btn-pedir-carona" data-id="${ride.id}" ${ride.vagasDisponiveis <= 0 ? 'disabled' : ''}>
-              ${ride.vagasDisponiveis > 0 ? 'Pedir carona' : 'Esgotado'}
-            </button>
-          `}
+${isOwner ? `
+             <a href="#/editar-carona/${ride.id}" class="btn btn-sm btn-outline">Editar</a>
+             <button type="button" class="btn btn-sm btn-outline btn-delete-ride" data-id="${ride.id}" style="color:#d32f2f; border-color:rgba(211,47,47,0.3);">Excluir</button>
+           ` : isBooked ? '' : `
+             <button type="button" class="btn btn-sm btn-azul btn-pedir-carona" data-id="${ride.id}" ${ride.vagasDisponiveis <= 0 ? 'disabled' : ''}>
+               ${ride.vagasDisponiveis > 0 ? 'Pedir carona' : 'Esgotado'}
+             </button>
+           `}
         </div>
       </div>
     </article>
