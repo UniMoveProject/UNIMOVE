@@ -68,7 +68,9 @@ export function renderRideCard(ride, isOwner = false, isBooked = false) {
 ${isOwner ? `
              <a href="#/editar-carona/${ride.id}" class="btn btn-sm btn-outline">Editar</a>
              <button type="button" class="btn btn-sm btn-outline btn-delete-ride" data-id="${ride.id}" style="color:#d32f2f; border-color:rgba(211,47,47,0.3);">Excluir</button>
-           ` : isBooked ? '' : `
+           ` : isBooked ? `
+             <button type="button" class="btn btn-sm btn-outline btn-cancel-booking" data-id="${ride.id}" style="color:#d32f2f; border-color:rgba(211,47,47,0.3);">Cancelar pedido</button>
+           ` : `
              <button type="button" class="btn btn-sm btn-azul btn-pedir-carona" data-id="${ride.id}" ${ride.vagasDisponiveis <= 0 ? 'disabled' : ''}>
                ${ride.vagasDisponiveis > 0 ? 'Pedir carona' : 'Esgotado'}
              </button>
@@ -88,6 +90,25 @@ export function attachRideCardEvents(container = document) {
       if (driverId) {
         showUserProfileModal(driverId);
       }
+    });
+  });
+
+  container.querySelectorAll('.btn-delete-ride').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const rideId = btn.dataset.id;
+      if (!confirm('Excluir esta carona?')) return;
+      const { deleteRide } = await import('../services/rides.js');
+      const res = await deleteRide(rideId);
+      if (res.success) { window.location.reload(); }
+      else { alert(res.error); }
+    });
+  });
+    btn.addEventListener('click', async () => {
+      const rideId = btn.dataset.id;
+      const { cancelBooking } = await import('../services/rides.js');
+      const res = await cancelBooking(rideId);
+      if (res.success) { window.location.reload(); }
+      else { alert(res.error); }
     });
   });
 }
