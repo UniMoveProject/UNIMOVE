@@ -508,3 +508,15 @@ export function calculateEconomyData(ridePrice = null) {
     percentualEconomia
   };
 }
+export async function cancelBooking(rideId) {
+  const user = getCurrentUser();
+  if (!user) return { success: false, error: 'Faca login.' };
+  if (isSupabaseConfigured) {
+    const { error: delErr } = await supabase.from('ride_passengers').delete().eq('ride_id', rideId).eq('passageiro_id', user.id);
+    if (delErr) return { success: false, error: delErr.message };
+    const { data: ride } = await supabase.from('rides').select('vagas_disponiveis').eq('id', rideId).single();
+    if (ride) { await supabase.from('rides').update({ vagas_disponiveis: (ride.vagas_disponiveis || 0) + 1 }).eq('id', rideId); }
+    return { success: true };
+  }
+  return { success: false, error: 'Nao disponivel offline.' };
+}
