@@ -88,8 +88,8 @@ const recent = rides.filter(r => (r.vagasDisponiveis || 0) > 0).slice(0, 6);
   }
 }
 
-export function attachHomeEvents() {
-  loadHomeRides();
+export async function attachHomeEvents() {
+  await loadHomeRides();
 
   function attachBookingEvents() {
     document.querySelectorAll('.btn-pedir-carona').forEach(btn => {
@@ -103,14 +103,14 @@ export function attachHomeEvents() {
           confirmText: 'Confirmar embarque',
           onConfirm: async () => {
             const res = await bookRide(rideId);
-            if (res.success) { loadHomeRides(); }
+            if (res.success) { await loadHomeRides(); }
             else { alert(res.error); }
           }
         });
       });
     });
   }
-  setTimeout(attachBookingEvents, 300);
+  attachBookingEvents();
 
 
   const form = document.getElementById('quickSearchForm');
