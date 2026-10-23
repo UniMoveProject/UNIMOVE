@@ -73,6 +73,7 @@ function buildChatHTML(ride, messages, user) {
               </div>
               ${ride.veiculo ? ` · ${ride.veiculo}` : ''}
                ${ride.cor ? `(${ride.cor})` : ''}${ride.placa ? ` · Placa ${ride.placa}` : ''}
+               ${ride.fotoVeiculo ? `<div style="margin-top:0.5rem;"><img src="${ride.fotoVeiculo}" alt="Foto do carro" style="width:160px; height:100px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);"></div>` : ''}
             </div>
           </div>
           <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
