@@ -3,6 +3,8 @@
  * Professional collegiate layout strictly without emojis.
  */
 
+import { renderEconomyCard } from '../components/EconomyCard.js';
+
 export function renderLandingView() {
   return `
     <div style="display:flex; flex-direction:column; gap:4rem;">
@@ -80,6 +82,9 @@ export function renderLandingView() {
         </div>
 
       </section>
+
+      <!-- Painel de Economia Universitária (Item 13) -->
+      ${renderEconomyCard()}
 
       <!-- MARQUEE STRIP -->
       <div class="marquee-strip">

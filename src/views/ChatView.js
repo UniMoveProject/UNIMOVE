@@ -178,8 +178,29 @@ export async function attachChatEvents() {
   const messagesArea = document.getElementById('chatMessagesArea');
   const input = document.getElementById('chatTextInput');
 
-  // Scroll to bottom
-  if (messagesArea) messagesArea.scrollTop = messagesArea.scrollHeight;
+  // Poll for new messages
+  let knownCount = messages.length;
+  const pollInterval = setInterval(async () => {
+    if (!document.getElementById('chatMessagesArea')) { clearInterval(pollInterval); return; }
+    try {
+      const latest = await getChatMessages(rideId);
+      if (latest.length !== knownCount) {
+        knownCount = latest.length;
+        const area = document.getElementById('chatMessagesArea');
+        if (area) {
+          area.innerHTML = latest.length > 0 ? latest.map(m => buildMessageHTML(m, user)).join('') : `
+            <div style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">
+              <p>Nenhuma mensagem ainda.</p>
+              <p style="font-size:0.95rem;">Envie uma mensagem para combinar o ponto de encontro com o grupo.</p>
+            </div>
+          `;
+          area.scrollTop = area.scrollHeight;
+          attachAvatarEvents();
+        }
+      }
+    } catch (e) {}
+  }, 4000);
+
 
   // Avatar click — mini profile popup
   attachAvatarEvents();

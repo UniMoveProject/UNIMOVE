@@ -6,7 +6,6 @@
 import { getAllRides } from '../services/rides.js';
 import { renderRideCard, attachRideCardEvents } from '../components/RideCard.js';
 import { getCurrentUser } from '../services/auth.js';
-import { renderEconomyCard } from '../components/EconomyCard.js';
 
 export function renderHomeView() {
   return `
@@ -33,9 +32,6 @@ export function renderHomeView() {
           </div>
         </div>
       </section>
-
-      <!-- Painel de Economia Universitária (Item 13) -->
-      ${renderEconomyCard()}
 
       <!-- Quick Route Search Bar -->
       <section class="card parallax-fade-up" style="padding:1.5rem; animation-delay: 0.1s;">
