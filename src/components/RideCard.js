@@ -103,8 +103,11 @@ export function attachRideCardEvents(container = document) {
       else { alert(res.error); }
     });
   });
+
+  container.querySelectorAll('.btn-cancel-booking').forEach(btn => {
     btn.addEventListener('click', async () => {
       const rideId = btn.dataset.id;
+      if (!confirm('Deseja cancelar sua vaga nesta carona?')) return;
       const { cancelBooking } = await import('../services/rides.js');
       const res = await cancelBooking(rideId);
       if (res.success) { window.location.reload(); }

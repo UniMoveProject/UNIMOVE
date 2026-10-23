@@ -511,13 +511,43 @@ export function calculateEconomyData(ridePrice = null) {
 }
 export async function cancelBooking(rideId) {
   const user = getCurrentUser();
-  if (!user) return { success: false, error: 'Faca login.' };
+  if (!user) return { success: false, error: 'Faça login para cancelar a solicitação.' };
+
   if (isSupabaseConfigured) {
-    const { error: delErr } = await supabase.from('ride_passengers').delete().eq('ride_id', rideId).eq('passageiro_id', user.id);
+    const { error: delErr } = await supabase
+      .from('ride_passengers')
+      .delete()
+      .eq('ride_id', rideId)
+      .eq('passageiro_id', user.id);
+
     if (delErr) return { success: false, error: delErr.message };
-    const { data: ride } = await supabase.from('rides').select('vagas_disponiveis').eq('id', rideId).single();
-    if (ride) { await supabase.from('rides').update({ vagas_disponiveis: (ride.vagas_disponiveis || 0) + 1 }).eq('id', rideId); }
+
+    const { data: ride } = await supabase
+      .from('rides')
+      .select('vagas_disponiveis')
+      .eq('id', rideId)
+      .single();
+
+    if (ride) {
+      await supabase
+        .from('rides')
+        .update({ vagas_disponiveis: (ride.vagas_disponiveis || 0) + 1 })
+        .eq('id', rideId);
+    }
     return { success: true };
   }
-  return { success: false, error: 'Nao disponivel offline.' };
+
+  // Fallback offline / localStorage
+  const rides = getAllRidesLocal();
+  const ride = rides.find(r => r.id === rideId);
+  if (!ride) return { success: false, error: 'Carona não encontrada.' };
+
+  if (ride.passageiros) {
+    ride.passageiros = ride.passageiros.filter(p => (p.id || p) !== user.id);
+  }
+  if (ride.vagasTotais && ride.vagasDisponiveis < ride.vagasTotais) {
+    ride.vagasDisponiveis += 1;
+  }
+  setStoredData(RIDES_KEY, rides);
+  return { success: true };
 }
