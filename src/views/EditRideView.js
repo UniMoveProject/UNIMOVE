@@ -6,6 +6,7 @@
 
 import { getRideById, updateRide, getAllRides } from '../services/rides.js';
 import { isSupabaseConfigured } from '../services/supabaseClient.js';
+import { supabase } from '../services/supabaseClient.js';
 import { getCurrentUser } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
 
@@ -53,7 +54,7 @@ export async function renderEditRideView(rideId) {
           </p>
         </div>
 
-        <form id="editRideForm" data-id="${ride.id}" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <form id="editRideForm" data-id="${ride.id}" data-foto="${ride.fotoVeiculo || ''}" style="display:flex; flex-direction:column; gap:1.25rem;">
           
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
             <div class="form-group">
@@ -134,8 +135,11 @@ export async function renderEditRideView(rideId) {
               <div>
                 <label class="form-label" for="editPlaca">Placa *</label>
                 <input type="text" id="editPlaca" class="form-input" value="${ride.placa || ''}" maxlength="8" required>
-              </div>
-            </div>
+               <div>
+                 <label class="form-label" for="editFotoVeiculo">Foto do carro</label>
+                 <input type="file" id="editFotoVeiculo" class="form-input" accept="image/*">
+               </div>
+             </div>
           </div>
 
           <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1rem;">
@@ -198,7 +202,17 @@ export function attachEditRideEvents() {
       return;
     }
 
-    const submitBtn = form.querySelector('button[type="submit"]');
+    const fileInput = document.getElementById('editFotoVeiculo');
+    let fotoVeiculoUrl = form.dataset.foto || '';
+    if (fileInput && fileInput.files && fileInput.files[0] && isSupabaseConfigured) {
+      const file = fileInput.files[0];
+      const path = `car-${rideId}-${Date.now()}`;
+      const { error: upErr } = await supabase.storage.from('car-photos').upload(path, file, { upsert: true });
+      if (!upErr) {
+        const { data: pub } = supabase.storage.from('car-photos').getPublicUrl(path);
+        fotoVeiculoUrl = pub.publicUrl;
+      }
+    }
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Salvando...'; }
 
     const updatedData = {
@@ -212,7 +226,8 @@ export function attachEditRideEvents() {
       preco: preco,
       veiculo: document.getElementById('editVeiculo').value.trim(),
       cor: document.getElementById('editCor').value.trim(),
-      placa: document.getElementById('editPlaca').value.trim().toUpperCase()
+       placa: document.getElementById('editPlaca').value.trim().toUpperCase(),
+       fotoVeiculo: fotoVeiculoUrl
     };
 
     const res = await updateRide(rideId, updatedData);

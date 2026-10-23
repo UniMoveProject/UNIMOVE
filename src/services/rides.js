@@ -114,6 +114,7 @@ export async function updateRideSupabase(id, updatedData) {
     cor: updatedData.cor,
     placa: updatedData.placa,
   };
+  if (updatedData.fotoVeiculo !== undefined) payload.foto_veiculo = updatedData.fotoVeiculo;
   if (updatedData.vagasDisponiveis !== undefined) payload.vagas_disponiveis = updatedData.vagasDisponiveis;
   if (updatedData.vagasTotais !== undefined) payload.vagas_totais = updatedData.vagasTotais;
   if (updatedData.status !== undefined) payload.status = updatedData.status;
