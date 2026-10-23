@@ -23,12 +23,12 @@ export function renderSearchRidesView(queryString = '') {
         <form id="searchFilterForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
           <div>
             <label class="form-label" for="searchOrigem">Origem / Bairro</label>
-            <input type="text" id="searchOrigem" class="form-input" placeholder="Ex: Valparaíso, Asa Sul, Ceilândia" value="${initialOrigem}">
+            <input type="text" id="searchOrigem" class="form-input" placeholder="Ex: Valparaíso, Asa Sul, Ceilândia" value="${initialOrigem}" maxlength="100">
           </div>
 
           <div>
             <label class="form-label" for="searchDestino">Destino</label>
-            <input type="text" id="searchDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC" value="${initialDestino}">
+            <input type="text" id="searchDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC" value="${initialDestino}" maxlength="100">
           </div>
 
           <div>

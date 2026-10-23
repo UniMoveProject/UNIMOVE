@@ -2,10 +2,17 @@
  * Authentication Service
  * Handles user login, registration, and profile management.
  * Uses Supabase Auth when configured, falls back to localStorage.
+ * Includes data-at-rest encryption for sensitive personal fields (LGPD) and age validation.
  */
 
 import { getStoredData, setStoredData, USERS_KEY, CURRENT_USER_KEY } from './storage.js';
 import { supabase, isSupabaseConfigured } from './supabaseClient.js';
+import {
+  encryptSensitiveProfile,
+  decryptSensitiveProfile,
+  hashPassword,
+  verifyPassword
+} from './crypto.js';
 
 export function getCurrentUser() {
   const user = localStorage.getItem(CURRENT_USER_KEY);
@@ -39,7 +46,8 @@ export async function loginWithSupabase(email, password) {
     .eq('id', data.user.id)
     .single();
 
-  const user = { id: data.user.id, email: data.user.email, ...profile };
+  const decryptedProfile = await decryptSensitiveProfile(profile || {});
+  const user = { id: data.user.id, email: data.user.email, ...decryptedProfile };
   setCurrentUser(user);
   return { success: true, user };
 }
@@ -47,6 +55,17 @@ export async function loginWithSupabase(email, password) {
 export async function registerWithSupabase(userData) {
   const email = userData.email.trim().toLowerCase();
   const password = userData.senha;
+
+  // Validação de maioridade para motorista (Bloquear menores de 18 anos)
+  if (userData.roles && userData.roles.includes('motorista')) {
+    const idadeNum = parseInt(userData.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return {
+        success: false,
+        error: 'Menores de 18 anos não podem se cadastrar como motorista (exigência legal de CNH).'
+      };
+    }
+  }
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -105,11 +124,14 @@ export async function registerWithSupabase(userData) {
     profilePayload.veiculo_placa = profilePayload.veiculo_placa || userData.veiculo.placa || null;
   }
 
-  const { error: profileError } = await supabase.from('profiles').upsert(profilePayload);
+  // Criptografar dados sensíveis antes de enviar ao banco Supabase (LGPD)
+  const encryptedPayload = await encryptSensitiveProfile(profilePayload);
+
+  const { error: profileError } = await supabase.from('profiles').upsert(encryptedPayload);
   if (profileError) {
     console.error('Erro ao salvar perfil no Supabase:', profileError.message);
     // Try update as fallback
-    await supabase.from('profiles').update(profilePayload).eq('id', data.user.id);
+    await supabase.from('profiles').update(encryptedPayload).eq('id', data.user.id);
   }
 
   const user = { id: data.user.id, email, ...profilePayload };
@@ -127,6 +149,14 @@ export async function updateProfileSupabase(updatedData) {
   if (!currentUser) return { success: false, error: 'Usuário não autenticado.' };
 
   const payload = { ...updatedData };
+
+  // Validação de maioridade para motorista
+  if (payload.roles && payload.roles.includes('motorista')) {
+    const idadeNum = parseInt(payload.idade || currentUser.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return { success: false, error: 'Menores de 18 anos não podem ativar o perfil de motorista.' };
+    }
+  }
 
   // Handle legacy avatar field
   if (payload.avatar) {
@@ -161,9 +191,12 @@ export async function updateProfileSupabase(updatedData) {
   delete payload.total_caronas;
   delete payload.created_at;
 
+  // Criptografar dados sensíveis antes de salvar no Supabase
+  const encryptedPayload = await encryptSensitiveProfile(payload);
+
   const { error } = await supabase
     .from('profiles')
-    .update(payload)
+    .update(encryptedPayload)
     .eq('id', currentUser.id);
 
   if (error) return { success: false, error: error.message };
@@ -183,11 +216,18 @@ export async function login(email, password) {
   // Fallback to localStorage
   const users = getAllUsers();
   const normalizedEmail = email.trim().toLowerCase();
-  const found = users.find(u => u.email.toLowerCase() === normalizedEmail && u.senha === password);
-  if (found) {
-    setCurrentUser(found);
-    return { success: true, user: found };
+
+  for (const u of users) {
+    if (u.email.toLowerCase() === normalizedEmail) {
+      const match = await verifyPassword(password, u.senha);
+      if (match) {
+        const decryptedUser = await decryptSensitiveProfile(u);
+        setCurrentUser(decryptedUser);
+        return { success: true, user: decryptedUser };
+      }
+    }
   }
+
   return { success: false, error: 'E-mail ou senha inválidos. Tente novamente.' };
 }
 
@@ -199,16 +239,30 @@ export function logout() {
 export async function registerUser(userData) {
   if (isSupabaseConfigured) return await registerWithSupabase(userData);
 
+  // Validação de maioridade para motorista
+  if (userData.roles && userData.roles.includes('motorista')) {
+    const idadeNum = parseInt(userData.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return {
+        success: false,
+        error: 'Menores de 18 anos não podem se cadastrar como motorista (exigência legal de CNH).'
+      };
+    }
+  }
+
   const users = getAllUsers();
   const normalizedEmail = userData.email.trim().toLowerCase();
   const exists = users.some(u => u.email.toLowerCase() === normalizedEmail);
   if (exists) return { success: false, error: 'Já existe uma conta cadastrada com este e-mail.' };
 
+  // Criptografar senha e campos sensíveis
+  const securePasswordHash = await hashPassword(userData.senha);
+
   const newUser = {
     id: 'usr_' + Date.now(),
     nome: userData.nome.trim(),
     email: normalizedEmail,
-    senha: userData.senha,
+    senha: securePasswordHash,
     cpf: userData.cpf,
     idade: parseInt(userData.idade, 10),
     sexo: userData.sexo,
@@ -223,8 +277,31 @@ export async function registerUser(userData) {
     total_caronas: 0
   };
 
-  users.push(newUser);
+  if (userData.roles && userData.roles.includes('motorista')) {
+    newUser.veiculo_modelo = userData.veiculo_modelo || null;
+    newUser.veiculo_cor = userData.veiculo_cor || null;
+    newUser.veiculo_placa = userData.veiculo_placa || null;
+    newUser.veiculo_foto_url = userData.veiculo_foto_url || null;
+    newUser.cnh = userData.cnh || null;
+    newUser.vagas_padrao = parseInt(userData.vagas_padrao, 10) || 3;
+    newUser.preco_medio = parseFloat(userData.preco_medio) || 0.00;
+    newUser.tempo_espera_min = parseInt(userData.tempo_espera_min, 10) || 5;
+    newUser.porta_malas_litros = parseInt(userData.porta_malas_litros, 10) || null;
+    newUser.preferencia_passageiros = userData.preferencia_passageiros || 'mista';
+    newUser.acessivel_cadeirante = Boolean(userData.acessivel_cadeirante);
+    newUser.veiculo = {
+      modelo: userData.veiculo_modelo || '',
+      cor: userData.veiculo_cor || '',
+      placa: userData.veiculo_placa || ''
+    };
+  }
+
+  // Criptografa dados em repouso no armazenamento local
+  const encryptedUser = await encryptSensitiveProfile(newUser);
+  users.push(encryptedUser);
   setStoredData(USERS_KEY, users);
+
+  // Na sessão em memória, mantemos legível
   setCurrentUser(newUser);
   return { success: true, user: newUser };
 }
@@ -235,13 +312,24 @@ export async function updateProfile(updatedData) {
   const currentUser = getCurrentUser();
   if (!currentUser) return { success: false, error: 'Usuário não autenticado.' };
 
+  // Validação de maioridade para motorista
+  if (updatedData.roles && updatedData.roles.includes('motorista')) {
+    const idadeNum = parseInt(updatedData.idade || currentUser.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return { success: false, error: 'Menores de 18 anos não podem ativar o perfil de motorista.' };
+    }
+  }
+
   const users = getAllUsers();
   const index = users.findIndex(u => u.id === currentUser.id);
   const merged = { ...currentUser, ...updatedData };
+
   if (index !== -1) {
-    users[index] = merged;
+    const encryptedMerged = await encryptSensitiveProfile(merged);
+    users[index] = encryptedMerged;
     setStoredData(USERS_KEY, users);
   }
+
   setCurrentUser(merged);
   return { success: true, user: merged };
 }

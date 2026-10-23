@@ -39,11 +39,11 @@ export function renderHomeView() {
         <form id="quickSearchForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)) 120px; gap:1rem; align-items:flex-end;">
           <div>
             <label class="form-label" for="quickOrigem">De onde voce sai?</label>
-            <input type="text" id="quickOrigem" class="form-input" placeholder="Ex: Setor Bela Vista, Asa Sul, Gama...">
+            <input type="text" id="quickOrigem" class="form-input" placeholder="Ex: Setor Bela Vista, Asa Sul, Gama..." maxlength="100">
           </div>
           <div>
             <label class="form-label" for="quickDestino">Qual campus ou destino?</label>
-            <input type="text" id="quickDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC">
+            <input type="text" id="quickDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC" maxlength="100">
           </div>
           <button type="submit" class="btn btn-azul" style="height:48px; border-radius:var(--radius-md);">
             Buscar

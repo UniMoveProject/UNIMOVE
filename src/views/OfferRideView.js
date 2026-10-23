@@ -41,19 +41,19 @@ export function renderOfferRideView() {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
             <div class="form-group">
               <label class="form-label" for="rideOrigem">Ponto de partida / Bairro *</label>
-              <input type="text" id="rideOrigem" class="form-input" placeholder="Ex: Setor Bela Vista - Valparaíso" required>
+              <input type="text" id="rideOrigem" class="form-input" placeholder="Ex: Setor Bela Vista - Valparaíso" maxlength="100" required>
             </div>
 
             <div class="form-group">
               <label class="form-label" for="ridePontoEncontro">Ponto de encontro combinado</label>
-              <input type="text" id="ridePontoEncontro" class="form-input" placeholder="Ex: Terminal Jardim ABC, Posto Ipiranga">
+              <input type="text" id="ridePontoEncontro" class="form-input" placeholder="Ex: Terminal Jardim ABC, Posto Ipiranga" maxlength="100">
             </div>
           </div>
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
             <div class="form-group">
               <label class="form-label" for="rideDestino">Destino / Campus *</label>
-              <input type="text" id="rideDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC" value="Campus UNICEPLAC" required>
+              <input type="text" id="rideDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC" value="Campus UNICEPLAC" maxlength="100" required>
             </div>
 
             <div class="form-group">
@@ -75,12 +75,12 @@ export function renderOfferRideView() {
 
             <div class="form-group">
               <label class="form-label" for="rideVagas">Vagas disponíveis *</label>
-              <input type="number" id="rideVagas" class="form-input" min="1" max="6" value="3" required>
+              <input type="number" id="rideVagas" class="form-input" min="1" max="10" value="3" required>
             </div>
 
             <div class="form-group">
               <label class="form-label" for="ridePreco">Ajuda de custo por vaga (R$)</label>
-              <input type="number" id="ridePreco" class="form-input" min="0" step="0.50" value="6.00">
+              <input type="number" id="ridePreco" class="form-input" min="0" max="999" step="0.50" value="6.00">
             </div>
           </div>
 
@@ -90,17 +90,17 @@ export function renderOfferRideView() {
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
               <div>
                 <label class="form-label" for="rideVeiculo">Modelo</label>
-                <input type="text" id="rideVeiculo" class="form-input" placeholder="Ex: Onix, HB20, Gol" value="${userVehicle.modelo}">
+                <input type="text" id="rideVeiculo" class="form-input" placeholder="Ex: Onix, HB20, Gol" value="${userVehicle.modelo}" maxlength="50">
               </div>
 
               <div>
                 <label class="form-label" for="rideCor">Cor</label>
-                <input type="text" id="rideCor" class="form-input" placeholder="Ex: Branco, Preto, Prata" value="${userVehicle.cor}">
+                <input type="text" id="rideCor" class="form-input" placeholder="Ex: Branco, Preto, Prata" value="${userVehicle.cor}" maxlength="30">
               </div>
 
               <div>
                 <label class="form-label" for="ridePlaca">Placa</label>
-                <input type="text" id="ridePlaca" class="form-input" placeholder="Ex: ABC-1234" value="${userVehicle.placa}">
+                <input type="text" id="ridePlaca" class="form-input" placeholder="Ex: ABC-1234" value="${userVehicle.placa}" maxlength="8">
               </div>
             </div>
           </div>

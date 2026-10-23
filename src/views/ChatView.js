@@ -115,7 +115,7 @@ function buildChatHTML(ride, messages, user) {
 
         <!-- Input Footer -->
         <form class="chat-footer" id="chatInputForm" data-ride-id="${ride.id}">
-          <input type="text" id="chatTextInput" class="form-input" placeholder="Escreva uma mensagem para o grupo..." autocomplete="off" required>
+          <input type="text" id="chatTextInput" class="form-input" placeholder="Escreva uma mensagem para o grupo..." maxlength="500" autocomplete="off" required>
           <button type="submit" class="btn btn-azul" style="padding:0.75rem 1.5rem;">
             Enviar
           </button>

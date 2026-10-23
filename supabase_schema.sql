@@ -5,6 +5,7 @@
 
 -- 1. EXTENSÕES
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto"; -- Extensão nativa para criptografia de dados em repouso (LGPD)
 
 -- 2. TABELA DE PERFIS DE ESTUDANTES
 CREATE TABLE IF NOT EXISTS public.profiles (
@@ -54,7 +55,10 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   total_caronas INTEGER DEFAULT 0,
 
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+
+  -- Restrição de Maioridade: Motoristas devem ter obrigatoriamente 18 anos ou mais
+  CONSTRAINT check_motorista_maioridade CHECK (NOT ('motorista' = ANY(roles)) OR (idade IS NOT NULL AND idade >= 18))
 );
 
 -- ==========================================================================

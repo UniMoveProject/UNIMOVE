@@ -77,11 +77,11 @@ export function renderProfileView() {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem;">
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileNome">Nome completo *</label>
-              <input type="text" id="profileNome" class="form-input" value="${user.nome || ''}" required>
+              <input type="text" id="profileNome" class="form-input" value="${user.nome || ''}" maxlength="100" required>
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileEmail">E-mail institucional</label>
-              <input type="email" id="profileEmail" class="form-input" value="${user.email || ''}" disabled style="opacity:0.65;">
+              <input type="email" id="profileEmail" class="form-input" value="${user.email || ''}" maxlength="100" disabled style="opacity:0.65;">
             </div>
           </div>
 
@@ -92,7 +92,7 @@ export function renderProfileView() {
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileIdade">Idade</label>
-              <input type="number" id="profileIdade" class="form-input" min="16" max="100" value="${user.idade || ''}">
+              <input type="number" id="profileIdade" class="form-input" min="16" max="120" maxlength="3" value="${user.idade || ''}">
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileTelefone">Celular / WhatsApp</label>
@@ -124,11 +124,11 @@ export function renderProfileView() {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-top:1rem;">
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileCurso">Curso</label>
-              <input type="text" id="profileCurso" class="form-input" value="${user.curso || ''}" placeholder="Ex: Administração">
+              <input type="text" id="profileCurso" class="form-input" value="${user.curso || ''}" maxlength="80" placeholder="Ex: Administração">
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profilePeriodo">Período / Semestre</label>
-              <input type="text" id="profilePeriodo" class="form-input" value="${user.periodo || ''}" placeholder="Ex: 3º período">
+              <input type="text" id="profilePeriodo" class="form-input" value="${user.periodo || ''}" maxlength="30" placeholder="Ex: 3º período">
             </div>
           </div>
 
@@ -144,10 +144,9 @@ export function renderProfileView() {
                 <input type="checkbox" name="profileRole" value="passageiro" ${user.roles && user.roles.includes('passageiro') ? 'checked' : ''}>
                 <span class="pill-label">Passageiro</span>
               </label>
-              <label class="pill-option">
-                <input type="checkbox" name="profileRole" value="ciclista" ${user.roles && user.roles.includes('ciclista') ? 'checked' : ''}>
-                <span class="pill-label">Ciclista</span>
-              </label>
+            </div>
+            <div id="profileMotoristaAgeNotice" style="display:none; color:#c62828; font-size:0.85rem; margin-top:0.35rem;">
+              Apenas maiores de 18 anos podem ativar o modo motorista.
             </div>
           </div>
         </div>
@@ -170,11 +169,11 @@ export function renderProfileView() {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileVeiculoModelo">Modelo do carro</label>
-              <input type="text" id="profileVeiculoModelo" class="form-input" value="${user.veiculo_modelo || ''}" placeholder="Ex: Onix 1.0">
+              <input type="text" id="profileVeiculoModelo" class="form-input" value="${user.veiculo_modelo || ''}" maxlength="50" placeholder="Ex: Onix 1.0">
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileVeiculoCor">Cor</label>
-              <input type="text" id="profileVeiculoCor" class="form-input" value="${user.veiculo_cor || ''}" placeholder="Ex: Branco">
+              <input type="text" id="profileVeiculoCor" class="form-input" value="${user.veiculo_cor || ''}" maxlength="30" placeholder="Ex: Branco">
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileVeiculoPlaca">Placa</label>
@@ -184,8 +183,8 @@ export function renderProfileView() {
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:1rem;">
             <div class="form-group" style="margin:0;">
-              <label class="form-label" for="profileCnh">CNH (número)</label>
-              <input type="text" id="profileCnh" class="form-input" value="${user.cnh || ''}" placeholder="Número da CNH">
+              <label class="form-label" for="profileCnh">CNH (máximo 15 números)</label>
+              <input type="text" id="profileCnh" class="form-input" value="${user.cnh || ''}" placeholder="Apenas números da CNH" maxlength="15" inputmode="numeric">
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profileVagas">Capacidade de passageiros</label>
@@ -193,7 +192,7 @@ export function renderProfileView() {
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profilePrecoMedio">Preço médio por carona (R\$)</label>
-              <input type="number" id="profilePrecoMedio" class="form-input" min="0" step="0.50" value="${user.preco_medio || 0}">
+              <input type="number" id="profilePrecoMedio" class="form-input" min="0" max="999" step="0.50" value="${user.preco_medio || 0}">
             </div>
           </div>
 
@@ -204,7 +203,7 @@ export function renderProfileView() {
             </div>
             <div class="form-group" style="margin:0;">
               <label class="form-label" for="profilePortaMalas">Espaço no porta-malas (litros)</label>
-              <input type="number" id="profilePortaMalas" class="form-input" min="0" value="${user.porta_malas_litros || ''}" placeholder="Ex: 300">
+              <input type="number" id="profilePortaMalas" class="form-input" min="0" max="9999" value="${user.porta_malas_litros || ''}" placeholder="Ex: 300">
             </div>
           </div>
 
@@ -322,10 +321,54 @@ export function attachProfileEvents() {
     });
   }
 
+  // ── CNH Máscara / Limite 15 números ────────────────
+  const cnhInput = document.getElementById('profileCnh');
+  if (cnhInput) {
+    cnhInput.addEventListener('input', () => {
+      cnhInput.value = cnhInput.value.replace(/\D/g, '').slice(0, 15);
+    });
+  }
+
+  // ── Validação Idade e Motorista ─────────────────────
+  const idadeInput = document.getElementById('profileIdade');
+  const ageNotice = document.getElementById('profileMotoristaAgeNotice');
+
+  function checkMotoristaAge() {
+    const ageVal = parseInt(idadeInput?.value || '0', 10);
+    if (ageVal > 0 && ageVal < 18) {
+      if (profileRoleMotorista && profileRoleMotorista.checked) {
+        profileRoleMotorista.checked = false;
+        if (motoCard) motoCard.style.display = 'none';
+      }
+      if (ageNotice) ageNotice.style.display = 'block';
+    } else {
+      if (ageNotice) ageNotice.style.display = 'none';
+    }
+  }
+
+  if (idadeInput) {
+    idadeInput.addEventListener('input', () => {
+      idadeInput.value = idadeInput.value.replace(/\D/g, '').slice(0, 3);
+      checkMotoristaAge();
+    });
+  }
+
   // ── Toggle seção motorista ──────────────────────────
-  if (profileRoleMotorista && motoCard) {
+  if (profileRoleMotorista) {
     profileRoleMotorista.addEventListener('change', () => {
-      motoCard.style.display = profileRoleMotorista.checked ? 'block' : 'none';
+      const ageVal = parseInt(idadeInput?.value || '0', 10);
+      if (profileRoleMotorista.checked && ageVal > 0 && ageVal < 18) {
+        profileRoleMotorista.checked = false;
+        if (motoCard) motoCard.style.display = 'none';
+        if (ageNotice) ageNotice.style.display = 'block';
+        showModal({
+          title: 'Ação não permitida',
+          message: 'Apenas maiores de 18 anos podem se cadastrar ou atuar como motoristas.',
+          confirmText: 'Entendi'
+        });
+        return;
+      }
+      if (motoCard) motoCard.style.display = profileRoleMotorista.checked ? 'block' : 'none';
     });
   }
 
@@ -335,11 +378,42 @@ export function attachProfileEvents() {
       e.preventDefault();
 
       const roles = Array.from(document.querySelectorAll('input[name="profileRole"]:checked')).map(el => el.value);
+      const idadeNum = parseInt(document.getElementById('profileIdade').value || '0', 10);
+
+      if (roles.includes('motorista')) {
+        if (idadeNum < 18) {
+          showModal({
+            title: 'Ação não permitida',
+            message: 'Apenas maiores de 18 anos podem ser motoristas no UniMove.',
+            confirmText: 'Corrigir'
+          });
+          return;
+        }
+
+        const cnhVal = (document.getElementById('profileCnh')?.value || '').replace(/\D/g, '');
+        if (!cnhVal) {
+          showModal({
+            title: 'CNH obrigatória',
+            message: 'Por favor, informe o número da sua CNH para ativar o perfil de motorista.',
+            confirmText: 'Corrigir'
+          });
+          return;
+        }
+
+        if (cnhVal.length > 15) {
+          showModal({
+            title: 'CNH inválida',
+            message: 'A CNH deve conter no máximo 15 números.',
+            confirmText: 'Corrigir'
+          });
+          return;
+        }
+      }
 
       const updated = {
         nome: document.getElementById('profileNome').value.trim(),
         cpf: document.getElementById('profileCpf').value.trim(),
-        idade: document.getElementById('profileIdade').value,
+        idade: idadeNum || null,
         telefone: document.getElementById('profileTelefone').value.trim(),
         sexo: document.getElementById('profileSexo').value,
         preferencia_carona: document.getElementById('profilePreferenciaCarona').value,

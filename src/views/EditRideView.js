@@ -40,19 +40,19 @@ export function renderEditRideView(rideId) {
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
             <div class="form-group">
               <label class="form-label" for="editOrigem">Ponto de partida / Bairro *</label>
-              <input type="text" id="editOrigem" class="form-input" value="${ride.origem}" required>
+              <input type="text" id="editOrigem" class="form-input" value="${ride.origem}" maxlength="100" required>
             </div>
 
             <div class="form-group">
               <label class="form-label" for="editPontoEncontro">Ponto de encontro combinado</label>
-              <input type="text" id="editPontoEncontro" class="form-input" value="${ride.pontoEncontro || ''}">
+              <input type="text" id="editPontoEncontro" class="form-input" value="${ride.pontoEncontro || ''}" maxlength="100">
             </div>
           </div>
 
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
             <div class="form-group">
               <label class="form-label" for="editDestino">Destino / Campus *</label>
-              <input type="text" id="editDestino" class="form-input" value="${ride.destino}" required>
+              <input type="text" id="editDestino" class="form-input" value="${ride.destino}" maxlength="100" required>
             </div>
 
             <div class="form-group">
@@ -74,12 +74,12 @@ export function renderEditRideView(rideId) {
 
             <div class="form-group">
               <label class="form-label" for="editVagas">Vagas disponíveis *</label>
-              <input type="number" id="editVagas" class="form-input" min="1" max="6" value="${ride.vagasDisponiveis}" required>
+              <input type="number" id="editVagas" class="form-input" min="1" max="10" value="${ride.vagasDisponiveis}" required>
             </div>
 
             <div class="form-group">
               <label class="form-label" for="editPreco">Ajuda de custo por vaga (R$)</label>
-              <input type="number" id="editPreco" class="form-input" min="0" step="0.50" value="${ride.preco}">
+              <input type="number" id="editPreco" class="form-input" min="0" max="999" step="0.50" value="${ride.preco}">
             </div>
           </div>
 
@@ -89,17 +89,17 @@ export function renderEditRideView(rideId) {
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
               <div>
                 <label class="form-label" for="editVeiculo">Modelo</label>
-                <input type="text" id="editVeiculo" class="form-input" value="${ride.veiculo || ''}">
+                <input type="text" id="editVeiculo" class="form-input" value="${ride.veiculo || ''}" maxlength="50">
               </div>
 
               <div>
                 <label class="form-label" for="editCor">Cor</label>
-                <input type="text" id="editCor" class="form-input" value="${ride.cor || ''}">
+                <input type="text" id="editCor" class="form-input" value="${ride.cor || ''}" maxlength="30">
               </div>
 
               <div>
                 <label class="form-label" for="editPlaca">Placa</label>
-                <input type="text" id="editPlaca" class="form-input" value="${ride.placa || ''}">
+                <input type="text" id="editPlaca" class="form-input" value="${ride.placa || ''}" maxlength="8">
               </div>
             </div>
           </div>
