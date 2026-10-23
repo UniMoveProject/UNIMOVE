@@ -4,9 +4,11 @@
  * Includes reusable vehicle dropdown (Item 11) and R$ 6.00 price limit enforcement.
  */
 
-import { getCurrentUser } from '../services/auth.js';
-import { offerRide } from '../services/rides.js';
 import { showModal } from '../components/Modal.js';
+import { offerRide } from '../services/rides.js';
+import { getCurrentUser } from '../services/auth.js';
+
+import { supabase, isSupabaseConfigured } from '../services/supabaseClient.js';
 
 export function renderOfferRideView() {
   const user = getCurrentUser();
