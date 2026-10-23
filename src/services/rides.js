@@ -102,20 +102,23 @@ export async function offerRideSupabase(rideData) {
 }
 
 export async function updateRideSupabase(id, updatedData) {
-  const { error } = await supabase.from('rides').update({
+  const payload = {
     origem: updatedData.origem,
     ponto_encontro: updatedData.pontoEncontro,
     destino: updatedData.destino,
     horario_saida: updatedData.horarioSaida,
     horario_chegada: updatedData.horarioChegada,
     data: updatedData.data,
-    vagas_totais: updatedData.vagasTotais,
     preco: updatedData.preco,
     veiculo: updatedData.veiculo,
     cor: updatedData.cor,
     placa: updatedData.placa,
-    status: updatedData.status,
-  }).eq('id', id);
+  };
+  if (updatedData.vagasDisponiveis !== undefined) payload.vagas_disponiveis = updatedData.vagasDisponiveis;
+  if (updatedData.vagasTotais !== undefined) payload.vagas_totais = updatedData.vagasTotais;
+  if (updatedData.status !== undefined) payload.status = updatedData.status;
+
+  const { error } = await supabase.from('rides').update(payload).eq('id', id);
 
   if (error) return { success: false, error: error.message };
   return { success: true };

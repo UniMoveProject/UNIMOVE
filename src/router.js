@@ -65,7 +65,7 @@ export async function handleRoute() {
     attachEvents = attachMyRidesEvents;
   } else if (path.startsWith('/editar-carona/')) {
     const rideId = path.replace('/editar-carona/', '');
-    viewHtml = renderEditRideView(rideId);
+    viewHtml = await renderEditRideView(rideId);
     attachEvents = attachEditRideEvents;
   } else if (path.startsWith('/chat/')) {
     const rideId = path.replace('/chat/', '');

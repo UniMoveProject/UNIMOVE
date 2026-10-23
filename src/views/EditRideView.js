@@ -4,13 +4,20 @@
  * Includes reusable vehicle selector and R$ 6.00 price limit.
  */
 
-import { getRideById, updateRide } from '../services/rides.js';
+import { getRideById, updateRide, getAllRides } from '../services/rides.js';
+import { isSupabaseConfigured } from '../services/supabaseClient.js';
 import { getCurrentUser } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
 
-export function renderEditRideView(rideId) {
+export async function renderEditRideView(rideId) {
   const user = getCurrentUser();
-  const ride = getRideById(rideId);
+  let ride = null;
+  if (isSupabaseConfigured) {
+    const rides = await getAllRides();
+    ride = (rides || []).find(r => r.id === rideId) || null;
+  } else {
+    ride = getRideById(rideId);
+  }
 
   if (!user || !ride || ride.motoristaId !== user.id) {
     return `
