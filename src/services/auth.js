@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Authentication Service
  * Handles user login, registration, and profile management.
  * Uses Supabase Auth when configured, falls back to localStorage.
@@ -196,11 +196,6 @@ export async function updateProfileSupabase(updatedData) {
     payload.veiculo_cor = payload.veiculo_cor || payload.veiculo.cor;
     payload.veiculo_placa = payload.veiculo_placa || payload.veiculo.placa;
     delete payload.veiculo;
-  }
-
-  // Sanitize avatar_url — never store large base64 strings
-  if (payload.avatar_url && payload.avatar_url.startsWith('data:') && payload.avatar_url.length > 3000) {
-    delete payload.avatar_url;
   }
 
   // Parse numeric/boolean fields
