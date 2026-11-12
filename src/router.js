@@ -6,6 +6,7 @@
 import { renderHeader, attachHeaderEvents } from './components/Header.js';
 import { renderFooter } from './components/Footer.js';
 import { renderSidebar, renderBottomBar } from './components/NavBars.js';
+import { getCurrentUser } from './services/auth.js';
 
 import { renderLandingView, attachLandingEvents } from './views/LandingView.js';
 import { renderHomeView, attachHomeEvents } from './views/HomeView.js';
@@ -44,6 +45,19 @@ export async function handleRoute() {
   if (!app) return;
 
   const { path, queryString, anchor } = parseRoute();
+
+  // 🔒 SEGURANÇA: Bloqueia a rota de cadastro se não for o administrador (UserAdm@gmail.com)
+  if (path === '/cadastro') {
+    const user = getCurrentUser();
+    const emailPermitido = "UserAdm@gmail.com";
+    const emailLogado = user?.email?.trim().toLowerCase() || '';
+
+    if (emailLogado !== emailPermitido.toLowerCase()) {
+      // Se não for o admin, redireciona imediatamente para o login
+      window.location.hash = '#/login';
+      return;
+    }
+  }
 
   let viewHtml = '';
   let attachEvents = () => {};

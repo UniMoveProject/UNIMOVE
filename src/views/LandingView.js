@@ -4,6 +4,7 @@
  */
 
 import { renderEconomyCard } from '../components/EconomyCard.js';
+import { supabase } from '../services/supabaseClient.js';
 
 export function renderLandingView() {
   return `
@@ -28,7 +29,8 @@ export function renderLandingView() {
 
           <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2rem;">
             <a href="#/login" class="btn btn-lg btn-azul">Entrar na plataforma</a>
-            <a href="#/cadastro" class="btn btn-lg btn-amarelo">Criar conta</a>
+            <!-- Botão de cadastro restrito -->
+            <a href="#/cadastro" class="btn btn-lg btn-amarelo btn-cadastro-restrito" style="display: none;">Criar conta</a>
             <button type="button" id="btnScrollCalc" class="btn btn-lg btn-outline">Simular economia</button>
           </div>
 
@@ -187,7 +189,8 @@ export function renderLandingView() {
             </div>
           </div>
 
-          <a href="#/cadastro" class="btn btn-lg btn-verde">Começar a economizar agora</a>
+          <!-- Botão de cadastro restrito -->
+          <a href="#/cadastro" class="btn btn-lg btn-verde btn-cadastro-restrito" style="display: none;">Começar a economizar agora</a>
         </div>
       </section>
 
@@ -271,7 +274,7 @@ export function renderLandingView() {
               <span class="plus-icon">+</span>
             </button>
             <div class="faq-a">
-              <p>Sim. No seu perfil você pode alternar livremente entre oferecer carona quando estiver de carro ou pedir carona nos dias em que precisar.</p>
+              <p>Sim. No seu perfil você pode alternar livremente entre oferecer carona quando estiver de carro ou pedir carona nos days em que precisar.</p>
             </div>
           </div>
         </div>
@@ -286,7 +289,8 @@ export function renderLandingView() {
           Cadastre-se hoje mesmo e comece a rodar junto com seus colegas de faculdade.
         </p>
         <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
-          <a href="#/cadastro" class="btn btn-lg btn-amarelo">Criar minha conta gratuita</a>
+          <!-- Botão de cadastro restrito -->
+          <a href="#/cadastro" class="btn btn-lg btn-amarelo btn-cadastro-restrito" style="display: none;">Criar minha conta gratuita</a>
           <a href="#/login" class="btn btn-lg btn-azul">Já tenho conta (Entrar)</a>
         </div>
       </section>
@@ -296,6 +300,26 @@ export function renderLandingView() {
 }
 
 export function attachLandingEvents() {
+  // Lógica para verificar o e-mail do administrador logado
+  async function verificarPermissaoCadastro() {
+    const emailPermitido = "UserAdm@gmail.com"; // Conta adm
+
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      const botoesCadastro = document.querySelectorAll('.btn-cadastro-restrito');
+
+      if (!error && user && user.email === emailPermitido) {
+        botoesCadastro.forEach(btn => btn.style.display = 'inline-flex'); // Mostra se for o adm
+      } else {
+        botoesCadastro.forEach(btn => btn.style.display = 'none'); // Esconde para qualquer outro ou deslogado
+      }
+    } catch (err) {
+      console.error("Erro ao verificar permissão de cadastro:", err);
+    }
+  }
+
+  verificarPermissaoCadastro();
+
   const scrollCalcBtn = document.getElementById('btnScrollCalc');
   if (scrollCalcBtn) {
     scrollCalcBtn.addEventListener('click', () => {

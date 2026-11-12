@@ -4,6 +4,7 @@
  */
 
 import { login } from '../services/auth.js';
+import { supabase } from '../services/supabaseClient.js';
 
 export function renderLoginView() {
   return `
@@ -55,7 +56,8 @@ export function renderLoginView() {
           </button>
         </form>
 
-        <div style="text-align:center; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-color); font-size:1rem; color:var(--text-secondary);">
+        <!-- Rodapé de cadastro restrito apenas para o admin -->
+        <div class="login-cadastro-restrito" style="text-align:center; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border-color); font-size:1rem; color:var(--text-secondary); display: none;">
           Ainda não tem conta? <a href="#/cadastro" style="color:var(--azul-unimove); font-family:var(--font-subtitle); font-weight:bold;">Cadastre-se</a>
         </div>
 
@@ -65,6 +67,26 @@ export function renderLoginView() {
 }
 
 export function attachLoginEvents() {
+  // Verificação de permissão do e-mail de administrador na tela de login
+  async function verificarPermissaoLoginCadastro() {
+    const emailPermitido = "UserAdm@gmail.com"; // E-mail de admin
+
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      const elementosRestritos = document.querySelectorAll('.login-cadastro-restrito');
+
+      if (!error && user && user.email === emailPermitido) {
+        elementosRestritos.forEach(el => el.style.display = 'block'); // Mostra para o admin
+      } else {
+        elementosRestritos.forEach(el => el.style.display = 'none'); // Esconde para os demais
+      }
+    } catch (err) {
+      console.error("Erro ao verificar permissão no Login:", err);
+    }
+  }
+
+  verificarPermissaoLoginCadastro();
+
   const form = document.getElementById('loginForm');
   const errorMsg = document.getElementById('loginErrorMsg');
   const forgotBtn = document.getElementById('forgotPasswordBtn');
