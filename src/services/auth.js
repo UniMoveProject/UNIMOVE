@@ -63,6 +63,9 @@ export function isStrongPassword(password) {
 }
 
 export async function registerWithSupabase(userData) {
+  // Salva a sessão atual (o Administrador) para garantir que ela não seja perdida
+  const currentAdmin = getCurrentUser();
+
   const email = userData.email.trim().toLowerCase();
   const password = userData.senha;
 
@@ -161,9 +164,12 @@ export async function registerWithSupabase(userData) {
     await supabase.from('profiles').update(encryptedPayload).eq('id', data.user.id);
   }
 
-  const user = { id: data.user.id, email, ...profilePayload };
-  setCurrentUser(user);
-  return { success: true, user };
+  // Restaura a sessão do Administrador para que ele continue logado
+  if (currentAdmin) {
+    setCurrentUser(currentAdmin);
+  }
+
+  return { success: true, user: profilePayload };
 }
 
 export async function logoutSupabase() {
@@ -228,7 +234,7 @@ export async function updateProfileSupabase(updatedData) {
   return { success: true, user: merged };
 }
 
-// ── localStorage fallback ─────────────────────────────────────────────────────
+// ── localStorage fallback ────────────────────────────────────────────────     
 
 export async function login(email, password) {
   if (isSupabaseConfigured) {
@@ -260,6 +266,9 @@ export function logout() {
 
 export async function registerUser(userData) {
   if (isSupabaseConfigured) return await registerWithSupabase(userData);
+
+  // Salva a sessão atual (o Administrador)
+  const currentAdmin = getCurrentUser();
 
   // Validação Estrita de Senha Forte
   if (!isStrongPassword(userData.senha)) {
@@ -350,8 +359,11 @@ export async function registerUser(userData) {
   users.push(encryptedUser);
   setStoredData(USERS_KEY, users);
 
-  // Na sessão em memória, mantemos legível
-  setCurrentUser(newUser);
+  // Restaura a sessão do Administrador
+  if (currentAdmin) {
+    setCurrentUser(currentAdmin);
+  }
+
   return { success: true, user: newUser };
 }
 

@@ -46,6 +46,15 @@ export async function handleRoute() {
 
   const { path, queryString, anchor } = parseRoute();
 
+  // Se estiver logado e tentar ir para landing page, retorna o perfil
+  if (path === '/') {
+    const user = getCurrentUser();
+    if (user) {
+      window.location.hash = '#/perfil';
+      return;
+    }
+  }
+
   // 🔒 SEGURANÇA: Bloqueia a rota de cadastro se não for o administrador (UserAdm@gmail.com)
   if (path === '/cadastro') {
     const user = getCurrentUser();
@@ -159,7 +168,6 @@ export async function handleRoute() {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-
 export function initRouter() {
   window.addEventListener('hashchange', handleRoute);
   window.addEventListener('authChanged', handleRoute);
@@ -167,7 +175,6 @@ export function initRouter() {
 
   // Efeito Parallax Mouse no Desktop
   document.addEventListener('mousemove', (e) => {
-    // Apenas se a tela for maior que tablet
     if (window.innerWidth > 768) {
       const x = (window.innerWidth / 2 - e.pageX) / 45;
       const y = (window.innerHeight / 2 - e.pageY) / 45;

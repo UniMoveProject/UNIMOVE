@@ -164,7 +164,7 @@ export function renderRegisterView() {
             </div>
           </fieldset>
 
-          <!-- ── Função de Mobilidade (Ciclista REMOVIDO) ─────────────── -->
+          <!-- ── Função de Mobilidade ─────────────────────────────── -->
           <fieldset style="border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1.25rem;">
             <legend style="font-family:var(--font-subtitle); font-size:0.9rem; color:var(--azul-unimove); padding:0 0.5rem;">COMO VAI SE MOVER</legend>
 
@@ -325,14 +325,12 @@ export function attachRegisterEvents() {
     const hasNumber = /[0-9]/.test(val);
     const hasSpecial = /[^A-Za-z0-9]/.test(val);
 
-    // Atualiza checklist visual
     updateReqItem(reqLength, hasLength);
     updateReqItem(reqUpper, hasUpper);
     updateReqItem(reqLower, hasLower);
     updateReqItem(reqNumber, hasNumber);
     updateReqItem(reqSpecial, hasSpecial);
 
-    // Contagem de critérios atendidos
     const score = [hasLength, hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
     const passAlert = document.getElementById('regPassAlertNotice');
 
@@ -405,7 +403,6 @@ export function attachRegisterEvents() {
 
   if (idadeInput) {
     idadeInput.addEventListener('input', () => {
-      // Limita a 3 dígitos numéricos
       if (idadeInput.value.length > 3) idadeInput.value = idadeInput.value.slice(0, 3);
       checkAgeForMotorista();
     });
@@ -427,15 +424,12 @@ export function attachRegisterEvents() {
     });
   }
 
-  // ── Limite e Máscara Numérica da CNH (Máximo 15 números) ──────
   if (cnhInput) {
     cnhInput.addEventListener('input', () => {
-      // Aceita apenas números e no máximo 15 dígitos
       cnhInput.value = cnhInput.value.replace(/\D/g, '').slice(0, 15);
     });
   }
 
-  // ── Avatar de perfil (Comprimido com Canvas e Obrigatório) ────
   avatarPreview.addEventListener('click', () => avatarInput.click());
   avatarInput.addEventListener('change', async () => {
     const file = avatarInput.files[0];
@@ -451,7 +445,6 @@ export function attachRegisterEvents() {
     }
   });
 
-  // ── Foto do carro (Comprimida com Canvas) ─────────────────────
   carroPreview.addEventListener('click', () => carroInput.click());
   carroInput.addEventListener('change', async () => {
     const file = carroInput.files[0];
@@ -467,7 +460,6 @@ export function attachRegisterEvents() {
     }
   });
 
-  // ── Máscara CPF ───────────────────────────────────────────────
   cpfInput.addEventListener('input', () => {
     let v = cpfInput.value.replace(/\D/g, '').slice(0, 11);
     v = v.replace(/(\d{3})(\d)/, '$1.$2');
@@ -476,7 +468,6 @@ export function attachRegisterEvents() {
     cpfInput.value = v;
   });
 
-  // ── Máscara Telefone ──────────────────────────────────────────
   telInput.addEventListener('input', () => {
     let v = telInput.value.replace(/\D/g, '').slice(0, 11);
     if (v.length > 6) v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
@@ -503,7 +494,6 @@ export function attachRegisterEvents() {
 
       const roles = Array.from(document.querySelectorAll('input[name="regRole"]:checked')).map(el => el.value);
 
-      // Validações básicas
       if (!sexo) {
         errorMsg.textContent = 'Por favor, selecione seu sexo.';
         errorMsg.classList.add('show');
@@ -516,7 +506,6 @@ export function attachRegisterEvents() {
         return;
       }
 
-      // Validação Estrita de Maioridade para Motorista
       if (roles.includes('motorista')) {
         if (!idadeNum || idadeNum < 18) {
           errorMsg.textContent = 'Bloqueado: Menores de 18 anos não podem se cadastrar como motorista (exigência legal de CNH). Por favor, selecione apenas a opção Passageiro.';
@@ -538,7 +527,6 @@ export function attachRegisterEvents() {
         }
       }
 
-      // Validação de Foto de Perfil Obrigatória
       if (!avatarDataUrl) {
         errorMsg.textContent = 'A foto de perfil é obrigatória para todos os usuários.';
         errorMsg.classList.add('show');
@@ -547,12 +535,9 @@ export function attachRegisterEvents() {
           message: 'Por favor, envie uma foto de perfil nítida. A identificação visual é obrigatória para a segurança de todos os membros da comunidade universitária.',
           confirmText: 'Adicionar foto'
         });
-        const avatarWrapper = document.getElementById('regAvatar')?.closest('.avatar-upload-wrapper');
-        if (avatarWrapper) avatarWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
 
-      // Validação Estrita dos Requisitos de Senha Forte
       const hasLength = senha.length >= 8;
       const hasUpper = /[A-Z]/.test(senha);
       const hasLower = /[a-z]/.test(senha);
@@ -568,32 +553,14 @@ export function attachRegisterEvents() {
         if (!hasNumber) missing.push('pelo menos um número (0-9)');
         if (!hasSpecial) missing.push('pelo menos um caractere especial (!@#$...)');
 
-        const msg = `Sua senha não é segura. Requisitos pendentes: ${missing.join(', ')}.`;
-        errorMsg.textContent = msg;
+        errorMsg.textContent = `Sua senha não é segura. Requisitos pendentes: ${missing.join(', ')}.`;
         errorMsg.classList.add('show');
-
-        showModal({
-          title: 'Senha Não Segura',
-          message: `O cadastro só é permitido após criar uma senha forte. Sua senha precisa conter:\n• ${missing.join('\n• ')}`,
-          confirmText: 'Criar senha forte'
-        });
-
-        const pwdBox = document.getElementById('passwordSecurityBox');
-        if (pwdBox) pwdBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        senhaInput.focus();
         return;
       }
 
       if (senha !== confirmaSenha) {
         errorMsg.textContent = 'As senhas não conferem. Verifique a confirmação digitada.';
         errorMsg.classList.add('show');
-
-        showModal({
-          title: 'Senhas Diferentes',
-          message: 'A confirmação de senha digitada é diferente da senha escolhida. Por favor, digite a mesma senha nos dois campos.',
-          confirmText: 'Corrigir'
-        });
-
         confirmaSenhaInput.focus();
         return;
       }
@@ -611,7 +578,6 @@ export function attachRegisterEvents() {
         avatar: avatarDataUrl
       };
 
-      // Campos do motorista
       if (roles.includes('motorista')) {
         const modelo = document.getElementById('regVeiculoModelo')?.value.trim() || '';
         const cor = document.getElementById('regVeiculoCor')?.value.trim() || '';
@@ -628,7 +594,6 @@ export function attachRegisterEvents() {
         userData.preferencia_passageiros = document.getElementById('regPreferenciaPassageiros')?.value || 'todos';
         userData.acessivel_cadeirante = document.getElementById('regAcessivel')?.checked || false;
 
-        // Se cadastrou um veículo, salva na lista de veículos reutilizáveis
         if (modelo && placa) {
           userData.veiculos = [
             {
@@ -656,12 +621,24 @@ export function attachRegisterEvents() {
       if (res.success) {
         errorMsg.classList.remove('show');
         showModal({
-          title: 'Cadastro realizado com sucesso',
-          message: `Bem-vindo(a) ao UniMove, ${nome.split(' ')[0]}! Seu perfil universitário foi criado e seus dados pessoais estão protegidos com criptografia.`,
-          confirmText: 'Acessar o aplicativo',
-          cancelText: '',
+          title: 'Cadastro realizado com sucesso!',
+          message: `O aluno(a) ${nome.split(' ')[0]} foi cadastrado(a) com sucesso! A sua sessão como administrador continua ativa.`,
+          confirmText: 'Cadastrar novo usuário',
+          cancelText: 'Ir para o início',
           onConfirm: () => {
-            window.location.hash = '#/home';
+            // Limpa o formulário para cadastrar outro em sequência
+            form.reset();
+            avatarDataUrl = '';
+            carroDataUrl = '';
+            avatarPreview.style.backgroundImage = '';
+            avatarPreview.textContent = 'Foto';
+            carroPreview.style.backgroundImage = '';
+            carroPreview.textContent = 'Foto do carro';
+            if (motoristaFields) motoristaFields.style.display = 'none';
+          },
+          onCancel: () => {
+            // Leva até o perfil (#/perfil)
+            window.location.hash = '#/perfil';
           }
         });
       } else {
