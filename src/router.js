@@ -46,10 +46,11 @@ export async function handleRoute() {
 
   const { path, queryString, anchor } = parseRoute();
 
-  // Se estiver logado e tentar ir para landing page, retorna o perfil
-  if (path === '/') {
+  // 🔒 Se o utilizador estiver na raiz exata (Landing Page pura `#/` ou vazio), permitimos ver a Landing Page mesmo logado (evita travar o logout)
+  const currentHash = window.location.hash.slice(1);
+  if (path === '/' && currentHash !== '' && currentHash !== '/' && currentHash !== '#') {
     const user = getCurrentUser();
-    if (user) {
+    if (user && !currentHash.includes('login') && !currentHash.includes('cadastro')) {
       window.location.hash = '#/perfil';
       return;
     }

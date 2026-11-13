@@ -637,8 +637,8 @@ export function attachRegisterEvents() {
             if (motoristaFields) motoristaFields.style.display = 'none';
           },
           onCancel: () => {
-            // Leva até o perfil (#/perfil)
-            window.location.hash = '#/perfil';
+            // Leva até o perfil (#/home)
+            window.location.hash = '#/home';
           }
         });
       } else {
