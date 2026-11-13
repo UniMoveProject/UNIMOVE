@@ -2,7 +2,7 @@
  * Reusable Modal Dialog Component
  */
 
-export function showModal({ title, message, confirmText = 'Confirmar', cancelText = 'Cancelar', onConfirm, isDanger = false }) {
+export function showModal({ title, message, confirmText = 'Confirmar', cancelText = 'Cancelar', onConfirm, onCancel, isDanger = false }) {
   const existing = document.getElementById('appModalOverlay');
   if (existing) existing.remove();
 
@@ -33,7 +33,10 @@ export function showModal({ title, message, confirmText = 'Confirmar', cancelTex
   }
 
   if (cancelBtn) {
-    cancelBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', () => {
+      if (onCancel) onCancel();
+      closeModal();
+    });
   }
   
   overlay.addEventListener('click', (e) => {

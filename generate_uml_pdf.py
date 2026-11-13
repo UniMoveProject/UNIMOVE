@@ -1,0 +1,1560 @@
+# -*- coding: utf-8 -*-
+"""
+Script gerador do documento PDF com os Diagramas UML Completos do UniMove.
+Gera uma especificação visual de nível profissional em HTML/SVG e compila via Microsoft Edge.
+Versão refinada com espaçamento perfeito no Diagrama de Casos de Uso.
+"""
+
+import os
+import subprocess
+
+html_content = """<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>UniMove - Diagramas UML Completos do Projeto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f1f5f9;
+    color: #1e293b;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sheet {
+    width: 297mm;
+    height: 210mm;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+    background: #ffffff;
+    overflow: hidden;
+    padding: 10mm 12mm 8mm 12mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Header Superior Padronizado */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #0F5DED;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+  .page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-badge {
+    background: #0F5DED;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .page-header-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0F172A;
+  }
+  .page-header-subtitle {
+    font-size: 11px;
+    color: #64748B;
+    margin-left: 6px;
+  }
+  .page-header-right {
+    font-size: 10px;
+    font-weight: 600;
+    color: #0F5DED;
+    background: #EFF6FF;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid #BFDBFE;
+  }
+
+  /* Conteúdo Principal */
+  .page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* Rodapé Padronizado */
+  .page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #E2E8F0;
+    padding-top: 4px;
+    margin-top: 6px;
+    font-size: 9px;
+    color: #64748B;
+  }
+  .page-footer-left {
+    display: flex;
+    gap: 15px;
+  }
+  .page-footer-tag {
+    color: #0F5DED;
+    font-weight: 600;
+  }
+
+  /* Capa */
+  .cover-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #0A192F 0%, #0F5DED 60%, #1E40AF 100%);
+    margin: -10mm -12mm -8mm -12mm;
+    padding: 18mm 20mm;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover-accent-circle {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(248, 212, 16, 0.15) 0%, rgba(248, 212, 16, 0) 70%);
+    top: -100px;
+    right: -100px;
+    pointer-events: none;
+  }
+  .cover-accent-circle2 {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(134, 250, 1, 0.12) 0%, rgba(134, 250, 1, 0) 70%);
+    bottom: -80px;
+    left: 20%;
+    pointer-events: none;
+  }
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .cover-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cover-logo-icon {
+    width: 44px;
+    height: 44px;
+    background: #F8D410;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    color: #0A192F;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+  .cover-brand-text {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .cover-tagline {
+    font-size: 12px;
+    color: #93C5FD;
+    margin-top: 2px;
+  }
+  .cover-version-pill {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .cover-middle {
+    margin: auto 0;
+    max-width: 85%;
+  }
+  .cover-title-label {
+    color: #F8D410;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .cover-title {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #FFFFFF 0%, #E2E8F0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cover-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #E2E8F0;
+    max-width: 800px;
+  }
+  .cover-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .cover-topic-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    backdrop-filter: blur(8px);
+  }
+  .cover-topic-num {
+    color: #86FA01;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .cover-topic-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    padding-top: 14px;
+    font-size: 11px;
+    color: #94A3B8;
+  }
+  .cover-meta strong {
+    color: #ffffff;
+  }
+
+  /* Estilos Gerais para Diagramas */
+  .diagram-container {
+    width: 100%;
+    height: 100%;
+    background: #FAFBFD;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .diagram-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  svg path:not([class*="filled"]) {
+    fill: none;
+  }
+
+  .split-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    height: 100%;
+  }
+
+  .info-callout {
+    background: #EFF6FF;
+    border-left: 3px solid #0F5DED;
+    padding: 4px 8px;
+    font-size: 10px;
+    color: #1E3A8A;
+    margin-bottom: 6px;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+  <!-- PÁGINA 1: CAPA -->
+  <div class="sheet">
+    <div class="cover-container">
+      <div class="cover-accent-circle"></div>
+      <div class="cover-accent-circle2"></div>
+
+      <div class="cover-top">
+        <div class="cover-brand">
+          <div class="cover-logo-icon">U</div>
+          <div>
+            <div class="cover-brand-text">UniMove</div>
+            <div class="cover-tagline">Mobilidade Acadêmica & Carona Solidária</div>
+          </div>
+        </div>
+        <div class="cover-version-pill">ESPECIFICAÇÃO TÉCNICA UML v1.0 • 2026</div>
+      </div>
+
+      <div class="cover-middle">
+        <div class="cover-title-label">Documentação de Engenharia de Software</div>
+        <div class="cover-title">Modelagem e Diagramas UML Completos da Plataforma</div>
+        <div class="cover-desc">
+          Documento técnico abrangente especificando a arquitetura estática, comportamental e de implantação do sistema <strong>UniMove</strong>. Inclui diagrama de classes de domínio e serviços, casos de uso com atores e estereótipos, diagramas de sequência de negócios, máquina de estados do ciclo da carona, arquitetura de componentes SPA e diagrama de implantação em nuvem com Supabase e Vercel.
+        </div>
+
+        <div class="cover-topics-grid">
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 01</div>
+            <div class="cover-topic-title">Arquitetura de Pacotes & Componentes</div>
+          </div>
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 02</div>
+            <div class="cover-topic-title">Diagrama de Classes de Domínio & Entidades</div>
+          </div>
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 03</div>
+            <div class="cover-topic-title">Diagrama de Classes de Serviços & SPA</div>
+          </div>
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 04</div>
+            <div class="cover-topic-title">Diagrama de Casos de Uso Geral</div>
+          </div>
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 05</div>
+            <div class="cover-topic-title">Diagramas de Sequência (Oferta & Reserva)</div>
+          </div>
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 06</div>
+            <div class="cover-topic-title">Diagrama de Estados & Ciclo de Vida</div>
+          </div>
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 07</div>
+            <div class="cover-topic-title">Diagrama de Atividades (Fluxo de Carona)</div>
+          </div>
+          <div class="cover-topic-card">
+            <div class="cover-topic-num">MÓDULO 08</div>
+            <div class="cover-topic-title">Diagrama de Implantação & Topologia BaaS</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cover-bottom">
+        <div>
+          <strong>Projeto:</strong> UniMove Single Page Application (SPA)<br>
+          <strong>Stack:</strong> Vanilla JS ES6+, Vite, Supabase BaaS (PostgreSQL 15, Auth, Realtime)
+        </div>
+        <div style="text-align: right;" class="cover-meta">
+          <strong>Padrão:</strong> UML 2.5 (Unified Modeling Language)<br>
+          <strong>Data de Emissão:</strong> 23 de Outubro de 2026 • Status: Aprovado
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PÁGINA 2: PACOTES -->
+  <div class="sheet">
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="brand-badge">UML 01</span>
+        <span class="page-header-title">Diagrama de Pacotes & Arquitetura de Componentes</span>
+        <span class="page-header-subtitle">Visão macroestrutural e separação em camadas da SPA UniMove</span>
+      </div>
+      <div class="page-header-right">Página 2 • Visão Arquitetural</div>
+    </div>
+
+    <div class="page-content">
+      <div class="info-callout">
+        <strong>Padrão Arquitetural:</strong> Arquitetura desacoplada em 4 camadas (Apresentação SPA, Roteamento Client-Side, Serviços de Negócio & Estado, e Camada de Persistência Híbrida Supabase BaaS + LocalStorage Fallback).
+      </div>
+      <div class="diagram-container">
+        <svg class="diagram-svg" viewBox="0 0 1020 540" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path class="filled-shape" d="M 0 0 L 10 5 L 0 10 z" fill="#0F5DED"/>
+            </marker>
+            <marker id="dashArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path class="filled-shape" d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+            </marker>
+            <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+            </filter>
+          </defs>
+
+          <!-- PACOTE 1: APRESENTAÇÃO -->
+          <rect x="20" y="20" width="310" height="490" rx="8" fill="#F8FAFC" stroke="#64748B" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#shadow)"/>
+          <path class="filled-shape" d="M 20 20 L 140 20 L 155 35 L 20 35 Z" fill="#64748B"/>
+          <text x="30" y="31" font-size="10" font-weight="700" fill="#ffffff">«package» presentation</text>
+
+          <rect x="35" y="45" width="280" height="235" rx="6" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="1.2"/>
+          <text x="45" y="62" font-size="11" font-weight="700" fill="#5B21B6">«component» Views (Telas SPA)</text>
+          
+          <rect x="45" y="72" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="52" y="88" font-size="9" font-weight="600" fill="#4C1D95">LandingView</text>
+          <rect x="180" y="72" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="187" y="88" font-size="9" font-weight="600" fill="#4C1D95">HomeView</text>
+
+          <rect x="45" y="105" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="52" y="121" font-size="9" font-weight="600" fill="#4C1D95">SearchRidesView</text>
+          <rect x="180" y="105" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="187" y="121" font-size="9" font-weight="600" fill="#4C1D95">OfferRideView</text>
+
+          <rect x="45" y="138" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="52" y="154" font-size="9" font-weight="600" fill="#4C1D95">MyRidesView</text>
+          <rect x="180" y="138" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="187" y="154" font-size="9" font-weight="600" fill="#4C1D95">EditRideView</text>
+
+          <rect x="45" y="171" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="52" y="187" font-size="9" font-weight="600" fill="#4C1D95">ChatView</text>
+          <rect x="180" y="171" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="187" y="187" font-size="9" font-weight="600" fill="#4C1D95">ProfileView</text>
+
+          <rect x="45" y="204" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="52" y="220" font-size="9" font-weight="600" fill="#4C1D95">LoginView</text>
+          <rect x="180" y="204" width="125" height="26" rx="4" fill="#ffffff" stroke="#C4B5FD"/>
+          <text x="187" y="220" font-size="9" font-weight="600" fill="#4C1D95">RegisterView</text>
+
+          <rect x="45" y="237" width="260" height="24" rx="4" fill="#DDD6FE" stroke="#8B5CF6"/>
+          <text x="85" y="253" font-size="9" font-weight="700" fill="#4C1D95">+ Event Listeners & DOM Binding</text>
+
+          <!-- Components Sub-package -->
+          <rect x="35" y="295" width="280" height="200" rx="6" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.2"/>
+          <text x="45" y="312" font-size="11" font-weight="700" fill="#334155">«component» Reusable Components</text>
+
+          <rect x="45" y="322" width="125" height="24" rx="4" fill="#ffffff" stroke="#CBD5E1"/>
+          <text x="55" y="338" font-size="9" font-weight="600" fill="#1E293B">Header (Topbar)</text>
+          <rect x="180" y="322" width="125" height="24" rx="4" fill="#ffffff" stroke="#CBD5E1"/>
+          <text x="190" y="338" font-size="9" font-weight="600" fill="#1E293B">Footer (Campus)</text>
+
+          <rect x="45" y="354" width="125" height="24" rx="4" fill="#ffffff" stroke="#CBD5E1"/>
+          <text x="55" y="370" font-size="9" font-weight="600" fill="#1E293B">NavBars (Side/Bot)</text>
+          <rect x="180" y="354" width="125" height="24" rx="4" fill="#ffffff" stroke="#CBD5E1"/>
+          <text x="190" y="370" font-size="9" font-weight="600" fill="#1E293B">RideCard (Feed)</text>
+
+          <rect x="45" y="386" width="125" height="24" rx="4" fill="#ffffff" stroke="#CBD5E1"/>
+          <text x="55" y="402" font-size="9" font-weight="600" fill="#1E293B">Modal (Popups)</text>
+          <rect x="180" y="386" width="125" height="24" rx="4" fill="#ffffff" stroke="#CBD5E1"/>
+          <text x="190" y="402" font-size="9" font-weight="600" fill="#1E293B">SplashScreen</text>
+
+          <rect x="45" y="420" width="260" height="60" rx="4" fill="#E2E8F0" stroke="#94A3B8"/>
+          <text x="55" y="437" font-size="9" font-weight="700" fill="#0F172A">Styles & Assets:</text>
+          <text x="55" y="452" font-size="8.5" fill="#334155">• styles/main.css (Tokens, Light/Dark Theme)</text>
+          <text x="55" y="467" font-size="8.5" fill="#334155">• Brand Palette: #FFF4CC, #0F5DED, #F8D410, #86FA01</text>
+
+          <!-- PACOTE 2: CONTROLE -->
+          <rect x="360" y="20" width="190" height="490" rx="8" fill="#F8FAFC" stroke="#64748B" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#shadow)"/>
+          <path class="filled-shape" d="M 360 20 L 470 20 L 485 35 L 360 35 Z" fill="#64748B"/>
+          <text x="370" y="31" font-size="10" font-weight="700" fill="#ffffff">«package» controller</text>
+
+          <rect x="375" y="55" width="160" height="150" rx="6" fill="#DBEAFE" stroke="#0F5DED" stroke-width="1.5"/>
+          <text x="385" y="75" font-size="11" font-weight="700" fill="#0F5DED">«controller» Router</text>
+          <line x1="375" y1="83" x2="535" y2="83" stroke="#0F5DED" stroke-width="0.8"/>
+          <text x="385" y="98" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E3A8A">+ parseRoute()</text>
+          <text x="385" y="113" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E3A8A">+ navigateTo(path)</text>
+          <text x="385" y="128" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E3A8A">+ handleRoute()</text>
+          <text x="385" y="143" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E3A8A">- landingAnchors[]</text>
+          <text x="385" y="158" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E3A8A">- hashchange Listener</text>
+          <text x="385" y="173" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E3A8A">- popstate Listener</text>
+          <text x="385" y="193" font-size="8.5" fill="#0F5DED" font-weight="600">Dynamic Lifecycle</text>
+
+          <rect x="375" y="240" width="160" height="100" rx="6" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.2"/>
+          <text x="385" y="260" font-size="11" font-weight="700" fill="#0369A1">«entrypoint» Main.js</text>
+          <line x1="375" y1="268" x2="535" y2="268" stroke="#0284C7" stroke-width="0.8"/>
+          <text x="385" y="284" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#075985">• DOMContentLoaded</text>
+          <text x="385" y="299" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#075985">• initTheme()</text>
+          <text x="385" y="314" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#075985">• initSplashScreen()</text>
+          <text x="385" y="329" font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#075985">• mountRouter()</text>
+
+          <rect x="375" y="365" width="160" height="130" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="1.2"/>
+          <text x="385" y="385" font-size="10" font-weight="700" fill="#92400E">«events» Event Bus</text>
+          <line x1="375" y1="392" x2="535" y2="392" stroke="#D97706" stroke-width="0.8"/>
+          <text x="385" y="408" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• window:authChanged</text>
+          <text x="385" y="423" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• window:themeChanged</text>
+          <text x="385" y="438" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• window:rideUpdated</text>
+          <text x="385" y="453" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• window:newChatMessage</text>
+          <text x="385" y="473" font-size="8" fill="#B45309" font-style="italic">Desacoplamento Reativo</text>
+
+          <!-- PACOTE 3: SERVIÇOS -->
+          <rect x="580" y="20" width="200" height="490" rx="8" fill="#F8FAFC" stroke="#64748B" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#shadow)"/>
+          <path class="filled-shape" d="M 580 20 L 685 20 L 700 35 L 580 35 Z" fill="#64748B"/>
+          <text x="590" y="31" font-size="10" font-weight="700" fill="#ffffff">«package» services</text>
+
+          <rect x="595" y="48" width="170" height="92" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="1.2"/>
+          <text x="605" y="65" font-size="10" font-weight="700" fill="#0F5DED">«service» AuthService</text>
+          <line x1="595" y1="71" x2="765" y2="71" stroke="#0F5DED" stroke-width="0.6"/>
+          <text x="605" y="85" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• login / register()</text>
+          <text x="605" y="98" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• getCurrentUser()</text>
+          <text x="605" y="111" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• updateUserProfile()</text>
+          <text x="605" y="124" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• logout()</text>
+
+          <rect x="595" y="152" width="170" height="110" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="1.2"/>
+          <text x="605" y="169" font-size="10" font-weight="700" fill="#0F5DED">«service» RidesService</text>
+          <line x1="595" y1="175" x2="765" y2="175" stroke="#0F5DED" stroke-width="0.6"/>
+          <text x="605" y="189" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• getAllRides()</text>
+          <text x="605" y="202" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• searchRides(filters)</text>
+          <text x="605" y="215" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• offerRide(payload)</text>
+          <text x="605" y="228" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• bookRide(rideId)</text>
+          <text x="605" y="241" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• cancelBooking(rideId)</text>
+          <text x="605" y="254" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• editRide / deleteRide()</text>
+
+          <rect x="595" y="274" width="170" height="75" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="1.2"/>
+          <text x="605" y="291" font-size="10" font-weight="700" fill="#0F5DED">«service» ChatService</text>
+          <line x1="595" y1="297" x2="765" y2="297" stroke="#0F5DED" stroke-width="0.6"/>
+          <text x="605" y="311" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• getChatMessages(id)</text>
+          <text x="605" y="324" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• sendMessage(id, txt)</text>
+          <text x="605" y="337" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• mapMessage(msg)</text>
+
+          <rect x="595" y="360" width="170" height="65" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="1.2"/>
+          <text x="605" y="377" font-size="10" font-weight="700" fill="#0F5DED">«service» ThemeService</text>
+          <line x1="595" y1="383" x2="765" y2="383" stroke="#0F5DED" stroke-width="0.6"/>
+          <text x="605" y="397" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• toggleTheme()</text>
+          <text x="605" y="410" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• initTheme() / get()</text>
+
+          <rect x="595" y="435" width="170" height="65" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="1.2"/>
+          <text x="605" y="452" font-size="10" font-weight="700" fill="#0F5DED">«service» StorageService</text>
+          <line x1="595" y1="458" x2="765" y2="458" stroke="#0F5DED" stroke-width="0.6"/>
+          <text x="605" y="472" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• getStoredData(key)</text>
+          <text x="605" y="485" font-size="8" font-family="'JetBrains Mono', monospace" fill="#334155">• setStoredData(key, val)</text>
+
+          <!-- PACOTE 4: PERSISTÊNCIA -->
+          <rect x="810" y="20" width="190" height="490" rx="8" fill="#F8FAFC" stroke="#64748B" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#shadow)"/>
+          <path class="filled-shape" d="M 810 20 L 915 20 L 930 35 L 810 35 Z" fill="#64748B"/>
+          <text x="820" y="31" font-size="10" font-weight="700" fill="#ffffff">«package» data_layer</text>
+
+          <rect x="825" y="55" width="160" height="85" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+          <text x="835" y="73" font-size="10" font-weight="700" fill="#15803D">«adapter» supabaseClient</text>
+          <line x1="825" y1="79" x2="985" y2="79" stroke="#16A34A" stroke-width="0.6"/>
+          <text x="835" y="93" font-size="8" font-family="'JetBrains Mono', monospace" fill="#166534">+ supabase: Client</text>
+          <text x="835" y="106" font-size="8" font-family="'JetBrains Mono', monospace" fill="#166534">+ isSupabaseConfigured</text>
+          <text x="835" y="122" font-size="8" fill="#15803D">Auth + PostgREST + Realtime</text>
+
+          <rect x="825" y="160" width="160" height="210" rx="6" fill="#F0FDF4" stroke="#22C55E" stroke-width="1.5"/>
+          <text x="835" y="180" font-size="11" font-weight="700" fill="#166534">«cloud» Supabase PostgreSQL</text>
+          <line x1="825" y1="188" x2="985" y2="188" stroke="#22C55E" stroke-width="0.8"/>
+          
+          <rect x="835" y="196" width="140" height="24" rx="4" fill="#ffffff" stroke="#86EFAC"/>
+          <text x="842" y="212" font-size="8.5" font-weight="600" fill="#14532D">Table: profiles</text>
+          
+          <rect x="835" y="226" width="140" height="24" rx="4" fill="#ffffff" stroke="#86EFAC"/>
+          <text x="842" y="242" font-size="8.5" font-weight="600" fill="#14532D">Table: rides</text>
+
+          <rect x="835" y="256" width="140" height="24" rx="4" fill="#ffffff" stroke="#86EFAC"/>
+          <text x="842" y="272" font-size="8.5" font-weight="600" fill="#14532D">Table: ride_passengers</text>
+
+          <rect x="835" y="286" width="140" height="24" rx="4" fill="#ffffff" stroke="#86EFAC"/>
+          <text x="842" y="302" font-size="8.5" font-weight="600" fill="#14532D">Table: messages</text>
+
+          <rect x="835" y="318" width="140" height="42" rx="4" fill="#DCFCE7" stroke="#4ADE80"/>
+          <text x="840" y="332" font-size="8" font-weight="700" fill="#166534">• RLS Policies (Row Security)</text>
+          <text x="840" y="344" font-size="8" font-weight="700" fill="#166534">• Trigger: handle_new_user</text>
+          <text x="840" y="354" font-size="7.5" fill="#15803D">• Realtime Publication</text>
+
+          <rect x="825" y="390" width="160" height="105" rx="6" fill="#FFFBEB" stroke="#F59E0B" stroke-width="1.2"/>
+          <text x="835" y="410" font-size="10" font-weight="700" fill="#B45309">«browser» LocalStorage</text>
+          <line x1="825" y1="416" x2="985" y2="416" stroke="#F59E0B" stroke-width="0.6"/>
+          <text x="835" y="430" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• unimove_rides</text>
+          <text x="835" y="443" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• unimove_users</text>
+          <text x="835" y="456" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• unimove_chat</text>
+          <text x="835" y="469" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• unimove_currentUser</text>
+          <text x="835" y="482" font-size="8" font-family="'JetBrains Mono', monospace" fill="#78350F">• unimove_theme</text>
+
+          <!-- LINHAS DE DEPENDÊNCIA -->
+          <line x1="315" y1="110" x2="375" y2="110" stroke="#0F5DED" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+          <text x="325" y="103" font-size="8" fill="#0F5DED" font-weight="600">routes</text>
+
+          <line x1="455" y1="240" x2="455" y2="205" stroke="#0284C7" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+
+          <line x1="315" y1="140" x2="595" y2="85" stroke="#64748B" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#dashArrow)"/>
+          <line x1="315" y1="165" x2="595" y2="185" stroke="#64748B" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#dashArrow)"/>
+          <line x1="315" y1="190" x2="595" y2="295" stroke="#64748B" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#dashArrow)"/>
+
+          <line x1="765" y1="95" x2="825" y2="95" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <line x1="765" y1="205" x2="825" y2="110" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+          <line x1="765" y1="305" x2="825" y2="125" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+
+          <line x1="765" y1="465" x2="825" y2="450" stroke="#D97706" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <line x1="905" y1="140" x2="905" y2="160" stroke="#15803D" stroke-width="2" marker-end="url(#arrow)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="page-footer-left">
+        <span>UniMove • Arquitetura de Software</span>
+        <span>Camadas: <strong class="page-footer-tag">Presentation, Controller, Domain Services, Data/BaaS</strong></span>
+      </div>
+      <div>Página 2 de 8</div>
+    </div>
+  </div>
+
+
+  <!-- PÁGINA 3: CLASSES DE DOMÍNIO -->
+  <div class="sheet">
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="brand-badge">UML 02</span>
+        <span class="page-header-title">Diagrama de Classes de Domínio & Entidades de Dados</span>
+        <span class="page-header-subtitle">Modelagem das entidades de dados relacionais e regras de integridade do Supabase</span>
+      </div>
+      <div class="page-header-right">Página 3 • Modelo de Classes de Domínio</div>
+    </div>
+
+    <div class="page-content">
+      <div class="info-callout">
+        <strong>Padrão de Modelagem:</strong> Classes de Entidade com relacionamentos estritos 1:N e N:N (tabela associativa `RidePassenger`), herança lógica via enum roles (`motorista` e `passageiro`), tipagem e cardinalidades formais.
+      </div>
+      <div class="diagram-container">
+        <svg class="diagram-svg" viewBox="0 0 1020 540" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="diamond" viewBox="0 0 16 16" refX="0" refY="8" markerWidth="10" markerHeight="10" orient="auto">
+              <polygon points="0 8, 8 3, 16 8, 8 13" fill="#ffffff" stroke="#0F5DED" stroke-width="1.5"/>
+            </marker>
+            <marker id="compDiamond" viewBox="0 0 16 16" refX="0" refY="8" markerWidth="10" markerHeight="10" orient="auto">
+              <polygon points="0 8, 8 3, 16 8, 8 13" fill="#0F5DED" stroke="#0F5DED" stroke-width="1.5"/>
+            </marker>
+            <marker id="genArrow" viewBox="0 0 16 16" refX="16" refY="8" markerWidth="10" markerHeight="10" orient="auto">
+              <polygon points="0 2, 16 8, 0 14" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+            </marker>
+          </defs>
+
+          <!-- CLASSE 1: PROFILES -->
+          <g transform="translate(30, 25)">
+            <rect x="0" y="0" width="280" height="470" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="2"/>
+            <rect x="0" y="0" width="280" height="38" rx="5" fill="#EFF6FF"/>
+            <text x="140" y="16" text-anchor="middle" font-size="9" fill="#0F5DED" font-weight="600">«entity / table»</text>
+            <text x="140" y="32" text-anchor="middle" font-size="13" fill="#0F172A" font-weight="800">Profile (Estudante)</text>
+            <line x1="0" y1="38" x2="280" y2="38" stroke="#0F5DED" stroke-width="1.5"/>
+
+            <g font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E293B">
+              <text x="10" y="55">+ id: UUID [PK]</text>
+              <text x="10" y="70">+ nome: String</text>
+              <text x="10" y="85">+ email: String [Unique]</text>
+              <text x="10" y="100">+ cpf: String [0..1]</text>
+              <text x="10" y="115">+ idade: Integer [0..1]</text>
+              <text x="10" y="130">+ sexo: GenderEnum</text>
+              <text x="10" y="145">+ preferencia_carona: CaronaPrefEnum</text>
+              <text x="10" y="160">+ telefone: String [0..1]</text>
+              <text x="10" y="175">+ avatar_url: String [0..1]</text>
+              <text x="10" y="190">+ curso: String = 'Administração'</text>
+              <text x="10" y="205">+ periodo: String = '1º período'</text>
+              <text x="10" y="220">+ campus: String = 'Campus UNICEPLAC'</text>
+              <text x="10" y="235">+ roles: String[] = ['passageiro']</text>
+              
+              <line x1="8" y1="245" x2="272" y2="245" stroke="#CBD5E1" stroke-dasharray="2,2"/>
+              <text x="10" y="258" font-size="8" fill="#D97706" font-weight="700">/* Atributos Específicos Motorista */</text>
+              <text x="10" y="273">+ veiculo_modelo: String [0..1]</text>
+              <text x="10" y="288">+ veiculo_cor: String [0..1]</text>
+              <text x="10" y="303">+ veiculo_placa: String [0..1]</text>
+              <text x="10" y="318">+ veiculo_foto_url: String [0..1]</text>
+              <text x="10" y="333">+ cnh: String [0..1]</text>
+              <text x="10" y="348">+ vagas_padrao: Integer = 3</text>
+              <text x="10" y="363">+ preferencia_passageiros: PassPrefEnum</text>
+              <text x="10" y="378">+ tempo_espera_min: Integer = 5</text>
+              <text x="10" y="393">+ porta_malas_litros: Integer [0..1]</text>
+              <text x="10" y="408">+ acessivel_cadeirante: Boolean = false</text>
+              <text x="10" y="423">+ preco_medio: Decimal = 0.00</text>
+              <text x="10" y="438">+ avaliacoes: Decimal = 5.0</text>
+              <text x="10" y="453">+ total_caronas: Integer = 0</text>
+            </g>
+
+            <line x1="0" y1="460" x2="280" y2="460" stroke="#0F5DED" stroke-width="1"/>
+            <text x="10" y="468" font-size="7.5" fill="#64748B">+ isDriver(): Boolean | + getDisplayName(): String</text>
+          </g>
+
+          <!-- CLASSE 2: RIDE -->
+          <g transform="translate(370, 25)">
+            <rect x="0" y="0" width="280" height="340" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="2"/>
+            <rect x="0" y="0" width="280" height="38" rx="5" fill="#EFF6FF"/>
+            <text x="140" y="16" text-anchor="middle" font-size="9" fill="#0F5DED" font-weight="600">«entity / table»</text>
+            <text x="140" y="32" text-anchor="middle" font-size="13" fill="#0F172A" font-weight="800">Ride (Carona)</text>
+            <line x1="0" y1="38" x2="280" y2="38" stroke="#0F5DED" stroke-width="1.5"/>
+
+            <g font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E293B">
+              <text x="10" y="55">+ id: UUID [PK]</text>
+              <text x="10" y="70">+ motorista_id: UUID [FK -> Profile.id]</text>
+              <text x="10" y="85">+ origem: String</text>
+              <text x="10" y="100">+ ponto_encontro: String [0..1]</text>
+              <text x="10" y="115">+ destino: String = 'Campus UNICEPLAC'</text>
+              <text x="10" y="130">+ data: Date</text>
+              <text x="10" y="145">+ horario_saida: Time</text>
+              <text x="10" y="160">+ horario_chegada: Time [0..1]</text>
+              <text x="10" y="175">+ vagas_totais: Integer = 3</text>
+              <text x="10" y="190">+ vagas_disponiveis: Integer</text>
+              <text x="10" y="205">+ preco: Decimal(6,2) = 0.00</text>
+              <text x="10" y="220">+ veiculo: String</text>
+              <text x="10" y="235">+ cor: String</text>
+              <text x="10" y="250">+ placa: String</text>
+              <text x="10" y="265">+ status: RideStatusEnum = 'ativa'</text>
+              <text x="10" y="280">+ created_at: Timestamp</text>
+            </g>
+
+            <line x1="0" y1="290" x2="280" y2="290" stroke="#0F5DED" stroke-width="1"/>
+            <g font-size="8" font-family="'JetBrains Mono', monospace" fill="#0F5DED">
+              <text x="10" y="305">+ reservarVaga(passageiroId): Boolean</text>
+              <text x="10" y="320">+ cancelarReserva(passageiroId): Boolean</text>
+              <text x="10" y="333">+ hasAvailableSeats(): Boolean</text>
+            </g>
+          </g>
+
+          <!-- CLASSE 3: RIDE_PASSENGER -->
+          <g transform="translate(370, 395)">
+            <rect x="0" y="0" width="280" height="100" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="2"/>
+            <rect x="0" y="0" width="280" height="30" rx="5" fill="#DCFCE7"/>
+            <text x="140" y="13" text-anchor="middle" font-size="8" fill="#15803D" font-weight="600">«association / table»</text>
+            <text x="140" y="25" text-anchor="middle" font-size="11" fill="#14532D" font-weight="800">RidePassenger (Reserva)</text>
+            <line x1="0" y1="30" x2="280" y2="30" stroke="#16A34A" stroke-width="1.5"/>
+
+            <g font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E293B">
+              <text x="10" y="46">+ id: UUID [PK]</text>
+              <text x="10" y="60">+ ride_id: UUID [FK -> Ride.id]</text>
+              <text x="10" y="74">+ passageiro_id: UUID [FK -> Profile.id]</text>
+              <text x="10" y="88">+ status: PassengerStatusEnum = 'confirmado'</text>
+            </g>
+          </g>
+
+          <!-- CLASSE 4: MESSAGE -->
+          <g transform="translate(710, 25)">
+            <rect x="0" y="0" width="275" height="180" rx="6" fill="#FFFFFF" stroke="#7C3AED" stroke-width="2"/>
+            <rect x="0" y="0" width="275" height="38" rx="5" fill="#EDE9FE"/>
+            <text x="137" y="16" text-anchor="middle" font-size="9" fill="#7C3AED" font-weight="600">«entity / table»</text>
+            <text x="137" y="32" text-anchor="middle" font-size="13" fill="#4C1D95" font-weight="800">ChatMessage (Mensagem)</text>
+            <line x1="0" y1="38" x2="275" y2="38" stroke="#7C3AED" stroke-width="1.5"/>
+
+            <g font-size="8.5" font-family="'JetBrains Mono', monospace" fill="#1E293B">
+              <text x="10" y="55">+ id: UUID [PK]</text>
+              <text x="10" y="72">+ ride_id: UUID [FK -> Ride.id]</text>
+              <text x="10" y="89">+ sender_id: UUID [FK -> Profile.id]</text>
+              <text x="10" y="106">+ text: String</text>
+              <text x="10" y="123">+ created_at: Timestamp</text>
+            </g>
+
+            <line x1="0" y1="135" x2="275" y2="135" stroke="#7C3AED" stroke-width="1"/>
+            <g font-size="8" font-family="'JetBrains Mono', monospace" fill="#6D28D9">
+              <text x="10" y="152">+ formatForDisplay(): Object</text>
+              <text x="10" y="167">+ enrichWithSenderProfile(): void</text>
+            </g>
+          </g>
+
+          <!-- ENUMERAÇÕES -->
+          <g transform="translate(710, 225)">
+            <rect x="0" y="0" width="275" height="270" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.2"/>
+            <rect x="0" y="0" width="275" height="28" rx="5" fill="#E2E8F0"/>
+            <text x="137" y="18" text-anchor="middle" font-size="10" fill="#334155" font-weight="800">«enumerations» Tipos de Domínio</text>
+            <line x1="0" y1="28" x2="275" y2="28" stroke="#CBD5E1" stroke-width="1"/>
+
+            <g font-size="8" font-family="'JetBrains Mono', monospace" fill="#1E293B">
+              <text x="10" y="44" font-weight="700" fill="#0F5DED">«enumeration» RideStatusEnum</text>
+              <text x="20" y="57">• ativa</text>
+              <text x="20" y="69">• concluida</text>
+              <text x="20" y="81">• cancelada</text>
+
+              <line x1="10" y1="88" x2="265" y2="88" stroke="#E2E8F0"/>
+              <text x="10" y="102" font-weight="700" fill="#16A34A">«enumeration» PassengerStatusEnum</text>
+              <text x="20" y="115">• confirmado</text>
+              <text x="20" y="127">• cancelado</text>
+
+              <line x1="10" y1="134" x2="265" y2="134" stroke="#E2E8F0"/>
+              <text x="10" y="148" font-weight="700" fill="#D97706">«enumeration» CaronaPrefEnum</text>
+              <text x="20" y="161">• homem | • mulher | • indiferente</text>
+
+              <line x1="10" y1="168" x2="265" y2="168" stroke="#E2E8F0"/>
+              <text x="10" y="182" font-weight="700" fill="#7C3AED">«enumeration» GenderEnum</text>
+              <text x="20" y="195">• masculino | • feminino | • outro | • prefiro_nao_dizer</text>
+
+              <line x1="10" y1="202" x2="265" y2="202" stroke="#E2E8F0"/>
+              <text x="10" y="216" font-weight="700" fill="#0284C7">«enumeration» UserRoleEnum</text>
+              <text x="20" y="229">• passageiro</text>
+              <text x="20" y="241">• motorista</text>
+            </g>
+          </g>
+
+          <!-- RELACIONAMENTOS -->
+          <line x1="310" y1="120" x2="370" y2="120" stroke="#0F5DED" stroke-width="2" marker-start="url(#diamond)"/>
+          <text x="318" y="112" font-size="9" font-weight="700" fill="#0F5DED">1</text>
+          <text x="345" y="112" font-size="9" font-weight="700" fill="#0F5DED">0..*</text>
+          <text x="320" y="134" font-size="8" fill="#475569">oferta</text>
+
+          <line x1="510" y1="365" x2="510" y2="395" stroke="#16A34A" stroke-width="2" marker-start="url(#compDiamond)"/>
+          <text x="495" y="378" font-size="9" font-weight="700" fill="#16A34A">1</text>
+          <text x="495" y="392" font-size="9" font-weight="700" fill="#16A34A">0..*</text>
+
+          <line x1="310" y1="440" x2="370" y2="440" stroke="#16A34A" stroke-width="2"/>
+          <text x="318" y="432" font-size="9" font-weight="700" fill="#16A34A">1</text>
+          <text x="345" y="432" font-size="9" font-weight="700" fill="#16A34A">0..*</text>
+          <text x="320" y="455" font-size="8" fill="#475569">reserva</text>
+
+          <line x1="650" y1="110" x2="710" y2="110" stroke="#7C3AED" stroke-width="2" marker-start="url(#compDiamond)"/>
+          <text x="658" y="102" font-size="9" font-weight="700" fill="#7C3AED">1</text>
+          <text x="688" y="102" font-size="9" font-weight="700" fill="#7C3AED">0..*</text>
+          <text x="660" y="125" font-size="8" fill="#475569">conversa</text>
+
+          <path d="M 280 25 L 280 8 L 750 8 L 750 25" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+          <text x="515" y="6" font-size="8" fill="#7C3AED" text-anchor="middle" font-weight="600">enviaMensagem (1..*)</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="page-footer-left">
+        <span>UniMove • Engenharia de Dados</span>
+        <span>Entidades: <strong class="page-footer-tag">Profile, Ride, RidePassenger, ChatMessage</strong></span>
+      </div>
+      <div>Página 3 de 8</div>
+    </div>
+  </div>
+
+
+  <!-- PÁGINA 4: CASOS DE USO COM ESPAÇAMENTO PERFEITO -->
+  <div class="sheet">
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="brand-badge">UML 03</span>
+        <span class="page-header-title">Diagrama de Casos de Uso (Use Case Diagram)</span>
+        <span class="page-header-subtitle">Atores acadêmicos, interações com a plataforma e relacionamentos include/extend</span>
+      </div>
+      <div class="page-header-right">Página 4 • Comportamento do Usuário</div>
+    </div>
+
+    <div class="page-content">
+      <div class="info-callout">
+        <strong>Atores do Sistema:</strong> Ator base <code>Estudante</code> especializado em <code>Motorista Universitário</code> e <code>Passageiro Universitário</code>, além do ator secundário/externo <code>Supabase BaaS</code>.
+      </div>
+      <div class="diagram-container">
+        <svg class="diagram-svg" viewBox="0 0 1020 540" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ucArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path class="filled-shape" d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+            </marker>
+          </defs>
+
+          <!-- LIMITE DO SISTEMA -->
+          <rect x="230" y="15" width="570" height="505" rx="10" fill="#FFFFFF" stroke="#0F5DED" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <text x="245" y="38" font-size="12" font-weight="800" fill="#0F5DED">«system boundary» Plataforma UniMove (Web SPA)</text>
+
+          <!-- ATORES -->
+          <!-- Ator Generalizado: Estudante -->
+          <g transform="translate(60, 45)">
+            <circle cx="30" cy="18" r="14" fill="#EFF6FF" stroke="#0F5DED" stroke-width="2"/>
+            <line x1="30" y1="32" x2="30" y2="70" stroke="#0F5DED" stroke-width="2"/>
+            <line x1="8" y1="46" x2="52" y2="46" stroke="#0F5DED" stroke-width="2"/>
+            <line x1="30" y1="70" x2="12" y2="105" stroke="#0F5DED" stroke-width="2"/>
+            <line x1="30" y1="70" x2="48" y2="105" stroke="#0F5DED" stroke-width="2"/>
+            <text x="30" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A">Estudante</text>
+            <text x="30" y="134" text-anchor="middle" font-size="8.5" fill="#64748B">(Ator Geral)</text>
+          </g>
+
+          <!-- Especialização: Motorista -->
+          <g transform="translate(60, 215)">
+            <circle cx="30" cy="18" r="14" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+            <line x1="30" y1="32" x2="30" y2="70" stroke="#D97706" stroke-width="2"/>
+            <line x1="8" y1="46" x2="52" y2="46" stroke="#D97706" stroke-width="2"/>
+            <line x1="30" y1="70" x2="12" y2="105" stroke="#D97706" stroke-width="2"/>
+            <line x1="30" y1="70" x2="48" y2="105" stroke="#D97706" stroke-width="2"/>
+            <text x="30" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="#92400E">Motorista</text>
+            <text x="30" y="134" text-anchor="middle" font-size="8.5" fill="#B45309">(Possui Veículo)</text>
+          </g>
+
+          <!-- Especialização: Passageiro -->
+          <g transform="translate(60, 375)">
+            <circle cx="30" cy="18" r="14" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+            <line x1="30" y1="32" x2="30" y2="70" stroke="#16A34A" stroke-width="2"/>
+            <line x1="8" y1="46" x2="52" y2="46" stroke="#16A34A" stroke-width="2"/>
+            <line x1="30" y1="70" x2="12" y2="105" stroke="#16A34A" stroke-width="2"/>
+            <line x1="30" y1="70" x2="48" y2="105" stroke="#16A34A" stroke-width="2"/>
+            <text x="30" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="#14532D">Passageiro</text>
+            <text x="30" y="134" text-anchor="middle" font-size="8.5" fill="#15803D">(Busca Carona)</text>
+          </g>
+
+          <!-- Herança dos Atores -->
+          <line x1="90" y1="215" x2="90" y2="155" stroke="#64748B" stroke-width="1.5" marker-end="url(#genArrow)"/>
+          <line x1="90" y1="375" x2="90" y2="155" stroke="#64748B" stroke-width="1.5" marker-end="url(#genArrow)"/>
+
+          <!-- ATOR SECUNDÁRIO: SUPABASE -->
+          <g transform="translate(870, 220)">
+            <rect x="0" y="0" width="100" height="90" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+            <text x="50" y="24" text-anchor="middle" font-size="9" fill="#15803D" font-weight="600">«service»</text>
+            <text x="50" y="42" text-anchor="middle" font-size="12" fill="#14532D" font-weight="800">Supabase</text>
+            <text x="50" y="58" text-anchor="middle" font-size="9" fill="#15803D">Auth & DB</text>
+            <line x1="10" y1="68" x2="90" y2="68" stroke="#86EFAC"/>
+            <text x="50" y="80" text-anchor="middle" font-size="7.5" fill="#166534">PostgreSQL / RLS</text>
+          </g>
+
+          <!-- CASOS DE USO GERAIS (ESTUDANTE) - DISTRIBUÍDOS SEM SOBREPOSIÇÃO -->
+          <g transform="translate(260, 50)">
+            <ellipse cx="90" cy="20" rx="85" ry="19" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.5"/>
+            <text x="90" y="24" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1E3A8A">UC01: Cadastrar Perfil</text>
+          </g>
+
+          <g transform="translate(260, 100)">
+            <ellipse cx="90" cy="20" rx="85" ry="19" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.5"/>
+            <text x="90" y="24" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1E3A8A">UC02: Autenticar (Login)</text>
+          </g>
+
+          <g transform="translate(540, 50)">
+            <ellipse cx="90" cy="20" rx="85" ry="19" fill="#FEF3C7" stroke="#D97706" stroke-width="1.2"/>
+            <text x="90" y="24" text-anchor="middle" font-size="9" font-weight="600" fill="#92400E">UC03: Validar Matrícula</text>
+          </g>
+
+          <g transform="translate(540, 100)">
+            <ellipse cx="90" cy="20" rx="85" ry="19" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.2"/>
+            <text x="90" y="24" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1E3A8A">UC04: Alternar Tema (L/D)</text>
+          </g>
+
+          <!-- GRUPO MOTORISTA -->
+          <g transform="translate(260, 195)">
+            <ellipse cx="95" cy="22" rx="90" ry="21" fill="#FEF3C7" stroke="#D97706" stroke-width="1.8"/>
+            <text x="95" y="26" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">UC05: Publicar Nova Carona</text>
+          </g>
+
+          <g transform="translate(540, 195)">
+            <ellipse cx="90" cy="22" rx="85" ry="20" fill="#FEF3C7" stroke="#D97706" stroke-width="1.2"/>
+            <text x="90" y="26" text-anchor="middle" font-size="9.5" font-weight="600" fill="#92400E">UC06: Definir Rota e Vagas</text>
+          </g>
+
+          <g transform="translate(260, 255)">
+            <ellipse cx="95" cy="22" rx="90" ry="20" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+            <text x="95" y="26" text-anchor="middle" font-size="9.5" font-weight="600" fill="#92400E">UC07: Editar / Excluir Carona</text>
+          </g>
+
+          <!-- GRUPO PASSAGEIRO -->
+          <g transform="translate(260, 330)">
+            <ellipse cx="95" cy="22" rx="90" ry="21" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.8"/>
+            <text x="95" y="26" text-anchor="middle" font-size="10" font-weight="700" fill="#14532D">UC08: Buscar & Filtrar Carona</text>
+          </g>
+
+          <g transform="translate(260, 390)">
+            <ellipse cx="95" cy="22" rx="90" ry="21" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.8"/>
+            <text x="95" y="26" text-anchor="middle" font-size="10" font-weight="700" fill="#14532D">UC09: Reservar Vaga na Carona</text>
+          </g>
+
+          <g transform="translate(540, 390)">
+            <ellipse cx="90" cy="22" rx="85" ry="20" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+            <text x="90" y="26" text-anchor="middle" font-size="9.5" font-weight="600" fill="#14532D">UC10: Cancelar Reserva</text>
+          </g>
+
+          <!-- COMPARTILHADO (CHAT) -->
+          <g transform="translate(370, 465)">
+            <ellipse cx="100" cy="22" rx="95" ry="21" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.8"/>
+            <text x="100" y="26" text-anchor="middle" font-size="10" font-weight="700" fill="#4C1D95">UC11: Conversar no Chat da Carona</text>
+          </g>
+
+          <!-- LIGAÇÕES ATOR -> CASOS DE USO -->
+          <line x1="120" y1="80" x2="260" y2="70" stroke="#0F5DED" stroke-width="1.5"/>
+          <line x1="120" y1="80" x2="260" y2="120" stroke="#0F5DED" stroke-width="1.2"/>
+          <line x1="120" y1="80" x2="540" y2="120" stroke="#0F5DED" stroke-width="1.2" stroke-dasharray="2,2"/>
+
+          <line x1="120" y1="260" x2="260" y2="217" stroke="#D97706" stroke-width="1.8"/>
+          <line x1="120" y1="260" x2="260" y2="277" stroke="#D97706" stroke-width="1.5"/>
+
+          <line x1="120" y1="415" x2="260" y2="352" stroke="#16A34A" stroke-width="1.8"/>
+          <line x1="120" y1="415" x2="260" y2="412" stroke="#16A34A" stroke-width="1.8"/>
+
+          <line x1="120" y1="280" x2="370" y2="480" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <line x1="120" y1="435" x2="370" y2="490" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <!-- RELACIONAMENTOS INCLUDE / EXTEND -->
+          <line x1="435" y1="70" x2="540" y2="70" stroke="#475569" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#ucArrow)"/>
+          <text x="485" y="63" text-anchor="middle" font-size="8" fill="#475569" font-weight="600">«include»</text>
+
+          <line x1="445" y1="217" x2="540" y2="217" stroke="#475569" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#ucArrow)"/>
+          <text x="490" y="210" text-anchor="middle" font-size="8" fill="#475569" font-weight="600">«include»</text>
+
+          <line x1="540" y1="412" x2="445" y2="412" stroke="#475569" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#ucArrow)"/>
+          <text x="495" y="405" text-anchor="middle" font-size="8" fill="#475569" font-weight="600">«extend»</text>
+
+          <!-- CONEXÕES BACKEND -->
+          <line x1="435" y1="120" x2="870" y2="245" stroke="#16A34A" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="445" y1="220" x2="870" y2="265" stroke="#16A34A" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="445" y1="412" x2="870" y2="285" stroke="#16A34A" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="560" y1="485" x2="870" y2="295" stroke="#16A34A" stroke-width="1" stroke-dasharray="2,2"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="page-footer-left">
+        <span>UniMove • Engenharia de Requisitos</span>
+        <span>Métricas: <strong class="page-footer-tag">11 Casos de Uso, 3 Atores Humanos Especializados, 1 Ator Sistema BaaS</strong></span>
+      </div>
+      <div>Página 4 de 8</div>
+    </div>
+  </div>
+
+
+  <!-- PÁGINA 5: SEQUÊNCIA -->
+  <div class="sheet">
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="brand-badge">UML 04</span>
+        <span class="page-header-title">Diagramas de Sequência (Sequence Diagrams)</span>
+        <span class="page-header-subtitle">Comunicação e troca de mensagens temporal nos dois fluxos nucleares do sistema</span>
+      </div>
+      <div class="page-header-right">Página 5 • Comportamento Dinâmico</div>
+    </div>
+
+    <div class="page-content">
+      <div class="split-layout">
+        <!-- DIAGRAMA DE SEQUÊNCIA 1: OFERTA DE CARONA -->
+        <div class="diagram-container">
+          <div style="font-size: 11px; font-weight: 700; color: #0F5DED; margin-bottom: 4px;">
+            1. Fluxo de Oferta e Publicação de Nova Carona
+          </div>
+          <svg class="diagram-svg" viewBox="0 0 490 460" xmlns="http://www.w3.org/2000/svg">
+            <rect x="15" y="10" width="70" height="28" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="1.2"/>
+            <text x="50" y="27" text-anchor="middle" font-size="9" font-weight="700" fill="#92400E">Motorista</text>
+            <line x1="50" y1="38" x2="50" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <rect x="110" y="10" width="85" height="28" rx="4" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.2"/>
+            <text x="152" y="27" text-anchor="middle" font-size="8.5" font-weight="700" fill="#4C1D95">OfferRideView</text>
+            <line x1="152" y1="38" x2="152" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <rect x="225" y="10" width="85" height="28" rx="4" fill="#DBEAFE" stroke="#0F5DED" stroke-width="1.2"/>
+            <text x="267" y="27" text-anchor="middle" font-size="8.5" font-weight="700" fill="#0F5DED">RidesService</text>
+            <line x1="267" y1="38" x2="267" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <rect x="340" y="10" width="85" height="28" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+            <text x="382" y="27" text-anchor="middle" font-size="8.5" font-weight="700" fill="#14532D">Supabase:rides</text>
+            <line x1="382" y1="38" x2="382" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <line x1="50" y1="65" x2="152" y2="65" stroke="#1E293B" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="100" y="58" text-anchor="middle" font-size="7.5" fill="#1E293B">1: submeterForm(dados)</text>
+
+            <rect x="147" y="65" width="10" height="340" fill="#EDE9FE" stroke="#7C3AED"/>
+
+            <path d="M 157 85 C 190 85, 190 105, 157 105" stroke="#7C3AED" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+            <text x="185" y="98" font-size="7" fill="#4C1D95">validarCampos()</text>
+
+            <line x1="157" y1="125" x2="267" y2="125" stroke="#0F5DED" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="210" y="118" text-anchor="middle" font-size="7.5" fill="#0F5DED">2: offerRide(rideData)</text>
+
+            <rect x="262" y="125" width="10" height="230" fill="#DBEAFE" stroke="#0F5DED"/>
+
+            <path d="M 272 145 C 305 145, 305 165, 272 165" stroke="#0F5DED" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+            <text x="300" y="158" font-size="7" fill="#1E3A8A">checkAuth()</text>
+
+            <line x1="272" y1="185" x2="382" y2="185" stroke="#16A34A" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="327" y="178" text-anchor="middle" font-size="7.5" fill="#16A34A">3: INSERT INTO rides</text>
+
+            <rect x="377" y="185" width="10" height="70" fill="#DCFCE7" stroke="#16A34A"/>
+
+            <path d="M 387 205 C 415 205, 415 225, 387 225" stroke="#16A34A" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+            <text x="415" y="218" font-size="6.5" fill="#14532D">eval(RLS)</text>
+
+            <line x1="377" y1="245" x2="272" y2="245" stroke="#16A34A" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+            <text x="325" y="238" text-anchor="middle" font-size="7" fill="#16A34A">{ id, status: 'ativa' }</text>
+
+            <line x1="262" y1="290" x2="157" y2="290" stroke="#0F5DED" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+            <text x="210" y="283" text-anchor="middle" font-size="7" fill="#0F5DED">{ success: true }</text>
+
+            <line x1="147" y1="335" x2="50" y2="335" stroke="#7C3AED" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="100" y="328" text-anchor="middle" font-size="7.5" fill="#4C1D95">4: showSuccessModal()</text>
+
+            <line x1="147" y1="380" x2="50" y2="380" stroke="#7C3AED" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+            <text x="100" y="373" text-anchor="middle" font-size="7.5" fill="#4C1D95">5: navigateTo('/minhas-caronas')</text>
+          </svg>
+        </div>
+
+        <!-- DIAGRAMA DE SEQUÊNCIA 2: RESERVA -->
+        <div class="diagram-container">
+          <div style="font-size: 11px; font-weight: 700; color: #16A34A; margin-bottom: 4px;">
+            2. Fluxo de Busca, Reserva de Vaga e Notificação
+          </div>
+          <svg class="diagram-svg" viewBox="0 0 490 460" xmlns="http://www.w3.org/2000/svg">
+            <rect x="15" y="10" width="70" height="28" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+            <text x="50" y="27" text-anchor="middle" font-size="9" font-weight="700" fill="#14532D">Passageiro</text>
+            <line x1="50" y1="38" x2="50" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <rect x="110" y="10" width="90" height="28" rx="4" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.2"/>
+            <text x="155" y="27" text-anchor="middle" font-size="8.5" font-weight="700" fill="#4C1D95">SearchRidesView</text>
+            <line x1="155" y1="38" x2="155" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <rect x="230" y="10" width="80" height="28" rx="4" fill="#DBEAFE" stroke="#0F5DED" stroke-width="1.2"/>
+            <text x="270" y="27" text-anchor="middle" font-size="8.5" font-weight="700" fill="#0F5DED">RidesService</text>
+            <line x1="270" y1="38" x2="270" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <rect x="340" y="10" width="95" height="28" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+            <text x="387" y="27" text-anchor="middle" font-size="8.5" font-weight="700" fill="#14532D">Supabase BaaS</text>
+            <line x1="387" y1="38" x2="387" y2="440" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <line x1="50" y1="65" x2="155" y2="65" stroke="#1E293B" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="100" y="58" text-anchor="middle" font-size="7.5" fill="#1E293B">1: onBookClick(rideId)</text>
+
+            <rect x="150" y="65" width="10" height="340" fill="#EDE9FE" stroke="#7C3AED"/>
+
+            <line x1="155" y1="95" x2="270" y2="95" stroke="#0F5DED" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="210" y="88" text-anchor="middle" font-size="7.5" fill="#0F5DED">2: bookRide(rideId)</text>
+
+            <rect x="265" y="95" width="10" height="250" fill="#DBEAFE" stroke="#0F5DED"/>
+
+            <line x1="275" y1="125" x2="387" y2="125" stroke="#16A34A" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="330" y="118" text-anchor="middle" font-size="7.5" fill="#16A34A">3: SELECT vagas_disponiveis</text>
+
+            <rect x="382" y="125" width="10" height="155" fill="#DCFCE7" stroke="#16A34A"/>
+
+            <line x1="382" y1="155" x2="275" y2="155" stroke="#16A34A" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+            <text x="330" y="148" text-anchor="middle" font-size="7" fill="#16A34A">retorna vagas > 0</text>
+
+            <line x1="275" y1="185" x2="382" y2="185" stroke="#16A34A" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="330" y="178" text-anchor="middle" font-size="7.5" fill="#16A34A">4: INSERT INTO ride_passengers</text>
+
+            <line x1="275" y1="215" x2="382" y2="215" stroke="#16A34A" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="330" y="208" text-anchor="middle" font-size="7.5" fill="#16A34A">5: UPDATE rides (vagas - 1)</text>
+
+            <line x1="382" y1="250" x2="275" y2="250" stroke="#16A34A" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+            <text x="330" y="243" text-anchor="middle" font-size="7" fill="#16A34A">200 OK (Confirmado)</text>
+
+            <line x1="265" y1="285" x2="160" y2="285" stroke="#0F5DED" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+            <text x="210" y="278" text-anchor="middle" font-size="7" fill="#0F5DED">{ success: true }</text>
+
+            <line x1="150" y1="320" x2="50" y2="320" stroke="#16A34A" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="100" y="313" text-anchor="middle" font-size="7.5" fill="#14532D">6: showSuccessToast()</text>
+
+            <line x1="150" y1="365" x2="50" y2="365" stroke="#7C3AED" stroke-width="1.2" marker-end="url(#arrow)"/>
+            <text x="100" y="358" text-anchor="middle" font-size="7.5" fill="#4C1D95">7: navigateTo('/chat/' + rideId)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="page-footer-left">
+        <span>UniMove • Comportamento Dinâmico</span>
+        <span>Fluxos: <strong class="page-footer-tag">Publicação de Rota e Reserva com Verificação Concorrente</strong></span>
+      </div>
+      <div>Página 5 de 8</div>
+    </div>
+  </div>
+
+
+  <!-- PÁGINA 6: ESTADOS -->
+  <div class="sheet">
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="brand-badge">UML 05</span>
+        <span class="page-header-title">Diagrama de Máquina de Estados (State Machine Diagram)</span>
+        <span class="page-header-subtitle">Transições de estados formais das entidades centrais: Carona (Ride) e Reserva</span>
+      </div>
+      <div class="page-header-right">Página 6 • Ciclo de Vida</div>
+    </div>
+
+    <div class="page-content">
+      <div class="info-callout">
+        <strong>Autômato de Estados:</strong> Representação das transições de estados orientadas a eventos (guarda de condições <code>[vagas == 0]</code>, <code>[cancelado pelo motorista]</code>) para integridade da regra de negócio.
+      </div>
+      <div class="diagram-container">
+        <svg class="diagram-svg" viewBox="0 0 1020 540" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="980" height="250" rx="8" fill="#F8FAFC" stroke="#0F5DED" stroke-width="1.5"/>
+          <text x="35" y="42" font-size="12" font-weight="800" fill="#0F5DED">1. Ciclo de Vida da Carona (Ride State Machine)</text>
+
+          <circle cx="60" cy="130" r="12" fill="#0F172A"/>
+          <circle cx="60" cy="130" r="16" fill="none" stroke="#64748B" stroke-width="1"/>
+
+          <line x1="76" y1="130" x2="130" y2="130" stroke="#0F5DED" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="103" y="122" text-anchor="middle" font-size="7.5" fill="#475569">ofertar()</text>
+
+          <g transform="translate(130, 95)">
+            <rect x="0" y="0" width="160" height="70" rx="8" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.5"/>
+            <text x="80" y="24" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1E3A8A">ATIVA (Disponível)</text>
+            <line x1="0" y1="32" x2="160" y2="32" stroke="#BFDBFE"/>
+            <text x="10" y="46" font-size="7.5" fill="#1E40AF">• entry / exibeNoFeed()</text>
+            <text x="10" y="58" font-size="7.5" fill="#1E40AF">• do / vagas_disp > 0</text>
+          </g>
+
+          <line x1="290" y1="120" x2="400" y2="120" stroke="#D97706" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="345" y="112" text-anchor="middle" font-size="7.5" fill="#D97706">reservar [vagas == 0]</text>
+
+          <line x1="400" y1="145" x2="290" y2="145" stroke="#16A34A" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+          <text x="345" y="157" text-anchor="middle" font-size="7.5" fill="#16A34A">cancelarReserva [vagas > 0]</text>
+
+          <g transform="translate(400, 95)">
+            <rect x="0" y="0" width="160" height="70" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+            <text x="80" y="24" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400E">LOTADA (Sem Vagas)</text>
+            <line x1="0" y1="32" x2="160" y2="32" stroke="#FDE68A"/>
+            <text x="10" y="46" font-size="7.5" fill="#78350F">• entry / bloqueiaReservas()</text>
+            <text x="10" y="58" font-size="7.5" fill="#78350F">• do / chatAtivo = true</text>
+          </g>
+
+          <line x1="560" y1="120" x2="660" y2="120" stroke="#0F5DED" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="610" y="112" text-anchor="middle" font-size="7.5" fill="#0F5DED">horárioChegou()</text>
+
+          <g transform="translate(660, 95)">
+            <rect x="0" y="0" width="150" height="70" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+            <text x="75" y="24" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4C1D95">EM TRÂNSITO</text>
+            <line x1="0" y1="32" x2="150" y2="32" stroke="#DDD6FE"/>
+            <text x="10" y="46" font-size="7.5" fill="#5B21B6">• entry / rotaIniciada()</text>
+            <text x="10" y="58" font-size="7.5" fill="#5B21B6">• do / trajetoParaCampus()</text>
+          </g>
+
+          <line x1="810" y1="130" x2="880" y2="130" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="845" y="122" text-anchor="middle" font-size="7.5" fill="#16A34A">chegada()</text>
+
+          <g transform="translate(880, 105)">
+            <circle cx="25" cy="25" r="16" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+            <circle cx="25" cy="25" r="10" fill="#16A34A"/>
+            <text x="25" y="55" text-anchor="middle" font-size="9" font-weight="700" fill="#14532D">CONCLUÍDA</text>
+          </g>
+
+          <g transform="translate(370, 195)">
+            <rect x="0" y="0" width="140" height="45" rx="6" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+            <text x="70" y="18" text-anchor="middle" font-size="9.5" font-weight="700" fill="#991B1B">CANCELADA</text>
+            <text x="10" y="34" font-size="7" fill="#7F1D1D">• notificaPassageiros()</text>
+          </g>
+
+          <line x1="210" y1="165" x2="210" y2="217" stroke="#DC2626" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="210" y1="217" x2="370" y2="217" stroke="#DC2626" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+          <text x="220" y="210" font-size="7" fill="#DC2626">motoristaCancela()</text>
+
+          <!-- SUBGRAFO 2: RESERVA -->
+          <rect x="20" y="285" width="980" height="235" rx="8" fill="#F8FAFC" stroke="#16A34A" stroke-width="1.5"/>
+          <text x="35" y="307" font-size="12" font-weight="800" fill="#16A34A">2. Ciclo de Vida da Reserva do Passageiro (RidePassenger State Machine)</text>
+
+          <circle cx="60" cy="390" r="12" fill="#0F172A"/>
+          <circle cx="60" cy="390" r="16" fill="none" stroke="#64748B" stroke-width="1"/>
+
+          <line x1="76" y1="390" x2="150" y2="390" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="113" y="382" text-anchor="middle" font-size="7.5" fill="#475569">solicitarVaga()</text>
+
+          <g transform="translate(150, 355)">
+            <rect x="0" y="0" width="180" height="70" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+            <text x="90" y="24" text-anchor="middle" font-size="10.5" font-weight="700" fill="#14532D">CONFIRMADO</text>
+            <line x1="0" y1="32" x2="180" y2="32" stroke="#86EFAC"/>
+            <text x="10" y="46" font-size="7.5" fill="#166534">• entry / decrementaVagas()</text>
+            <text x="10" y="58" font-size="7.5" fill="#166534">• entry / adicionaAoChat()</text>
+          </g>
+
+          <line x1="330" y1="390" x2="520" y2="390" stroke="#0F5DED" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="425" y="382" text-anchor="middle" font-size="7.5" fill="#0F5DED">caronaConcluida()</text>
+
+          <g transform="translate(520, 355)">
+            <rect x="0" y="0" width="180" height="70" rx="8" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.5"/>
+            <text x="90" y="24" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1E3A8A">FINALIZADO</text>
+            <line x1="0" y1="32" x2="180" y2="32" stroke="#BFDBFE"/>
+            <text x="10" y="46" font-size="7.5" fill="#1E40AF">• entry / incrementaHistorico()</text>
+            <text x="10" y="58" font-size="7.5" fill="#1E40AF">• do / avaliarMotorista()</text>
+          </g>
+
+          <line x1="700" y1="390" x2="790" y2="390" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <g transform="translate(790, 365)">
+            <circle cx="25" cy="25" r="16" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+            <circle cx="25" cy="25" r="10" fill="#16A34A"/>
+            <text x="25" y="55" text-anchor="middle" font-size="9" font-weight="700" fill="#14532D">SUCESSO</text>
+          </g>
+
+          <line x1="240" y1="425" x2="240" y2="480" stroke="#DC2626" stroke-width="1.2" stroke-dasharray="3,3"/>
+          <line x1="240" y1="480" x2="400" y2="480" stroke="#DC2626" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+          <text x="310" y="473" text-anchor="middle" font-size="7" fill="#DC2626">desistirCarona()</text>
+
+          <g transform="translate(400, 455)">
+            <rect x="0" y="0" width="160" height="45" rx="6" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.2"/>
+            <text x="80" y="18" text-anchor="middle" font-size="9" font-weight="700" fill="#991B1B">CANCELADO</text>
+            <text x="10" y="32" font-size="6.5" fill="#7F1D1D">• incrementaVagasDisponiveis()</text>
+          </g>
+
+          <line x1="560" y1="480" x2="630" y2="480" stroke="#DC2626" stroke-width="1.2" marker-end="url(#arrow)"/>
+          <g transform="translate(630, 465)">
+            <circle cx="15" cy="15" r="12" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+            <circle cx="15" cy="15" r="7" fill="#DC2626"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="page-footer-left">
+        <span>UniMove • Autômatos Finitos</span>
+        <span>Entidades Rastreadas: <strong class="page-footer-tag">Ride Lifecycle & Passenger Reservation Lifecycle</strong></span>
+      </div>
+      <div>Página 6 de 8</div>
+    </div>
+  </div>
+
+
+  <!-- PÁGINA 7: ATIVIDADES -->
+  <div class="sheet">
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="brand-badge">UML 06</span>
+        <span class="page-header-title">Diagrama de Atividades (Activity Diagram)</span>
+        <span class="page-header-subtitle">Fluxo lógico de decisão, paralelismo (fork/join) e tratamento de assentos da carona</span>
+      </div>
+      <div class="page-header-right">Página 7 • Lógica de Processo</div>
+    </div>
+
+    <div class="page-content">
+      <div class="info-callout">
+        <strong>Lógica Operacional:</strong> Demonstra bifurcações de decisão (condições de guarda), conferência de autenticação do estudante, bloqueio de assento e despacho simultâneo de notificação e canal de chat.
+      </div>
+      <div class="diagram-container">
+        <svg class="diagram-svg" viewBox="0 0 1020 540" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="510" cy="25" r="12" fill="#0F172A"/>
+
+          <line x1="510" y1="37" x2="510" y2="60" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <rect x="420" y="60" width="180" height="35" rx="8" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.5"/>
+          <text x="510" y="82" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1E3A8A">Informar Origem / Destino</text>
+
+          <line x1="510" y1="95" x2="510" y2="120" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <polygon points="510,120 580,145 510,170 440,145" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+          <text x="510" y="148" text-anchor="middle" font-size="8" font-weight="700" fill="#78350F">Caronas no Feed?</text>
+
+          <line x1="580" y1="145" x2="720" y2="145" stroke="#D97706" stroke-width="1.2" marker-end="url(#arrow)"/>
+          <text x="635" y="138" font-size="7.5" fill="#D97706">[Não encontradas]</text>
+
+          <rect x="720" y="128" width="160" height="34" rx="8" fill="#FFFBEB" stroke="#F59E0B" stroke-width="1.2"/>
+          <text x="800" y="149" text-anchor="middle" font-size="8.5" fill="#92400E">Exibir "Nenhuma Carona" e Ajustar Filtros</text>
+
+          <line x1="800" y1="162" x2="800" y2="200" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="800" y1="200" x2="510" y2="200" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3,3"/>
+
+          <line x1="510" y1="170" x2="510" y2="215" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="525" y="195" font-size="7.5" fill="#16A34A">[Sim]</text>
+
+          <rect x="420" y="215" width="180" height="35" rx="8" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.5"/>
+          <text x="510" y="237" text-anchor="middle" font-size="9" font-weight="600" fill="#1E3A8A">Visualizar Perfil e Veículo</text>
+
+          <line x1="510" y1="250" x2="510" y2="275" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <polygon points="510,275 580,300 510,325 440,300" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+          <text x="510" y="303" text-anchor="middle" font-size="8" font-weight="700" fill="#4C1D95">Logado?</text>
+
+          <line x1="440" y1="300" x2="300" y2="300" stroke="#7C3AED" stroke-width="1.2" marker-end="url(#arrow)"/>
+          <text x="365" y="293" font-size="7.5" fill="#7C3AED">[Não]</text>
+
+          <rect x="170" y="283" width="130" height="34" rx="8" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="1.2"/>
+          <text x="235" y="304" text-anchor="middle" font-size="8.5" fill="#5B21B6">Exibir Modal Login / Cadastro</text>
+
+          <line x1="235" y1="283" x2="235" y2="232" stroke="#8B5CF6" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="235" y1="232" x2="420" y2="232" stroke="#8B5CF6" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+          <line x1="510" y1="325" x2="510" y2="360" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <text x="525" y="345" font-size="7.5" fill="#16A34A">[Sim]</text>
+
+          <rect x="360" y="360" width="300" height="6" rx="3" fill="#1E293B"/>
+
+          <line x1="430" y1="366" x2="430" y2="395" stroke="#0F5DED" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <rect x="350" y="395" width="160" height="35" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+          <text x="430" y="415" text-anchor="middle" font-size="8" font-weight="600" fill="#14532D">Criar RidePassenger &</text>
+          <text x="430" y="425" text-anchor="middle" font-size="8" font-weight="600" fill="#14532D">Decrementar Vagas</text>
+
+          <line x1="590" y1="366" x2="590" y2="395" stroke="#7C3AED" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <rect x="515" y="395" width="155" height="35" rx="6" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.2"/>
+          <text x="592" y="415" text-anchor="middle" font-size="8" font-weight="600" fill="#4C1D95">Habilitar Mensagens no</text>
+          <text x="592" y="425" text-anchor="middle" font-size="8" font-weight="600" fill="#4C1D95">Canal em Tempo Real</text>
+
+          <line x1="430" y1="430" x2="430" y2="455" stroke="#0F5DED" stroke-width="1.5"/>
+          <line x1="590" y1="430" x2="590" y2="455" stroke="#7C3AED" stroke-width="1.5"/>
+          <rect x="360" y="455" width="300" height="6" rx="3" fill="#1E293B"/>
+
+          <line x1="510" y1="461" x2="510" y2="480" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <rect x="420" y="480" width="180" height="30" rx="6" fill="#EFF6FF" stroke="#0F5DED" stroke-width="1.2"/>
+          <text x="510" y="499" text-anchor="middle" font-size="8.5" font-weight="700" fill="#0F5DED">Acessar Grupo da Carona</text>
+
+          <line x1="600" y1="495" x2="680" y2="495" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <circle cx="700" cy="495" r="14" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+          <circle cx="700" cy="495" r="9" fill="#16A34A"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="page-footer-left">
+        <span>UniMove • Engenharia de Processos</span>
+        <span>Elementos: <strong class="page-footer-tag">Decisões, Fork/Join Paralelo, Ações de Negócio</strong></span>
+      </div>
+      <div>Página 7 de 8</div>
+    </div>
+  </div>
+
+
+  <!-- PÁGINA 8: IMPLANTAÇÃO -->
+  <div class="sheet">
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="brand-badge">UML 07</span>
+        <span class="page-header-title">Diagrama de Implantação & Topologia BaaS</span>
+        <span class="page-header-subtitle">Nós de hardware, containers de nuvem, protocolos de rede e topologia de deploy</span>
+      </div>
+      <div class="page-header-right">Página 8 • Topologia de Implantação</div>
+    </div>
+
+    <div class="page-content">
+      <div class="info-callout">
+        <strong>Infraestrutura e Deploy:</strong> Aplicação cliente distribuída via CDN Global (Vercel Edge Network), comunicando-se de forma segura por HTTPS/WSS com a infraestrutura Supabase Cloud gerenciada.
+      </div>
+      <div class="diagram-container">
+        <svg class="diagram-svg" viewBox="0 0 1020 540" xmlns="http://www.w3.org/2000/svg">
+          <!-- NÓ 1: CLIENT -->
+          <g transform="translate(30, 40)">
+            <polygon points="0,20 20,0 260,0 260,390 240,410 0,410" fill="#F8FAFC" stroke="#64748B" stroke-width="1.5"/>
+            <polygon points="240,0 260,0 260,390 240,410" fill="#E2E8F0" stroke="#64748B" stroke-width="1.5"/>
+            <polygon points="0,20 20,0 260,0 240,20" fill="#CBD5E1" stroke="#64748B" stroke-width="1.5"/>
+            
+            <text x="120" y="38" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">«device» Dispositivo Universitário</text>
+            <text x="120" y="52" text-anchor="middle" font-size="8" fill="#64748B">Smartphone / Notebook do Estudante</text>
+
+            <rect x="20" y="70" width="200" height="315" rx="6" fill="#FFFFFF" stroke="#0F5DED" stroke-width="1.5"/>
+            <text x="120" y="90" text-anchor="middle" font-size="9.5" font-weight="700" fill="#0F5DED">«execution environment»</text>
+            <text x="120" y="104" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0F172A">Modern Web Browser</text>
+            <line x1="20" y1="112" x2="220" y2="112" stroke="#BFDBFE"/>
+
+            <rect x="30" y="125" width="180" height="75" rx="4" fill="#EFF6FF" stroke="#93C5FD"/>
+            <text x="40" y="142" font-size="8.5" font-weight="700" fill="#1E3A8A">«artifact» unimove_app.bundle</text>
+            <text x="40" y="157" font-size="7.5" fill="#334155">• Vanilla JS ES6+ Modules</text>
+            <text x="40" y="170" font-size="7.5" fill="#334155">• Single Page Router</text>
+            <text x="40" y="183" font-size="7.5" fill="#334155">• CSS Tokens & Views</text>
+
+            <rect x="30" y="215" width="180" height="70" rx="4" fill="#FEF3C7" stroke="#FDE68A"/>
+            <text x="40" y="232" font-size="8.5" font-weight="700" fill="#92400E">«artifact» Client Storage</text>
+            <text x="40" y="247" font-size="7.5" fill="#78350F">• Sessão de Auth Local</text>
+            <text x="40" y="260" font-size="7.5" fill="#78350F">• Cache de Caronas Offline</text>
+            <text x="40" y="273" font-size="7.5" fill="#78350F">• Preferência de Tema (L/D)</text>
+
+            <rect x="30" y="298" width="180" height="70" rx="4" fill="#DCFCE7" stroke="#86EFAC"/>
+            <text x="40" y="315" font-size="8.5" font-weight="700" fill="#14532D">«artifact» @supabase/supabase-js</text>
+            <text x="40" y="330" font-size="7.5" fill="#166534">• Auth SDK (JWT)</text>
+            <text x="40" y="343" font-size="7.5" fill="#166534">• PostgREST HTTP Client</text>
+            <text x="40" y="356" font-size="7.5" fill="#166534">• WebSocket Realtime Client</text>
+          </g>
+
+          <!-- NÓ 2: VERCEL CDN -->
+          <g transform="translate(370, 20)">
+            <polygon points="0,20 20,0 240,0 240,160 220,180 0,180" fill="#F8FAFC" stroke="#64748B" stroke-width="1.5"/>
+            <polygon points="220,0 240,0 240,160 220,180" fill="#E2E8F0" stroke="#64748B" stroke-width="1.5"/>
+            <polygon points="0,20 20,0 240,0 220,20" fill="#CBD5E1" stroke="#64748B" stroke-width="1.5"/>
+
+            <text x="110" y="36" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">«cloud node» Vercel Edge CDN</text>
+            <text x="110" y="48" text-anchor="middle" font-size="8" fill="#64748B">Distribuição Global de Assets SPA</text>
+
+            <rect x="20" y="58" width="180" height="105" rx="6" fill="#FFFFFF" stroke="#000000" stroke-width="1.2"/>
+            <text x="110" y="74" text-anchor="middle" font-size="8.5" font-weight="700" fill="#000000">«server» Edge Static Server</text>
+            <line x1="20" y1="80" x2="200" y2="80" stroke="#E2E8F0"/>
+            <text x="30" y="94" font-size="7.5" fill="#334155">• index.html (SPA Entrypoint)</text>
+            <text x="30" y="108" font-size="7.5" fill="#334155">• vercel.json (Rewrites SPA)</text>
+            <text x="30" y="122" font-size="7.5" fill="#334155">• public/ (Logos & Assets)</text>
+            <text x="30" y="136" font-size="7.5" fill="#334155">• vite.config.js Bundle Output</text>
+            <text x="30" y="150" font-size="7" fill="#16A34A" font-weight="600">HTTPS SSL/TLS 1.3 Termination</text>
+          </g>
+
+          <!-- NÓ 3: SUPABASE CLOUD -->
+          <g transform="translate(680, 20)">
+            <polygon points="0,20 20,0 300,0 300,450 280,470 0,470" fill="#F8FAFC" stroke="#16A34A" stroke-width="1.8"/>
+            <polygon points="280,0 300,0 300,450 280,470" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.8"/>
+            <polygon points="0,20 20,0 300,0 280,20" fill="#86EFAC" stroke="#16A34A" stroke-width="1.8"/>
+
+            <text x="140" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#14532D">«cloud baas» Supabase Platform</text>
+            <text x="140" y="52" text-anchor="middle" font-size="8" fill="#166534">PostgreSQL & Microservices Cloud Node</text>
+
+            <rect x="20" y="65" width="240" height="72" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.2"/>
+            <text x="30" y="82" font-size="9" font-weight="700" fill="#166534">«service» Supabase GoTrue Auth</text>
+            <text x="30" y="97" font-size="7.5" fill="#334155">• Emissão de Tokens JWT</text>
+            <text x="30" y="110" font-size="7.5" fill="#334155">• Autenticação com Senha Criptografada</text>
+            <text x="30" y="123" font-size="7.5" fill="#334155">• Trigger on_auth_user_created -> public.profiles</text>
+
+            <rect x="20" y="148" width="240" height="72" rx="6" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.2"/>
+            <text x="30" y="165" font-size="9" font-weight="700" fill="#166534">«service» PostgREST Engine</text>
+            <text x="30" y="180" font-size="7.5" fill="#334155">• Mapeamento Automático REST -> SQL</text>
+            <text x="30" y="193" font-size="7.5" fill="#334155">• Filtros: ilike, gte, eq, select enriquecido</text>
+            <text x="30" y="206" font-size="7.5" fill="#334155">• Validação de RLS em Tempo de Execução</text>
+
+            <rect x="20" y="230" width="240" height="70" rx="6" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.2"/>
+            <text x="30" y="248" font-size="9" font-weight="700" fill="#4C1D95">«service» Realtime WebSocket Engine</text>
+            <text x="30" y="263" font-size="7.5" fill="#334155">• Canal de Pub/Sub da tabela 'messages'</text>
+            <text x="30" y="276" font-size="7.5" fill="#334155">• Escuta alterações no postgres_cdc</text>
+            <text x="30" y="289" font-size="7.5" fill="#334155">• Broadcast instantâneo para passageiros</text>
+
+            <rect x="20" y="310" width="240" height="135" rx="6" fill="#DCFCE7" stroke="#15803D" stroke-width="1.5"/>
+            <text x="30" y="330" font-size="10" font-weight="800" fill="#14532D">«database» PostgreSQL 15 Relational DB</text>
+            <line x1="20" y1="336" x2="260" y2="336" stroke="#86EFAC"/>
+            <text x="30" y="352" font-size="8" font-family="'JetBrains Mono', monospace" fill="#166534">• public.profiles (Estudantes)</text>
+            <text x="30" y="367" font-size="8" font-family="'JetBrains Mono', monospace" fill="#166534">• public.rides (Caronas)</text>
+            <text x="30" y="382" font-size="8" font-family="'JetBrains Mono', monospace" fill="#166534">• public.ride_passengers (Vagas)</text>
+            <text x="30" y="397" font-size="8" font-family="'JetBrains Mono', monospace" fill="#166534">• public.messages (Chat)</text>
+            <text x="30" y="415" font-size="7.5" fill="#14532D" font-weight="700">EXTENSIONS: uuid-ossp | Row Level Security (RLS)</text>
+            <text x="30" y="428" font-size="7.5" fill="#14532D">• Indexes: rides(origem, data, motorista_id)</text>
+          </g>
+
+          <!-- CONEXÕES DE REDE -->
+          <line x1="270" y1="110" x2="370" y2="110" stroke="#000000" stroke-width="2" marker-end="url(#arrow)"/>
+          <text x="320" y="103" text-anchor="middle" font-size="8" font-weight="700" fill="#000000">HTTPS / TLS</text>
+          <text x="320" y="125" text-anchor="middle" font-size="7" fill="#64748B">Download SPA</text>
+
+          <line x1="270" y1="280" x2="680" y2="280" stroke="#16A34A" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="360" y="268" width="220" height="24" rx="4" fill="#FFFFFF" stroke="#86EFAC" stroke-width="1"/>
+          <text x="470" y="280" text-anchor="middle" font-size="8" font-weight="700" fill="#15803D">HTTPS / REST API (JWT Bearer Token)</text>
+          <text x="470" y="290" text-anchor="middle" font-size="7" fill="#166534">CRUD Caronas, Perfis e Reservas de Vagas</text>
+
+          <line x1="270" y1="365" x2="680" y2="365" stroke="#7C3AED" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="360" y="353" width="220" height="24" rx="4" fill="#FFFFFF" stroke="#C4B5FD" stroke-width="1"/>
+          <text x="470" y="365" text-anchor="middle" font-size="8" font-weight="700" fill="#6D28D9">WSS:// (WebSocket Realtime Engine)</text>
+          <text x="470" y="375" text-anchor="middle" font-size="7" fill="#4C1D95">Canal de Chat Bidirecional em Tempo Real</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="page-footer-left">
+        <span>UniMove • Engenharia de Infraestrutura</span>
+        <span>Topologia: <strong class="page-footer-tag">Client SPA, Vercel CDN Hosting, Supabase Cloud (PostgreSQL 15 + RLS + Realtime)</strong></span>
+      </div>
+      <div>Página 8 de 8</div>
+    </div>
+  </div>
+
+</body>
+</html>
+"""
+
+html_file_path = os.path.abspath("unimove_uml_completo.html")
+pdf_file_path = os.path.abspath("UniMove_Diagrama_UML_Completo.pdf")
+
+with open(html_file_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+if not os.path.exists(edge_path):
+    edge_path = r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+
+cmd = [
+    edge_path,
+    "--headless=new",
+    "--disable-gpu",
+    "--run-all-compositor-stages-before-draw",
+    f"--print-to-pdf={pdf_file_path}",
+    "--no-pdf-header-footer",
+    html_file_path
+]
+
+res = subprocess.run(cmd, capture_output=True, text=True)
+if os.path.exists(pdf_file_path):
+    size_kb = os.path.getsize(pdf_file_path) / 1024
+    print(f"PDF ATUALIZADO: {size_kb:.2f} KB em {pdf_file_path}")

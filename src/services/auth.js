@@ -1,11 +1,18 @@
-/**
+﻿/**
  * Authentication Service
  * Handles user login, registration, and profile management.
  * Uses Supabase Auth when configured, falls back to localStorage.
+ * Includes data-at-rest encryption for sensitive personal fields (LGPD) and age validation.
  */
 
 import { getStoredData, setStoredData, USERS_KEY, CURRENT_USER_KEY } from './storage.js';
 import { supabase, isSupabaseConfigured } from './supabaseClient.js';
+import {
+  encryptSensitiveProfile,
+  decryptSensitiveProfile,
+  hashPassword,
+  verifyPassword
+} from './crypto.js';
 
 export function getCurrentUser() {
   const user = localStorage.getItem(CURRENT_USER_KEY);
@@ -39,14 +46,55 @@ export async function loginWithSupabase(email, password) {
     .eq('id', data.user.id)
     .single();
 
-  const user = { id: data.user.id, email: data.user.email, ...profile };
+  const decryptedProfile = await decryptSensitiveProfile(profile || {});
+  const user = { id: data.user.id, email: data.user.email, ...decryptedProfile };
   setCurrentUser(user);
   return { success: true, user };
 }
 
+export function isStrongPassword(password) {
+  if (!password || typeof password !== 'string') return false;
+  const hasLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[^A-Za-z0-9]/.test(password);
+  return hasLength && hasUpper && hasLower && hasNumber && hasSpecial;
+}
+
 export async function registerWithSupabase(userData) {
+  // Salva a sessão atual (o Administrador) para garantir que ela não seja perdida
+  const currentAdmin = getCurrentUser();
+
   const email = userData.email.trim().toLowerCase();
   const password = userData.senha;
+
+  // Validação Estrita de Senha Forte
+  if (!isStrongPassword(password)) {
+    return {
+      success: false,
+      error: 'A senha informada não é segura. Crie uma senha forte com no mínimo 8 caracteres, contendo maiúsculas, minúsculas, números e caracteres especiais.'
+    };
+  }
+
+  // Validação de maioridade para motorista (Bloquear menores de 18 anos)
+  if (userData.roles && userData.roles.includes('motorista')) {
+    const idadeNum = parseInt(userData.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return {
+        success: false,
+        error: 'Menores de 18 anos não podem se cadastrar como motorista (exigência legal de CNH).'
+      };
+    }
+  }
+
+  // Foto de perfil obrigatória
+  if (!userData.avatar && !userData.avatar_url) {
+    return {
+      success: false,
+      error: 'A foto de perfil é obrigatória para identificação e segurança de todos os usuários.'
+    };
+  }
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -59,10 +107,18 @@ export async function registerWithSupabase(userData) {
   }
   if (!data?.user) return { success: false, error: 'Erro ao registrar usuário.' };
 
-  let avatarUrl = userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
-  if (avatarUrl.startsWith('data:') && avatarUrl.length > 3000) {
-    avatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
-  }
+  const avatarUrl = userData.avatar || userData.avatar_url;
+
+  // Montar lista de veículos do motorista
+  const veiculosCadastrados = Array.isArray(userData.veiculos) && userData.veiculos.length > 0
+    ? userData.veiculos
+    : (userData.veiculo_modelo ? [{
+        id: 'veh_' + Date.now(),
+        modelo: userData.veiculo_modelo,
+        cor: userData.veiculo_cor || '',
+        placa: userData.veiculo_placa || '',
+        foto_url: userData.veiculo_foto_url || null
+      }] : []);
 
   // Build profile payload with all Standard fields
   const profilePayload = {
@@ -79,42 +135,41 @@ export async function registerWithSupabase(userData) {
     campus: userData.campus || 'Campus UNICEPLAC',
     roles: userData.roles || ['passageiro'],
     avatar_url: avatarUrl,
+    veiculos: veiculosCadastrados,
     avaliacoes: 5.0,
     total_caronas: 0,
   };
 
   // Motorista-specific fields
   if (userData.roles && userData.roles.includes('motorista')) {
-    profilePayload.veiculo_modelo = userData.veiculo_modelo || null;
-    profilePayload.veiculo_cor = userData.veiculo_cor || null;
-    profilePayload.veiculo_placa = userData.veiculo_placa || null;
-    profilePayload.veiculo_foto_url = userData.veiculo_foto_url || null;
+    profilePayload.veiculo_modelo = userData.veiculo_modelo || (veiculosCadastrados[0]?.modelo) || null;
+    profilePayload.veiculo_cor = userData.veiculo_cor || (veiculosCadastrados[0]?.cor) || null;
+    profilePayload.veiculo_placa = userData.veiculo_placa || (veiculosCadastrados[0]?.placa) || null;
+    profilePayload.veiculo_foto_url = userData.veiculo_foto_url || (veiculosCadastrados[0]?.foto_url) || null;
     profilePayload.cnh = userData.cnh || null;
     profilePayload.vagas_padrao = parseInt(userData.vagas_padrao, 10) || 3;
     profilePayload.preferencia_passageiros = userData.preferencia_passageiros || 'mista';
     profilePayload.tempo_espera_min = parseInt(userData.tempo_espera_min, 10) || 5;
     profilePayload.porta_malas_litros = parseInt(userData.porta_malas_litros, 10) || null;
     profilePayload.acessivel_cadeirante = Boolean(userData.acessivel_cadeirante) || false;
-    profilePayload.preco_medio = parseFloat(userData.preco_medio) || 0.00;
   }
 
-  // Legacy veiculo object support
-  if (userData.veiculo && typeof userData.veiculo === 'object') {
-    profilePayload.veiculo_modelo = profilePayload.veiculo_modelo || userData.veiculo.modelo || null;
-    profilePayload.veiculo_cor = profilePayload.veiculo_cor || userData.veiculo.cor || null;
-    profilePayload.veiculo_placa = profilePayload.veiculo_placa || userData.veiculo.placa || null;
-  }
+  // Criptografar dados sensíveis antes de enviar ao banco Supabase (LGPD)
+  const encryptedPayload = await encryptSensitiveProfile(profilePayload);
 
-  const { error: profileError } = await supabase.from('profiles').upsert(profilePayload);
+  const { error: profileError } = await supabase.from('profiles').upsert(encryptedPayload);
   if (profileError) {
     console.error('Erro ao salvar perfil no Supabase:', profileError.message);
     // Try update as fallback
-    await supabase.from('profiles').update(profilePayload).eq('id', data.user.id);
+    await supabase.from('profiles').update(encryptedPayload).eq('id', data.user.id);
   }
 
-  const user = { id: data.user.id, email, ...profilePayload };
-  setCurrentUser(user);
-  return { success: true, user };
+  // Restaura a sessão do Administrador para que ele continue logado
+  if (currentAdmin) {
+    setCurrentUser(currentAdmin);
+  }
+
+  return { success: true, user: profilePayload };
 }
 
 export async function logoutSupabase() {
@@ -128,6 +183,14 @@ export async function updateProfileSupabase(updatedData) {
 
   const payload = { ...updatedData };
 
+  // Validação de maioridade para motorista
+  if (payload.roles && payload.roles.includes('motorista')) {
+    const idadeNum = parseInt(payload.idade || currentUser.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return { success: false, error: 'Menores de 18 anos não podem ativar o perfil de motorista.' };
+    }
+  }
+
   // Handle legacy avatar field
   if (payload.avatar) {
     payload.avatar_url = payload.avatar;
@@ -139,11 +202,6 @@ export async function updateProfileSupabase(updatedData) {
     payload.veiculo_cor = payload.veiculo_cor || payload.veiculo.cor;
     payload.veiculo_placa = payload.veiculo_placa || payload.veiculo.placa;
     delete payload.veiculo;
-  }
-
-  // Sanitize avatar_url — never store large base64 strings
-  if (payload.avatar_url && payload.avatar_url.startsWith('data:') && payload.avatar_url.length > 3000) {
-    delete payload.avatar_url;
   }
 
   // Parse numeric/boolean fields
@@ -161,9 +219,12 @@ export async function updateProfileSupabase(updatedData) {
   delete payload.total_caronas;
   delete payload.created_at;
 
+  // Criptografar dados sensíveis antes de salvar no Supabase
+  const encryptedPayload = await encryptSensitiveProfile(payload);
+
   const { error } = await supabase
     .from('profiles')
-    .update(payload)
+    .update(encryptedPayload)
     .eq('id', currentUser.id);
 
   if (error) return { success: false, error: error.message };
@@ -173,7 +234,7 @@ export async function updateProfileSupabase(updatedData) {
   return { success: true, user: merged };
 }
 
-// ── localStorage fallback ─────────────────────────────────────────────────────
+// ── localStorage fallback ────────────────────────────────────────────────     
 
 export async function login(email, password) {
   if (isSupabaseConfigured) {
@@ -183,11 +244,18 @@ export async function login(email, password) {
   // Fallback to localStorage
   const users = getAllUsers();
   const normalizedEmail = email.trim().toLowerCase();
-  const found = users.find(u => u.email.toLowerCase() === normalizedEmail && u.senha === password);
-  if (found) {
-    setCurrentUser(found);
-    return { success: true, user: found };
+
+  for (const u of users) {
+    if (u.email.toLowerCase() === normalizedEmail) {
+      const match = await verifyPassword(password, u.senha);
+      if (match) {
+        const decryptedUser = await decryptSensitiveProfile(u);
+        setCurrentUser(decryptedUser);
+        return { success: true, user: decryptedUser };
+      }
+    }
   }
+
   return { success: false, error: 'E-mail ou senha inválidos. Tente novamente.' };
 }
 
@@ -199,16 +267,60 @@ export function logout() {
 export async function registerUser(userData) {
   if (isSupabaseConfigured) return await registerWithSupabase(userData);
 
+  // Salva a sessão atual (o Administrador)
+  const currentAdmin = getCurrentUser();
+
+  // Validação Estrita de Senha Forte
+  if (!isStrongPassword(userData.senha)) {
+    return {
+      success: false,
+      error: 'A senha informada não é segura. Crie uma senha forte com no mínimo 8 caracteres, contendo maiúsculas, minúsculas, números e caracteres especiais.'
+    };
+  }
+
+  // Validação de maioridade para motorista
+  if (userData.roles && userData.roles.includes('motorista')) {
+    const idadeNum = parseInt(userData.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return {
+        success: false,
+        error: 'Menores de 18 anos não podem se cadastrar como motorista (exigência legal de CNH).'
+      };
+    }
+  }
+
+  // Foto de perfil obrigatória
+  if (!userData.avatar && !userData.avatar_url) {
+    return {
+      success: false,
+      error: 'A foto de perfil é obrigatória para identificação e segurança de todos os usuários.'
+    };
+  }
+
   const users = getAllUsers();
   const normalizedEmail = userData.email.trim().toLowerCase();
   const exists = users.some(u => u.email.toLowerCase() === normalizedEmail);
   if (exists) return { success: false, error: 'Já existe uma conta cadastrada com este e-mail.' };
 
+  // Criptografar senha e campos sensíveis
+  const securePasswordHash = await hashPassword(userData.senha);
+
+  // Montar lista de veículos reutilizáveis do motorista
+  const veiculosCadastrados = Array.isArray(userData.veiculos) && userData.veiculos.length > 0
+    ? userData.veiculos
+    : (userData.veiculo_modelo ? [{
+        id: 'veh_' + Date.now(),
+        modelo: userData.veiculo_modelo,
+        cor: userData.veiculo_cor || '',
+        placa: userData.veiculo_placa || '',
+        foto_url: userData.veiculo_foto_url || null
+      }] : []);
+
   const newUser = {
     id: 'usr_' + Date.now(),
     nome: userData.nome.trim(),
     email: normalizedEmail,
-    senha: userData.senha,
+    senha: securePasswordHash,
     cpf: userData.cpf,
     idade: parseInt(userData.idade, 10),
     sexo: userData.sexo,
@@ -218,14 +330,40 @@ export async function registerUser(userData) {
     periodo: userData.periodo || '1º período',
     campus: userData.campus || 'Campus UNICEPLAC',
     roles: userData.roles || ['passageiro'],
-    avatar_url: userData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+    avatar_url: userData.avatar || userData.avatar_url,
+    veiculos: veiculosCadastrados,
     avaliacoes: 5.0,
     total_caronas: 0
   };
 
-  users.push(newUser);
+  if (userData.roles && userData.roles.includes('motorista')) {
+    newUser.veiculo_modelo = userData.veiculo_modelo || (veiculosCadastrados[0]?.modelo) || null;
+    newUser.veiculo_cor = userData.veiculo_cor || (veiculosCadastrados[0]?.cor) || null;
+    newUser.veiculo_placa = userData.veiculo_placa || (veiculosCadastrados[0]?.placa) || null;
+    newUser.veiculo_foto_url = userData.veiculo_foto_url || (veiculosCadastrados[0]?.foto_url) || null;
+    newUser.cnh = userData.cnh || null;
+    newUser.vagas_padrao = parseInt(userData.vagas_padrao, 10) || 3;
+    newUser.tempo_espera_min = parseInt(userData.tempo_espera_min, 10) || 5;
+    newUser.porta_malas_litros = parseInt(userData.porta_malas_litros, 10) || null;
+    newUser.preferencia_passageiros = userData.preferencia_passageiros || 'mista';
+    newUser.acessivel_cadeirante = Boolean(userData.acessivel_cadeirante);
+    newUser.veiculo = {
+      modelo: newUser.veiculo_modelo || '',
+      cor: newUser.veiculo_cor || '',
+      placa: newUser.veiculo_placa || ''
+    };
+  }
+
+  // Criptografa dados em repouso no armazenamento local
+  const encryptedUser = await encryptSensitiveProfile(newUser);
+  users.push(encryptedUser);
   setStoredData(USERS_KEY, users);
-  setCurrentUser(newUser);
+
+  // Restaura a sessão do Administrador
+  if (currentAdmin) {
+    setCurrentUser(currentAdmin);
+  }
+
   return { success: true, user: newUser };
 }
 
@@ -235,13 +373,53 @@ export async function updateProfile(updatedData) {
   const currentUser = getCurrentUser();
   if (!currentUser) return { success: false, error: 'Usuário não autenticado.' };
 
+  // Validação de maioridade para motorista
+  if (updatedData.roles && updatedData.roles.includes('motorista')) {
+    const idadeNum = parseInt(updatedData.idade || currentUser.idade, 10);
+    if (!idadeNum || idadeNum < 18) {
+      return { success: false, error: 'Menores de 18 anos não podem ativar o perfil de motorista.' };
+    }
+  }
+
   const users = getAllUsers();
   const index = users.findIndex(u => u.id === currentUser.id);
   const merged = { ...currentUser, ...updatedData };
+
   if (index !== -1) {
-    users[index] = merged;
+    const encryptedMerged = await encryptSensitiveProfile(merged);
+    users[index] = encryptedMerged;
     setStoredData(USERS_KEY, users);
   }
+
   setCurrentUser(merged);
   return { success: true, user: merged };
+}
+
+export async function getUserById(userId) {
+  if (!userId) return null;
+
+  if (isSupabaseConfigured) {
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (!error && data) {
+        return await decryptSensitiveProfile(data);
+      }
+    } catch (e) {
+      console.warn('Erro ao buscar perfil por ID no Supabase:', e);
+    }
+  }
+
+  const users = getAllUsers();
+  const user = users.find(u => u.id === userId);
+  if (user) {
+    return await decryptSensitiveProfile(user);
+  }
+
+  // Se o usuário atual for o mesmo solicitado
+  const currentUser = getCurrentUser();
+  if (currentUser && currentUser.id === userId) {
+    return currentUser;
+  }
+
+  return null;
 }

@@ -6,6 +6,7 @@
 import { renderHeader, attachHeaderEvents } from './components/Header.js';
 import { renderFooter } from './components/Footer.js';
 import { renderSidebar, renderBottomBar } from './components/NavBars.js';
+import { getCurrentUser } from './services/auth.js';
 
 import { renderLandingView, attachLandingEvents } from './views/LandingView.js';
 import { renderHomeView, attachHomeEvents } from './views/HomeView.js';
@@ -45,6 +46,29 @@ export async function handleRoute() {
 
   const { path, queryString, anchor } = parseRoute();
 
+  // 🔒 Se o utilizador estiver na raiz exata (Landing Page pura `#/` ou vazio), permitimos ver a Landing Page mesmo logado (evita travar o logout)
+  const currentHash = window.location.hash.slice(1);
+  if (path === '/' && currentHash !== '' && currentHash !== '/' && currentHash !== '#') {
+    const user = getCurrentUser();
+    if (user && !currentHash.includes('login') && !currentHash.includes('cadastro')) {
+      window.location.hash = '#/perfil';
+      return;
+    }
+  }
+
+  // 🔒 SEGURANÇA: Bloqueia a rota de cadastro se não for o administrador (UserAdm@gmail.com)
+  if (path === '/cadastro') {
+    const user = getCurrentUser();
+    const emailPermitido = "UserAdm@gmail.com";
+    const emailLogado = user?.email?.trim().toLowerCase() || '';
+
+    if (emailLogado !== emailPermitido.toLowerCase()) {
+      // Se não for o admin, redireciona imediatamente para o login
+      window.location.hash = '#/login';
+      return;
+    }
+  }
+
   let viewHtml = '';
   let attachEvents = () => {};
 
@@ -65,7 +89,7 @@ export async function handleRoute() {
     attachEvents = attachMyRidesEvents;
   } else if (path.startsWith('/editar-carona/')) {
     const rideId = path.replace('/editar-carona/', '');
-    viewHtml = renderEditRideView(rideId);
+    viewHtml = await renderEditRideView(rideId);
     attachEvents = attachEditRideEvents;
   } else if (path.startsWith('/chat/')) {
     const rideId = path.replace('/chat/', '');
@@ -145,7 +169,6 @@ export async function handleRoute() {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-
 export function initRouter() {
   window.addEventListener('hashchange', handleRoute);
   window.addEventListener('authChanged', handleRoute);
@@ -153,7 +176,6 @@ export function initRouter() {
 
   // Efeito Parallax Mouse no Desktop
   document.addEventListener('mousemove', (e) => {
-    // Apenas se a tela for maior que tablet
     if (window.innerWidth > 768) {
       const x = (window.innerWidth / 2 - e.pageX) / 45;
       const y = (window.innerHeight / 2 - e.pageY) / 45;

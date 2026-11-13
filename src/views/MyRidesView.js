@@ -5,7 +5,7 @@
 
 import { getMyRides, deleteRide } from '../services/rides.js';
 import { getCurrentUser } from '../services/auth.js';
-import { renderRideCard } from '../components/RideCard.js';
+import { renderRideCard, attachRideCardEvents } from '../components/RideCard.js';
 import { showModal } from '../components/Modal.js';
 
 export function renderMyRidesView() {
@@ -93,7 +93,7 @@ export async function loadMyRidesData() {
     }
 
     if (booked.length > 0) {
-      bookedContainer.innerHTML = booked.map(r => renderRideCard(r, false)).join('');
+      bookedContainer.innerHTML = booked.map(r => renderRideCard(r, false, true)).join('');
     } else {
       bookedContainer.innerHTML = `
         <div class="card" style="text-align:center; padding:2rem 1rem;">
@@ -103,6 +103,8 @@ export async function loadMyRidesData() {
       `;
     }
 
+    if (offered.length > 0) attachRideCardEvents(offeredContainer);
+    if (booked.length > 0) attachRideCardEvents(bookedContainer);
     attachDeleteEvents();
   } catch (err) {
     console.error('Erro ao carregar minhas caronas:', err);

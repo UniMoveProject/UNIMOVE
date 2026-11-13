@@ -3,14 +3,23 @@
  * Renders the responsive navigation structure for the logged-in platform.
  */
 
+import { getCurrentUser } from '../services/auth.js';
+
 const ICONS = {
   home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`,
   search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
   offer: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>`,
-  list: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>`
+  list: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>`,
+  userPlus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>`
 };
 
 export function renderSidebar(currentPath) {
+  // Verifica diretamente se o usuário logado é o administrador
+  const user = getCurrentUser();
+  const emailPermitido = "UserAdm@gmail.com";
+  const emailLogado = user?.email?.trim().toLowerCase() || '';
+  const ehAdmin = emailLogado === emailPermitido.toLowerCase();
+
   return `
     <aside class="app-sidebar">
       <div style="font-family:var(--font-subtitle); font-size:0.85rem; color:var(--text-muted); padding:0.5rem 1rem; margin-top:1rem;">MENU PRINCIPAL</div>
@@ -26,6 +35,13 @@ export function renderSidebar(currentPath) {
       <a href="#/minhas-caronas" class="app-nav-link ${currentPath === '/minhas-caronas' ? 'active' : ''}">
         ${ICONS.list} <span>Minhas Caronas</span>
       </a>
+      
+      <!-- Link de cadastro visível apenas se for o admin -->
+      ${ehAdmin ? `
+        <a href="#/cadastro" class="app-nav-link ${currentPath === '/cadastro' ? 'active' : ''}">
+          ${ICONS.userPlus} <span>Novo Cadastro</span>
+        </a>
+      ` : ''}
       
       <div style="flex: 1;"></div>
       
@@ -53,4 +69,8 @@ export function renderBottomBar(currentPath) {
       </a>
     </nav>
   `;
+}
+
+export function attachNavEvents() {
+  // Mantido vazio caso o router chame por compatibilidade
 }

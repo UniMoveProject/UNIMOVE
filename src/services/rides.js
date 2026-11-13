@@ -94,6 +94,7 @@ export async function offerRideSupabase(rideData) {
     veiculo: rideData.veiculo || 'Carro',
     cor: rideData.cor || 'Branco',
     placa: rideData.placa || '',
+    foto_veiculo: rideData.fotoVeiculo || null,
     status: 'ativa',
   }).select().single();
 
@@ -102,20 +103,24 @@ export async function offerRideSupabase(rideData) {
 }
 
 export async function updateRideSupabase(id, updatedData) {
-  const { error } = await supabase.from('rides').update({
+  const payload = {
     origem: updatedData.origem,
     ponto_encontro: updatedData.pontoEncontro,
     destino: updatedData.destino,
     horario_saida: updatedData.horarioSaida,
     horario_chegada: updatedData.horarioChegada,
     data: updatedData.data,
-    vagas_totais: updatedData.vagasTotais,
     preco: updatedData.preco,
     veiculo: updatedData.veiculo,
     cor: updatedData.cor,
     placa: updatedData.placa,
-    status: updatedData.status,
-  }).eq('id', id);
+  };
+  if (updatedData.fotoVeiculo !== undefined) payload.foto_veiculo = updatedData.fotoVeiculo;
+  if (updatedData.vagasDisponiveis !== undefined) payload.vagas_disponiveis = updatedData.vagasDisponiveis;
+  if (updatedData.vagasTotais !== undefined) payload.vagas_totais = updatedData.vagasTotais;
+  if (updatedData.status !== undefined) payload.status = updatedData.status;
+
+  const { error } = await supabase.from('rides').update(payload).eq('id', id);
 
   if (error) return { success: false, error: error.message };
   return { success: true };
@@ -231,6 +236,7 @@ function mapRide(r, passengers = []) {
     veiculo: r.veiculo,
     cor: r.cor,
     placa: r.placa,
+    fotoVeiculo: r.foto_veiculo || r.fotoVeiculo || '',
     status: r.status,
     passageiros: passengers,
   };
@@ -239,7 +245,25 @@ function mapRide(r, passengers = []) {
 // Busca uma carona pelo ID com lista de passageiros (para o Chat)
 export async function getRideWithPassengers(rideId) {
   if (!isSupabaseConfigured) {
-    return getRideById(rideId);
+    const ride = getRideById(rideId);
+    if (!ride) return null;
+    const users = getStoredData('unimove_users', []);
+    const passengers = (ride.passageiros || []).map(pItem => {
+      const pId = typeof pItem === 'object' && pItem !== null ? pItem.id : pItem;
+      const u = users.find(user => user.id === pId);
+      if (u) {
+        return {
+          id: u.id,
+          nome: u.nome,
+          avatar_url: u.avatar_url || u.avatar || '',
+          curso: u.curso || 'Estudante',
+          periodo: u.periodo || '',
+          avaliacoes: u.avaliacoes || 5.0
+        };
+      }
+      return typeof pItem === 'object' ? pItem : { id: pId, nome: 'Passageiro', avatar_url: '' };
+    });
+    return { ...ride, passageiros: passengers };
   }
 
   try {
@@ -323,14 +347,39 @@ export async function offerRide(rideData) {
   if (!user) return { success: false, error: 'Faca login para oferecer carona.' };
 
   const rides = getAllRidesLocal();
+  const motoristaAvatar = user.avatar_url || user.avatar || '';
+
+  // Salvar veículo novo no perfil se solicitado
+  if (rideData.salvarNoPerfil && rideData.veiculo) {
+    user.veiculos = user.veiculos || [];
+    const jaExiste = user.veiculos.some(v => v.placa && v.placa.trim().toUpperCase() === (rideData.placa || '').trim().toUpperCase());
+    if (!jaExiste) {
+      user.veiculos.push({
+        id: 'veh_' + Date.now(),
+        modelo: rideData.veiculo.trim(),
+        cor: (rideData.cor || '').trim(),
+        placa: (rideData.placa || '').trim(),
+        foto_url: null
+      });
+      // Atualiza no banco de usuários locais
+      const users = getStoredData('unimove_users', []);
+      const idx = users.findIndex(u => u.id === user.id);
+      if (idx !== -1) {
+        users[idx].veiculos = user.veiculos;
+        setStoredData('unimove_users', users);
+      }
+      localStorage.setItem('unimove_current_user', JSON.stringify(user));
+    }
+  }
+
   const newRide = {
     id: 'ride_' + Date.now(),
     motoristaId: user.id,
     motoristaNome: user.nome,
-    motoristaFoto: user.avatar,
-    motoristaCurso: `${user.curso} - ${user.periodo}`,
+    motoristaFoto: motoristaAvatar,
+    motoristaCurso: `${user.curso || 'Estudante'} - ${user.periodo || ''}`,
     motoristaAvaliacao: user.avaliacoes || 5.0,
-    totalCaronas: user.totalCaronas || 1,
+    totalCaronas: user.totalCaronas || user.total_caronas || 0,
     origem: rideData.origem.trim(),
     pontoEncontro: rideData.pontoEncontro.trim(),
     destino: rideData.destino.trim(),
@@ -405,4 +454,100 @@ export async function getMyRides() {
     offered: rides.filter(r => r.motoristaId === user.id),
     booked: rides.filter(r => r.passageiros && r.passageiros.includes(user.id)),
   };
+}
+
+// ── Preço Dinâmico e Cálculo de Economia (Itens 12 e 13) ─────────────────────────
+
+// Tarifa pública de transporte coletivo / ônibus (referência DF e Entorno para UNICEPLAC)
+export const TARIFA_ONIBUS_DF = 5.50;
+
+/**
+ * Calcula a média de preço das caronas ativas cadastradas no sistema
+ * Respeita o teto de carona solidária universitária de até R$ 6,00
+ */
+export function calculateAverageRidePrice() {
+  const rides = getAllRidesLocal().filter(r => r.status === 'ativa' && parseFloat(r.preco) > 0);
+  if (rides.length === 0) return 5.00;
+  const sum = rides.reduce((acc, r) => acc + (parseFloat(r.preco) || 0), 0);
+  const avg = sum / rides.length;
+  return Math.min(6.00, parseFloat(avg.toFixed(2)));
+}
+
+/**
+ * Calcula a média dos valores das caronas oferecidas por um motorista específico
+ */
+export function calculateDriverAveragePrice(motoristaId) {
+  if (!motoristaId) return 0.00;
+  const rides = getAllRidesLocal().filter(r => r.motoristaId === motoristaId && parseFloat(r.preco) > 0);
+  if (rides.length === 0) return 0.00;
+  const sum = rides.reduce((acc, r) => acc + (parseFloat(r.preco) || 0), 0);
+  return parseFloat((sum / rides.length).toFixed(2));
+}
+
+/**
+ * Retorna os dados completos do cálculo de economia:
+ * 1. O valor da passagem de ônibus
+ * 2. O valor da carona (média do sistema ou da rota específica, até R$ 6)
+ * 3. O valor da economia (por viagem e projeção mensal)
+ */
+export function calculateEconomyData(ridePrice = null) {
+  const carona = ridePrice !== null && !isNaN(ridePrice) && parseFloat(ridePrice) > 0
+    ? Math.min(6.00, parseFloat(ridePrice))
+    : calculateAverageRidePrice();
+
+  const onibus = TARIFA_ONIBUS_DF;
+  const economiaPorViagem = parseFloat(Math.max(0, onibus - carona).toFixed(2));
+  // 20 dias letivos no mês, 2 viagens por dia (ida e volta) = 40 viagens mensais
+  const economiaMensal = parseFloat((economiaPorViagem * 40).toFixed(2));
+  const percentualEconomia = onibus > 0 ? Math.round((economiaPorViagem / onibus) * 100) : 0;
+
+  return {
+    tarifaOnibus: onibus,
+    valorCarona: carona,
+    economiaPorViagem,
+    economiaMensal,
+    percentualEconomia
+  };
+}
+export async function cancelBooking(rideId) {
+  const user = getCurrentUser();
+  if (!user) return { success: false, error: 'Faça login para cancelar a solicitação.' };
+
+  if (isSupabaseConfigured) {
+    const { error: delErr } = await supabase
+      .from('ride_passengers')
+      .delete()
+      .eq('ride_id', rideId)
+      .eq('passageiro_id', user.id);
+
+    if (delErr) return { success: false, error: delErr.message };
+
+    const { data: ride } = await supabase
+      .from('rides')
+      .select('vagas_disponiveis')
+      .eq('id', rideId)
+      .single();
+
+    if (ride) {
+      await supabase
+        .from('rides')
+        .update({ vagas_disponiveis: (ride.vagas_disponiveis || 0) + 1 })
+        .eq('id', rideId);
+    }
+    return { success: true };
+  }
+
+  // Fallback offline / localStorage
+  const rides = getAllRidesLocal();
+  const ride = rides.find(r => r.id === rideId);
+  if (!ride) return { success: false, error: 'Carona não encontrada.' };
+
+  if (ride.passageiros) {
+    ride.passageiros = ride.passageiros.filter(p => (p.id || p) !== user.id);
+  }
+  if (ride.vagasTotais && ride.vagasDisponiveis < ride.vagasTotais) {
+    ride.vagasDisponiveis += 1;
+  }
+  setStoredData(RIDES_KEY, rides);
+  return { success: true };
 }

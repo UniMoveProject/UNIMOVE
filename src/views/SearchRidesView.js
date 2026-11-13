@@ -4,7 +4,7 @@
  */
 
 import { searchRides, bookRide } from '../services/rides.js';
-import { renderRideCard } from '../components/RideCard.js';
+import { renderRideCard, attachRideCardEvents } from '../components/RideCard.js';
 import { getCurrentUser } from '../services/auth.js';
 import { showModal } from '../components/Modal.js';
 
@@ -23,12 +23,12 @@ export function renderSearchRidesView(queryString = '') {
         <form id="searchFilterForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
           <div>
             <label class="form-label" for="searchOrigem">Origem / Bairro</label>
-            <input type="text" id="searchOrigem" class="form-input" placeholder="Ex: Valparaíso, Asa Sul, Ceilândia" value="${initialOrigem}">
+            <input type="text" id="searchOrigem" class="form-input" placeholder="Ex: Valparaíso, Asa Sul, Ceilândia" value="${initialOrigem}" maxlength="100">
           </div>
 
           <div>
             <label class="form-label" for="searchDestino">Destino</label>
-            <input type="text" id="searchDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC" value="${initialDestino}">
+            <input type="text" id="searchDestino" class="form-input" placeholder="Ex: Campus UNICEPLAC" value="${initialDestino}" maxlength="100">
           </div>
 
           <div>
@@ -81,15 +81,16 @@ export function attachSearchRidesEvents() {
     const horario = document.getElementById('searchHorario')?.value || '';
     const vagasMinimas = document.getElementById('searchVagas')?.value || '1';
 
-    try {
-      const results = (await searchRides({ origem, destino, horario, vagasMinimas })) || [];
-      const user = getCurrentUser();
+     try {
+       const user = getCurrentUser();
+       const results = ((await searchRides({ origem, destino, horario, vagasMinimas })) || []).filter(r => r.motoristaId !== (user && user.id) && !(r.passageiros || []).some(p => (p.id || p) === (user && user.id)));
 
       if (title) title.textContent = `Resultados encontrados (${results.length})`;
 
       if (results.length > 0) {
         container.innerHTML = results.map(r => renderRideCard(r, user && user.id === r.motoristaId)).join('');
         attachBookingEvents();
+        attachRideCardEvents(container);
       } else {
         container.innerHTML = `
           <div class="card" style="text-align:center; padding:3rem 1.5rem;">
